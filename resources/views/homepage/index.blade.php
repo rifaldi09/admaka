@@ -92,7 +92,7 @@
             <div class="row gy-4 mt-1">
                 <div class="col-lg-6" data-aos="fade-up" data-aos-delay="300">
                     <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.2621436577488!2d104.4392378747239!3d0.9566927990340723!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d9718ec5f370e1%3A0xdd2db54d0ce576d1!2sFIKP%20UMRAH%2C%20Senggarang!5e0!3m2!1sid!2sid!4v1731637926157!5m2!1sid!2sid"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.2608888683835!2d104.43976111106188!3d0.9577714127055382!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d9718e92c17af1%3A0x41e9ee3f93ed6235!2sFakultas%20Teknik%20UMRAH!5e0!3m2!1sid!2sid!4v1745590867075!5m2!1sid!2sid"
                         width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div><!-- End Google Maps -->
