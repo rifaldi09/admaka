@@ -10,4 +10,10 @@ class HomepageController extends Controller
     {
         return view('homepage.index');
     }
+
+    // untuk kehalaman admin LTE (sementara)
+    public function admin()
+    {
+        return view('layout.admin.home');
+    }
 }

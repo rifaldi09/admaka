@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomepageController::class, "index"])->name('home');
 
+// Admin LTE (sementara)
+Route::get('admin', [HomepageController::class, 'admin'])->name('admin');
+
 // Login
 Route::controller(AuthController::class)->group(function () {
     Route::get('login', 'login')->name('login');
