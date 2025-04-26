@@ -12,9 +12,11 @@
 {{-- Content --}}
 @section('content')
 {{-- isi Sementara --}}
-    <div class="card">
+    <div class="card mt-3">
         <div class="card-body">
-            Ini adalah isi dashboard kamu.
+            {{-- teks nya diganti buat test kalo method user dari Auth tetep bisa dipake --}}
+            {{-- karena table users nya di ganti jadi mahasiswa --}}
+            Ini adalah isi dashboard {{ Auth::user()->username }}.
         </div>
     </div>
 @endsection

@@ -18,7 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomepageController::class, "index"])->name('home');
 
 // Admin LTE (sementara)
-Route::get('admin', [HomepageController::class, 'admin'])->name('admin');
+// Route, nama route, sama method diganti ke dashboard untuk sementara
+Route::get('dashboard', [HomepageController::class, 'dashboard'])->name('dashboard');
 
 // Login
 Route::controller(AuthController::class)->group(function () {

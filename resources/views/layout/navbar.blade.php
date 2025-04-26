@@ -37,6 +37,11 @@
             </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
+        {{-- mengubah tombol ketika user sudah login --}}
+        @if (!Auth::check())
         <a class="btn-getstarted" href="{{ route('login') }}">Login</a>
+        @else
+        <a class="btn-getstarted" href="{{ route('admin') }}">Dashboard</a>
+        @endif
     </div>
 </header>

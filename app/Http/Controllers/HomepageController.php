@@ -12,8 +12,8 @@ class HomepageController extends Controller
     }
 
     // untuk kehalaman admin LTE (sementara)
-    public function admin()
+    public function dashboard()
     {
-        return view('layout.admin.home');
+        return view('dashboard.home');
     }
 }
