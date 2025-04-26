@@ -321,35 +321,6 @@ return [
                 'period' => 30,
             ],
         ],
-        // Bagian SideBar
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user', // bisa diubahkan icon lain
-            'submenu' => [
-                [
-                    'text' => 'Reset Password',
-                    'url' => 'admin/settings/reset-password',
-                    'icon' => 'fas fa-fw fa-key', // bisa diubahkan icon lain
-                ],
-            ],
-        ],
-        ['header' => 'MENU'],
-        [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share', // bisa diubahkan icon lain
-            'submenu' => [
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-            ],
-        ],
     ],
 
     /*

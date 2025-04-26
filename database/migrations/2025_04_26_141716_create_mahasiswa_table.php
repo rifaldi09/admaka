@@ -20,6 +20,10 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->unsignedBigInteger('id_role');
+
+            // Penghubungan ke tabel roles
+            $table->foreign('id_role')->references('id_role')->on('roles')->onDelete('cascade');
         });
     }
 
@@ -28,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('mahasiswa');
     }
 };

@@ -14,17 +14,18 @@ class Mahasiswa extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'mahasiswa';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $primaryKey = 'id_mahasiswa';
     protected $fillable = [
         'username',
         // 'email',
         'password',
+        'id_role',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'id_role');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
