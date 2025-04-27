@@ -16,7 +16,7 @@
         <div class="card-body">
             {{-- teks nya diganti buat test kalo method user dari Auth tetep bisa dipake --}}
             {{-- karena table users nya di ganti jadi mahasiswa --}}
-            Ini adalah isi dashboard.
+            Ini adalah isi dashboard. {{ Auth::user()->username }}
         </div>
     </div>
 @endsection

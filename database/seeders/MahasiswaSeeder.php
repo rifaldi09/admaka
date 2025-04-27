@@ -106,22 +106,22 @@ class MahasiswaSeeder extends Seeder
         );
         // seeder database untuk isi table mahasiswa di database
         // relasi masih manual karna belum ada halaman yang mengaturnya
-        \App\Models\Mahasiswa::insert(
+        \App\Models\Mahasiswa::insert([
             [
                 'username' => 'mahasiswa',
                 'password' => Hash::make(123),
                 'id_role' => '1',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],);
-        \App\Models\Mahasiswa::insert(
+            ],]);
+        \App\Models\Mahasiswa::insert([
             [
                 'username' => 'admin',
                 'password' => Hash::make(123),
                 'id_role' => '2',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
+            ],]
         );
     }
 }

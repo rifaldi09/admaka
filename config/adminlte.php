@@ -321,6 +321,13 @@ return [
                 'period' => 30,
             ],
         ],
+        [
+            'type' => 'navbar-item',
+            'text' => 'Logout',
+            'topnav_right' => true,
+            'icon' => 'fas fa-sign-out-alt',
+            'url' => 'logout',
+        ],
     ],
 
     /*
@@ -438,7 +445,7 @@ return [
                 [
                     'type' => 'css',
                     'asset' => true,
-                    'location' => 'costum/css/custom.css', 
+                    'location' => 'costum/css/custom.css',
                 ],
             ],
         ],

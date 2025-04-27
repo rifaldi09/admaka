@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        // 'admin' => [
+        //     'driver' => 'session',
+        //     'provider' => 'mahasiswa',
+        // ],
     ],
 
     /*
@@ -65,9 +69,9 @@ return [
             'model' => App\Models\Mahasiswa::class,
         ],
 
-        // 'users' => [
+        // 'mahasiswa' => [
         //     'driver' => 'database',
-        //     'table' => 'users',
+        //     'table' => 'mahasiswa',
         // ],
     ],
 

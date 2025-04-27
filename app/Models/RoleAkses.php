@@ -9,7 +9,7 @@ class RoleAkses extends Model
 {
     use HasFactory;
     protected $table = 'role_akses';
-    protected $primaryKey = 'id_role_akses';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'id_role',
         'id_akses',
@@ -22,6 +22,6 @@ class RoleAkses extends Model
     // relasi ke tabel hak_akses
     public function hakAkses()
     {
-        return $this->belongsTo(HakAkses::class, 'id_akses');
+        return $this->belongsTo(HakAkses::class, 'id_akses','id_akses');
     }
 }

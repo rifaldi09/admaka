@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Role;
+use App\Models\RoleAkses;
+use App\Models\HakAkses;
+use Illuminate\Support\Facades\Auth;
 
 class HomepageController extends Controller
 {
@@ -14,6 +18,12 @@ class HomepageController extends Controller
     // untuk kehalaman admin LTE (sementara)
     public function dashboard()
     {
+
+        // $idRole = Auth::user()->id_role;
+        // $data = RoleAkses::with('hakAkses')->where('id_role', $idRole)->get();
+        // $menus = HakAkses::orderBy('id_akses')->get();
+        // dd($data);
+
         return view('dashboard.home');
     }
 }

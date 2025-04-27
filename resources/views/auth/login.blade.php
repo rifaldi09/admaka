@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="{{ asset('img/logoumrah.png') }}" rel="icon">
+    <link href="{{ asset('assets/img/logoumrah.png') }}" rel="icon">
     <!-- Bootstrap CSS -->
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- FontAwesome CSS -->
@@ -18,8 +18,8 @@
 <body>
     <div class="uf-form-signin">
         <div class="text-center">
-            <a href="{{ route('home') }}"><img src="{{ asset('assets/img/logoadmakaputih.png') }}" alt="" width="100"
-                    height="100"></a>
+            <a href="{{ route('home') }}"><img src="{{ asset('assets/img/logoadmakaputih.png') }}" alt=""
+                    width="100" height="100"></a>
             <h1 class="text-white h3">ADMAKA LOGIN</h1>
         </div>
         <form class="mt-4" action="{{ route('login-process') }}" method="post" enctype="multipart/form-data">
@@ -45,37 +45,37 @@
     <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('plugins/sweetalert2/sweetalert2.all.min.js') }}"></script>
     @if (session()->has('status'))
-    <script>
-        const message = "{{ session('message') }}";
-        const status = "{{ session('status') }}";
+        <script>
+            const message = "{{ session('message') }}";
+            const status = "{{ session('status') }}";
 
-        var toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 5000,
-            padding: '2em'
-        });
-
-        if (status == false || status == "" || status == "0") {
-            toast.fire({
-                icon: 'warning',
-                title: message,
-                padding: '2em'
-            });
-        } else {
-            toast.fire({
-                icon: 'success',
-                title: message,
+            var toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 5000,
                 padding: '2em'
             });
 
-            var container = document.querySelector(".container");
-            if (container) {
-                container.classList.add("sign-up-mode");
+            if (status == false || status == "" || status == "0") {
+                toast.fire({
+                    icon: 'warning',
+                    title: message,
+                    padding: '2em'
+                });
+            } else {
+                toast.fire({
+                    icon: 'success',
+                    title: message,
+                    padding: '2em'
+                });
+
+                var container = document.querySelector(".container");
+                if (container) {
+                    container.classList.add("sign-up-mode");
+                }
             }
-        }
-    </script>
+        </script>
     @endif
 </body>
 

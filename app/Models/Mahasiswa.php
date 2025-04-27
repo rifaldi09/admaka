@@ -14,7 +14,7 @@ class Mahasiswa extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'mahasiswa';
-    protected $primaryKey = 'id_mahasiswa';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'username',
         // 'email',
@@ -24,7 +24,7 @@ class Mahasiswa extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class, 'id_role');
+        return $this->belongsTo(Role::class, 'id_role','id_role');
     }
 
     /**

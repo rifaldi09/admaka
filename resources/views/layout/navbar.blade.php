@@ -41,7 +41,8 @@
         @if (!Auth::check())
         <a class="btn-getstarted" href="{{ route('login') }}">Login</a>
         @else
-        <a class="btn-getstarted" href="{{ route('admin') }}">Dashboard</a>
+        {{-- Belum ada Route --}}
+        <a class="btn-getstarted" href="">Dashboard</a>
         @endif
     </div>
 </header>

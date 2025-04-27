@@ -18,7 +18,7 @@ class AuthController extends Controller
     {
         //validasi data kosong
         $data = $request->validate([
-            'username' => 'required|min:8',
+            'username' => 'required',
             'password' => 'required',
         ]);
 
