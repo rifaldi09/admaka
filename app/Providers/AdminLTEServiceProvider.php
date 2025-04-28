@@ -59,6 +59,13 @@ class AdminLTEServiceProvider extends ServiceProvider
                     ]);
                 }
             }
+
+            //  // menu untuk logout
+            // $event->menu->add([
+            //     'text' => 'Logout',
+            //     'url' => 'logout',
+            //     'icon' => 'fas fa-sign-out-alt'
+            // ]);
         });
     }
 }

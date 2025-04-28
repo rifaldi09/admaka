@@ -12,9 +12,12 @@
     <link href="{{ asset('assets/css/all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/uf-style.css') }}" rel="stylesheet">
     <link href="{{ asset('plugins/sweetalert2/sweetalert2.css') }}" rel="stylesheet">
+
+    {{-- cdn toastr.js buat notif --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.css" integrity="sha512-oe8OpYjBaDWPt2VmSFR+qYOdnTjeV9QPLJUeqZyprDEQvQLJ9C5PCFclxwNuvb/GQgQngdCXzKSFltuHD3eCxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <title>ADMAKA</title>
 </head>
-
 <body>
     <div class="uf-form-signin">
         <div class="text-center">
@@ -41,6 +44,16 @@
 
     <!-- JavaScript -->
     <!-- Separate Popper and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js" integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        @foreach (['success', 'error', 'warning', 'info'] as $msg)
+            @if(session()->has($msg))
+                toastr.{{ $msg }}("{{ session($msg) }}");
+            @endif
+        @endforeach
+    </script>
+
     <script src="{{ asset('assets/js/popper.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('plugins/sweetalert2/sweetalert2.all.min.js') }}"></script>

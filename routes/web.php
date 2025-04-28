@@ -25,4 +25,5 @@ Route::get('dashboard', [HomepageController::class, 'dashboard'])->name('dashboa
 Route::controller(AuthController::class)->group(function () {
     Route::get('login', 'login')->name('login');
     Route::post('login-process', 'loginProcess')->name('login-process');
+    Route::get('logout', 'logout')->name('logout');
 });

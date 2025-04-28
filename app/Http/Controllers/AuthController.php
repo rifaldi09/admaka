@@ -28,9 +28,16 @@ class AuthController extends Controller
         // lakukan login
         if(FacadesAuth::attempt($credentials)) {
             // sementara masih belum ada auth untuk role
-            return redirect()->to('dashboard')->with('success_login', 'Login telah berhasil');
+            return redirect()->to('dashboard')->with('success', 'Login telah berhasil');
         } else {
-            return back()->with('failed_login', 'Login gagal dilakukan');
+            return back()->with('error', 'Login gagal dilakukan');
         }
+    }
+
+    public function logout()
+    {
+        FacadesAuth::logout();
+
+        return redirect()->to('login')->with('success', 'Logout telah berhasil');
     }
 }

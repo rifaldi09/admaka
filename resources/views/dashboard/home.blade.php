@@ -6,17 +6,34 @@
 
 {{-- Logo title Umrah --}}
 <link href="{{ asset('assets/img/logoumrah.png') }}" rel="icon">
+
+{{-- inject ke layout admin lte soalnya gatau gimana caranya biar bisa dimasukin langsung --}}
+@push('css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.css">
+@endpush
+
+@push('js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+    <script>
+        @foreach (['success', 'error', 'warning', 'info'] as $msg)
+            @if(session()->has($msg))
+                toastr.{{ $msg }}("{{ session($msg) }}");
+            @endif
+        @endforeach
+    </script>
+@endpush
+
 {{-- Title --}}
 @section('title', 'ADMAKA - FTTK UMRAH')
 
 {{-- Content --}}
 @section('content')
-{{-- isi Sementara --}}
+    {{-- isi Sementara --}}
     <div class="card mt-3">
         <div class="card-body">
             {{-- teks nya diganti buat test kalo method user dari Auth tetep bisa dipake --}}
             {{-- karena table users nya di ganti jadi mahasiswa --}}
-            Ini adalah isi dashboard. {{ Auth::user()->username }}
+            Ini adalah isi dashboard {{ Auth::user()->username }}
         </div>
     </div>
 @endsection
