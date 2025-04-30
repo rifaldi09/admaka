@@ -20,6 +20,8 @@ Route::get('/', [HomepageController::class, "index"])->name('home');
 // Admin LTE (sementara)
 // Route, nama route, sama method diganti ke dashboard untuk sementara
 Route::get('dashboard', [HomepageController::class, 'dashboard'])->name('dashboard');
+Route::get('hak-akses', [HomepageController::class, 'hakAkses'])->name('hak-akses');
+Route::post('edit-hak-akses', [HomepageController::class, 'editHakAkses'])->name('edit-hak-akses');
 
 // Login
 Route::controller(AuthController::class)->group(function () {

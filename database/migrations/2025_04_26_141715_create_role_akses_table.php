@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('role_akses', function (Blueprint $table) {
-            $table->id()->autoIncrement();
-            $table->unsignedBigInteger('id_role');
+            $table->id('id_role_akses')->autoIncrement();
+            $table->unsignedBigInteger('id_user');
             $table->unsignedBigInteger('id_akses');
             $table->timestamps();
 
-            // Penghubungan ke tabel roles
-            $table->foreign('id_role')->references('id_role')->on('roles')->onDelete('cascade');
+            // Penghubungan ke tabel users
+            $table->foreign('id_user')->references('id')->on('users')->onDelete('cascade');
             // Penghubungan ke tabel hak_akses
             $table->foreign('id_akses')->references('id_akses')->on('hak_akses')->onDelete('cascade');
         });

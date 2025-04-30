@@ -18,17 +18,17 @@ class AuthController extends Controller
     {
         //validasi data kosong
         $data = $request->validate([
-            'username' => 'required',
+            'id_user' => 'required',
             'password' => 'required',
         ]);
 
         // ambil kredensial user dari request
-        $credentials = $request->only('username', 'password');
+        $credentials = $request->only('id_user', 'password');
 
         // lakukan login
         if(FacadesAuth::attempt($credentials)) {
             // sementara masih belum ada auth untuk role
-            return redirect()->to('dashboard')->with('success', 'Login telah berhasil');
+            return redirect()->to('hak-akses')->with('success', 'Login telah berhasil');
         } else {
             return back()->with('error', 'Login gagal dilakukan');
         }

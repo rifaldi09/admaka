@@ -13,17 +13,9 @@ return new class extends Migration
     {
         // database mahasiswa (field sementara)
         Schema::create('mahasiswa', function (Blueprint $table) {
-            $table->id();
-            $table->string('username');
-            // $table->string('email')->unique();
-            // $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->id('nim');
+            $table->string('nama');
             $table->timestamps();
-            $table->unsignedBigInteger('id_role');
-
-            // Penghubungan ke tabel roles
-            $table->foreign('id_role')->references('id_role')->on('roles')->onDelete('cascade');
         });
     }
 

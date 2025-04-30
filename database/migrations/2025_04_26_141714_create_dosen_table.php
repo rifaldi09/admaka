@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id('id_role')->autoIncrement();
-            $table->string('role');
+        // database dosen (field sementara)
+        Schema::create('dosen', function (Blueprint $table) {
+            $table->id('nidn');
+            $table->string('nama');
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('dosen');
     }
 };

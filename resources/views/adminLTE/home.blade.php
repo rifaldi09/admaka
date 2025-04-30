@@ -24,16 +24,12 @@
 @endpush
 
 {{-- Title --}}
-@section('title', 'ADMAKA - FTTK UMRAH')
+@section('title')
+    @yield('title') ADMAKA - FTTK UMRAH
+@endsection
 
 {{-- Content --}}
 @section('content')
-    {{-- isi Sementara --}}
-    <div class="card mt-3">
-        <div class="card-body">
-            {{-- teks nya diganti buat test kalo method user dari Auth tetep bisa dipake --}}
-            {{-- karena table users nya di ganti jadi mahasiswa --}}
-            Ini adalah isi dashboard {{ Auth::user()->username }}
-        </div>
-    </div>
+    
+    @yield('content')
 @endsection

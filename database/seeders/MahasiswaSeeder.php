@@ -13,21 +13,58 @@ class MahasiswaSeeder extends Seeder
      */
     public function run(): void
     {
-        // seeder database untuk isi table role di database
-        \App\Models\Role::create(
+
+        // Users
+        \App\Models\User::insert([
             [
-                'role' => 'Mahasiswa',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],);
-        \App\Models\Role::create(
-            [
-                'role' => 'Administrator',
+                'id' => 1,
+                'id_user' => '133',
+                'password' => Hash::make('123'),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-        );
-        // seeder database untuk isi table hak_akses di database
+            [
+                'id' => 2,
+                'id_user' => '127',
+                'password' => Hash::make('123'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 3,
+                'id_user' => '2025',
+                'password' => Hash::make('123'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        \App\Models\Dosen::insert([
+            [
+                'nidn' => '2025',
+                'nama' => 'Dosen',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        // Mahasiswa
+        \App\Models\Mahasiswa::insert([
+            [
+                'nim' => '133',
+                'nama' => 'Mahasiswa',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nim' => '127',
+                'nama' => 'Admin',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        // Hak Akses
         \App\Models\HakAkses::insert([
             [
                 'header' => 'Surat',
@@ -47,7 +84,7 @@ class MahasiswaSeeder extends Seeder
             ],
             [
                 'header' => 'Profil',
-                'menu' => 'Lihat Profi',
+                'menu' => 'Lihat Profil',
                 'url' => 'lihat-profil',
                 'icon' => 'fa-solid fa-file-pen',
                 'created_at' => now(),
@@ -63,65 +100,21 @@ class MahasiswaSeeder extends Seeder
             ],
             [
                 'header' => 'Admin',
-                'menu' => 'Data Masteer',
+                'menu' => 'Data Master',
                 'url' => 'data-master',
                 'icon' => 'fa-solid fa-file-pen',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],]
-        );
-        // seeder database untuk isi table role_akses di database
-        // relasi masih manual karna belum ada halaman yang mengaturnya
+            ],
+        ]);
+
+        // Role Akses
         \App\Models\RoleAkses::insert([
-            [
-                'id_role' => '1',
-                'id_akses' => '1',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'id_role' => '1',
-                'id_akses' => '2',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'id_role' => '1',
-                'id_akses' => '3',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'id_role' => '1',
-                'id_akses' => '4',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'id_role' => '2',
-                'id_akses' => '5',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],]
-        );
-        // seeder database untuk isi table mahasiswa di database
-        // relasi masih manual karna belum ada halaman yang mengaturnya
-        \App\Models\Mahasiswa::insert([
-            [
-                'username' => 'mahasiswa',
-                'password' => Hash::make(123),
-                'id_role' => '1',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],]);
-        \App\Models\Mahasiswa::insert([
-            [
-                'username' => 'admin',
-                'password' => Hash::make(123),
-                'id_role' => '2',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],]
-        );
+            ['id_user' => 1, 'id_akses' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id_user' => 1, 'id_akses' => 2, 'created_at' => now(), 'updated_at' => now()],
+            ['id_user' => 1, 'id_akses' => 3, 'created_at' => now(), 'updated_at' => now()],
+            ['id_user' => 1, 'id_akses' => 4, 'created_at' => now(), 'updated_at' => now()],
+            ['id_user' => 2, 'id_akses' => 5, 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 }

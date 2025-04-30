@@ -29,11 +29,11 @@
             @csrf
             <div class="input-group uf-input-group input-group-lg mb-3">
                 <span class="input-group-text fa fa-user"></span>
-                <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+                <input type="text" class="form-control" id="id_user" name="id_user" placeholder="ID User" required>
             </div>
             <div class="input-group uf-input-group input-group-lg mb-3">
                 <span class="input-group-text fa fa-lock"></span>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
             </div>
 
             <div class="d-grid mb-4">

@@ -11,14 +11,10 @@ class RoleAkses extends Model
     protected $table = 'role_akses';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'id_role',
+        'id_user',
         'id_akses',
     ];
-    // relasi ke tabel role
-    public function role()
-    {
-        return $this->belongsTo(Role::class, 'id_role');
-    }
+    
     // relasi ke tabel hak_akses
     public function hakAkses()
     {
