@@ -1,4 +1,4 @@
-@extends('adminLTE.home')
+@extends('dashboard.home')
 
 @section('title', 'Dashboard Hak Akses')
 

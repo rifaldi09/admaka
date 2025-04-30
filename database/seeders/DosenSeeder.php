@@ -5,21 +5,20 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class MahasiswaSeeder extends Seeder
+class DosenSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        // Mahasiswa
-        \App\Models\Mahasiswa::insert([
+        \App\Models\Dosen::insert([
             [
-                'nim' => '133',
-                'nama' => 'Mahasiswa',
+                'nidn' => '2025',
+                'nama' => 'Dosen',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ]);
     }
 }

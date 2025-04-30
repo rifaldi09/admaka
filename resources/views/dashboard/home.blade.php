@@ -30,6 +30,5 @@
 
 {{-- Content --}}
 @section('content')
-    
     @yield('content')
 @endsection

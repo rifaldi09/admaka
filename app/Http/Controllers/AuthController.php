@@ -27,8 +27,7 @@ class AuthController extends Controller
 
         // lakukan login
         if(FacadesAuth::attempt($credentials)) {
-            // sementara masih belum ada auth untuk role
-            return redirect()->to('hak-akses')->with('success', 'Login telah berhasil');
+            return redirect()->to('dashboard')->with('success', 'Login telah berhasil');
         } else {
             return back()->with('error', 'Login gagal dilakukan');
         }

@@ -29,6 +29,22 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    // mengambil 1 data mahasiswa
+    public function dataMahasiswa() {
+        return $this->hasOne(Mahasiswa::class, 'nim', 'id_user');
+    }
+
+    // mengambil 1 data dosen
+    public function dataDosen() {
+        return $this->hasOne(Dosen::class, 'nidn', 'id_user');
+    }
+
+    // function yang ini gunanya biar $user->data itu bisa dinamis sesuai data yang lagi login sekarang
+    public function getDataAttribute()
+    {
+        return $this->dataMahasiswa()->first() ?? $this->dataDosen()->first();
+    }
+
     // relasi ke tabel role_akses
     public function roleAkses()
     {

@@ -1,0 +1,67 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class HakAksesSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+         // Hak Akses
+         \App\Models\HakAkses::insert([
+            [
+                'header' => 'Surat',
+                'menu' => 'Surat Persetujuan Sidang Skripsi',
+                'url' => 'sidang-skripsi',
+                'icon' => 'fa-solid fa-file-pen',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'header' => 'Surat',
+                'menu' => 'Surat Permohonan Sidang Skripsi',
+                'url' => 'surat-permohonan-sidang-skripsi',
+                'icon' => 'fa-solid fa-file-pen',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'header' => 'Profil',
+                'menu' => 'Lihat Profil',
+                'url' => 'lihat-profil',
+                'icon' => 'fa-solid fa-file-pen',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'header' => 'Surat',
+                'menu' => 'Surat Permohonan Seminar Proposal',
+                'url' => 'surat-keterangan-lulus',
+                'icon' => 'fa-solid fa-file-pen',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'header' => 'Admin',
+                'menu' => 'Data Master',
+                'url' => 'data-master',
+                'icon' => 'fa-solid fa-file-pen',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'header' => 'Admin',
+                'menu' => 'Hak Akses',
+                'url' => 'hak-akses',
+                'icon' => 'fa-solid fa-file-pen',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        ]);
+    }
+}
