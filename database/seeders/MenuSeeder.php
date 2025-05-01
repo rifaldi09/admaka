@@ -48,7 +48,7 @@ class MenuSeeder extends Seeder
             ],
             [
                 'header' => 'Admin',
-                'menu' => 'Data Master',
+                'menu' => 'Data Mahasiswa dan Dosen',
                 'url' => 'data-master',
                 'icon' => 'fa-solid fa-file-pen',
                 'created_at' => now(),

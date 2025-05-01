@@ -435,21 +435,51 @@ return [
                 ],
             ],
         ],
-    ],
-
-    //! costum CSS
-    'plugins' => [
-        'CustomCSS' => [
-            'active' => true,
+        'Toastr' => [
+            'active' => false,
             'files' => [
                 [
                     'type' => 'css',
-                    'asset' => true,
-                    'location' => 'costum/css/custom.css',
+                    'asset' => false,
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js',
+                ],
+            ],
+        ],
+        'Bootstrap' => [
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js',
                 ],
             ],
         ],
     ],
+
+    //! costum CSS
+    // 'plugins' => [
+    //     'CustomCSS' => [
+    //         'active' => true,
+    //         'files' => [
+    //             [
+    //                 'type' => 'css',
+    //                 'asset' => true,
+    //                 'location' => 'costum/css/custom.css',
+    //             ],
+    //         ],
+    //     ],
+    // ],
 
     /*
     |--------------------------------------------------------------------------
