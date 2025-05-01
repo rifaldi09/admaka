@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class HakAksesSeeder extends Seeder
+class MenuSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,7 +13,7 @@ class HakAksesSeeder extends Seeder
     public function run(): void
     {
          // Hak Akses
-         \App\Models\HakAkses::insert([
+         \App\Models\Menu::insert([
             [
                 'header' => 'Surat',
                 'menu' => 'Surat Persetujuan Sidang Skripsi',

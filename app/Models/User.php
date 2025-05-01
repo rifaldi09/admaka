@@ -18,6 +18,7 @@ class User extends Authenticatable
     protected $fillable = [
         'id_user',
         'password',
+        'id_role',
     ];
     
     protected $hidden = [
@@ -48,6 +49,6 @@ class User extends Authenticatable
     // relasi ke tabel role_akses
     public function roleAkses()
     {
-        return $this->hasMany(RoleAkses::class, 'id_user');
+        return $this->hasMany(RoleAkses::class, 'id_role');
     }
 }

@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class HakAkses extends Model
+class Menu extends Model
 {
     use HasFactory;
-    protected $table = 'hak_akses';
-    protected $primaryKey = 'id_akses';
+    protected $table = 'menu';
+    protected $primaryKey = 'id_menu';
     protected $fillable = [
         'header',
         'menu',
@@ -20,6 +20,6 @@ class HakAkses extends Model
     // relasi ke tabel role_akses
     public function roleAkses()
     {
-        return $this->hasMany(RoleAkses::class, 'id_akses');
+        return $this->hasMany(RoleAkses::class, 'id_menu');
     }
 }

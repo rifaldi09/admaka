@@ -16,10 +16,11 @@ class DatabaseSeeder extends Seeder
         // command:
         // php artisan db:seed
         $this->call([
+            RoleSeeder::class,
             UserSeeder::class,
             MahasiswaSeeder::class,
             DosenSeeder::class,
-            HakAksesSeeder::class,
+            MenuSeeder::class,
             RoleAksesSeeder::class
         ]);
     }

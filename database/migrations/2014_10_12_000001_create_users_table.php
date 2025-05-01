@@ -18,8 +18,12 @@ return new class extends Migration
             $table->id();
             $table->string('id_user'); // sebelumnya username di ganti dengan id_user yang merujuk ke nim/nidn
             $table->string('password');
+            $table->unsignedBigInteger('id_role');
             $table->rememberToken();
             $table->timestamps();
+
+            // Penghubungan ke tabel role
+            $table->foreign('id_role')->references('id')->on('role')->onDelete('cascade');
         });
     }
 

@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
                 'id' => 1,
                 'id_user' => '133',
                 'password' => Hash::make('123'),
+                'id_role' => '1',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -27,6 +28,7 @@ class UserSeeder extends Seeder
                 'id' => 2,
                 'id_user' => '2025',
                 'password' => Hash::make('123'),
+                'id_role' => '2',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -34,6 +36,7 @@ class UserSeeder extends Seeder
                 'id' => 3,
                 'id_user' => '1234',
                 'password' => Hash::make('123'),
+                'id_role' => '3',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

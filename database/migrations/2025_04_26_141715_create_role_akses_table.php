@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('role_akses', function (Blueprint $table) {
             $table->id('id_role_akses')->autoIncrement();
-            $table->unsignedBigInteger('id_user');
-            $table->unsignedBigInteger('id_akses');
+            $table->unsignedBigInteger('id_role');
+            $table->unsignedBigInteger('id_menu');
             $table->timestamps();
 
-            // Penghubungan ke tabel users
-            $table->foreign('id_user')->references('id')->on('users')->onDelete('cascade');
+            // Penghubungan ke tabel role
+            $table->foreign('id_role')->references('id')->on('role')->onDelete('cascade');
             // Penghubungan ke tabel hak_akses
-            $table->foreign('id_akses')->references('id_akses')->on('hak_akses')->onDelete('cascade');
+            $table->foreign('id_menu')->references('id_menu')->on('menu')->onDelete('cascade');
         });
     }
 
