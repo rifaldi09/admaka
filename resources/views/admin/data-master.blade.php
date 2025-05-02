@@ -22,8 +22,8 @@
             <!-- Tab Mahasiswa -->
             <div class="tab-pane fade show active" id="nav-mhs" role="tabpanel" aria-labelledby="nav-mhs-tab">
                 <br>
-                <button class="btn btn-primary btn-sm" id="tambahMhs">Tambah Data</button>
-                <button class="btn btn-success btn-sm" id="importMhs">Import Data</button>
+                <button class="btn btn-primary btn-sm" id="tambahMhs"><i class="fa-solid fa-plus"></i> Tambah Data</button>
+                <button class="btn btn-success btn-sm" id="importMhs"><i class="fa-solid fa-arrow-up-from-bracket"></i> Import Data</button>
                 <br><br>
 
                 {{-- Setup data for datatables --}}
@@ -70,8 +70,8 @@
             <!-- Tab Dosen -->
             <div class="tab-pane fade" id="nav-dsn" role="tabpanel" aria-labelledby="nav-dsn-tab">
                 <br>
-                <button class="btn btn-primary btn-sm" id="tambahDsn">Tambah Data</button>
-                <button class="btn btn-success btn-sm" id="importDsn">Import Data</button>
+                <button class="btn btn-primary btn-sm" id="tambahDsn"><i class="fa-solid fa-plus"></i> Tambah Data</button>
+                <button class="btn btn-success btn-sm" id="importDsn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Import Data</button>
                 <br><br>
                 {{-- Setup data for datatables --}}
                 @php

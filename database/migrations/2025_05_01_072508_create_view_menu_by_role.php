@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // hapus view jika sudah ada karna migration tidak menghapus view
+        DB::statement('DROP VIEW IF EXISTS view_menus_by_role');
+
         DB::statement("
             CREATE VIEW view_menus_by_role AS
             SELECT 
@@ -32,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        DB::statement("DROP VIEW IF EXISTS view_menus_by_role");
+        
     }
 };

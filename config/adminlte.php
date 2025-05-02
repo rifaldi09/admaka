@@ -304,23 +304,23 @@ return [
     //! Config MENU
     'menu' => [
         // Bagian Config TopBar
-        [
-            'type' => 'darkmode-widget',
-            'topnav_right' => true,
-        ],
-        [
-            'type' => 'navbar-notification',
-            'id' => 'my-notification',
-            'icon' => 'fas fa-bell', // bisa diubahkan icon lain
-            'url' => 'notifications/show',
-            'topnav_right' => true,
-            'dropdown_mode' => true,
-            'dropdown_flabel' => 'All notifications',
-            'update_cfg' => [
-                'url' => 'notifications/get', // masuk ke route web
-                'period' => 30,
-            ],
-        ],
+        // [
+        //     'type' => 'darkmode-widget',
+        //     'topnav_right' => true,
+        // ],
+        // [
+        //     'type' => 'navbar-notification',
+        //     'id' => 'my-notification',
+        //     'icon' => 'fas fa-bell', // bisa diubahkan icon lain
+        //     'url' => 'notifications/show',
+        //     'topnav_right' => true,
+        //     'dropdown_mode' => true,
+        //     'dropdown_flabel' => 'All notifications',
+        //     'update_cfg' => [
+        //         'url' => 'notifications/get', // masuk ke route web
+        //         'period' => 30,
+        //     ],
+        // ],
         [
             'type' => 'navbar-item',
             'text' => 'Logout',
@@ -365,6 +365,16 @@ return [
     */
 
     'plugins' => [
+        'FontAwesomeCDN' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css',
+                ],
+            ],
+        ],
         'Datatables' => [
             'active' => false,
             'files' => [
@@ -411,12 +421,12 @@ return [
             ],
         ],
         'Sweetalert2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdn.jsdelivr.net/npm/sweetalert2@8',
+                    'location' => '//cdn.jsdelivr.net/npm/sweetalert2@11',
                 ],
             ],
         ],

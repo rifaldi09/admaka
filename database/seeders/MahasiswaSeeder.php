@@ -16,7 +16,7 @@ class MahasiswaSeeder extends Seeder
         \App\Models\Mahasiswa::insert([
             [
                 'nim' => '133',
-                'nama' => 'Mahasiswa',
+                'nama' => 'Mahasiswa 1',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

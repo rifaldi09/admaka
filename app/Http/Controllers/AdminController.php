@@ -28,13 +28,14 @@ class AdminController extends Controller
     }
 
     // untuk kehalaman edit hak akses admin
-    public function editHakAkses(Request $request)
+    public function editHakAkses($id)
     {
 
         // ambil id_role dari request
-        $id_role = $request->id_user;
+        $id_role = decrypt($id);
+        // dd($id_role);
 
-        // ambil data dari menuyangsesuai dengan $request
+        // ambil data dari menu yang sesuai dengan $request
         $dataRole = Role::where('id', $id_role)->first();
 
         // if ($dataUser == null) {
@@ -63,5 +64,58 @@ class AdminController extends Controller
 
         // kirim ke view halaman edit hak akses
         return view('admin.editHakAkses', compact('dataRole', 'menuALL', 'menuHakAkses'));
+    }
+
+    public function updateHakAkses(Request $request)
+    {
+        // ambil id_role dari request
+        $id_role = $request->id_role;
+
+        // hapus semua hak akses yang ada di role tersebut
+        RoleAkses::where('id_role', $id_role)->delete();
+
+        // insert hak akses baru
+        foreach ($request->check_akses as $menu) {
+            RoleAkses::create([
+                'id_role' => $id_role,
+                'id_menu' => $menu,
+            ]);
+        }
+
+        //! masih belum ada validasi ketika gagal menambahkan hak akses
+        return redirect()->route('hak-akses')->with('success', 'Hak Akses Berhasil Diubah');
+    }
+
+    // Fungsi Menambahkan Role
+    public function storeRole(Request $request)
+    {
+        // validasi input
+        $validasi = $request->validate([
+            'nama_role' => 'required|string|max:255',
+        ]);
+
+        // simpan role baru
+        Role::create([
+            'name_role' => $validasi['nama_role'],
+        ]);
+
+        //! masih belum ada validasi ketika gagal menambahkan role
+        return redirect()->route('hak-akses')->with('success', 'Role Berhasil Ditambahkan');
+    }
+
+    // Fungsi Menghapus Role
+    public function destroyRole($id)
+    {
+        // ambil id_role dari request
+        $id_role = decrypt($id);
+
+        // hapus role
+        Role::where('id', $id_role)->delete();
+
+        // hapus juga hak akses yang berhubungan dengan role tersebut
+        RoleAkses::where('id_role', $id_role)->delete();
+
+        //! masih belum ada validasi ketika gagal menghapus role
+        return redirect()->route('hak-akses')->with('success', 'Role Berhasil Dihapus');
     }
 }

@@ -25,7 +25,16 @@ Route::get('dashboard', [HomepageController::class, 'dashboard'])->name('dashboa
 Route::get('lihat-profil', [MahasiswaController::class, 'lihatProfil'])->name('lihat-profil');
 Route::get('hak-akses', [AdminController::class, 'hakAkses'])->name('hak-akses');
 Route::get('data-master', [AdminController::class, 'dataMaster'])->name('data-master');
-Route::post('edit-hak-akses', [AdminController::class, 'editHakAkses'])->name('edit-hak-akses');
+
+// Edit Hak Akses
+Route::get('edit-hak-akses/{id}', [AdminController::class, 'editHakAkses'])->name('edit-hak-akses');
+Route::post('update-hak-akses', [AdminController::class, 'updateHakAkses'])->name('update-hak-akses');
+
+// Menamabahkan Role
+Route::post('store-role', [AdminController::class, 'storeRole'])->name('store-role');
+
+// Menghapus Role
+Route::post('destroy-role/{id}', [AdminController::class, 'destroyRole'])->name('destroy-role');
 
 // Login
 Route::controller(AuthController::class)->group(function () {

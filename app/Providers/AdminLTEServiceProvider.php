@@ -56,20 +56,17 @@ class AdminLTEServiceProvider extends ServiceProvider
                 
                 // Tambahkan menu-item ke admin LTE
                 foreach ($group['menus'] as $menuItem) {
+
+                    // Tambahkan menu-item ke admin LTE
                     $event->menu->add([
-                        'text' => $menuItem['text'],
+                        'text' => $menuItem['text'] ,
                         'url'  => $menuItem['url'],
                         'icon' => $menuItem['icon'],
+                        // notofikasi menu sementara
+                        'label' => '3'
                     ]);
                 }
             }
-
-            //  // menu untuk logout
-            // $event->menu->add([
-            //     'text' => 'Logout',
-            //     'url' => 'logout',
-            //     'icon' => 'fas fa-sign-out-alt'
-            // ]);
         });
     }
 }

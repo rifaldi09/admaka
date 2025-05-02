@@ -15,7 +15,7 @@ class DosenSeeder extends Seeder
         \App\Models\Dosen::insert([
             [
                 'nidn' => '2025',
-                'nama' => 'Dosen',
+                'nama' => 'Dosen 1',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
