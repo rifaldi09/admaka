@@ -22,8 +22,11 @@
             <!-- Tab Mahasiswa -->
             <div class="tab-pane fade show active" id="nav-mhs" role="tabpanel" aria-labelledby="nav-mhs-tab">
                 <br>
-                <button class="btn btn-primary btn-sm" id="tambahMhs"><i class="fa-solid fa-plus"></i> Tambah Data</button>
-                <button class="btn btn-success btn-sm" id="importMhs"><i class="fa-solid fa-arrow-up-from-bracket"></i> Import Data</button>
+                <button class="btn btn-primary btn-sm" id="tambahMhs" data-toggle="modal" data-target="#modalMhs"><i
+                        class="fa-solid fa-plus"></i> Tambah
+                    Data</button>
+                <button class="btn btn-success btn-sm" id="importMhs"><i class="fa-solid fa-arrow-up-from-bracket"></i>
+                    Import Data</button>
                 <br><br>
 
                 {{-- Setup data for datatables --}}
@@ -70,8 +73,10 @@
             <!-- Tab Dosen -->
             <div class="tab-pane fade" id="nav-dsn" role="tabpanel" aria-labelledby="nav-dsn-tab">
                 <br>
-                <button class="btn btn-primary btn-sm" id="tambahDsn"><i class="fa-solid fa-plus"></i> Tambah Data</button>
-                <button class="btn btn-success btn-sm" id="importDsn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Import Data</button>
+                <button class="btn btn-primary btn-sm" id="tambahDsn"><i class="fa-solid fa-plus"></i> Tambah
+                    Data</button>
+                <button class="btn btn-success btn-sm" id="importDsn"><i class="fa-solid fa-arrow-up-from-bracket"></i>
+                    Import Data</button>
                 <br><br>
                 {{-- Setup data for datatables --}}
                 @php
@@ -116,4 +121,39 @@
         </div>
     </div>
 </div>
+{{-- INSERT DATA MAHASISWA --}}
+<x-adminlte-modal id="modalMhs" title="Tambah Mahasiswa">
+    <form>
+
+        <div class="form-group">
+            <x-adminlte-input type="text" label="NIM" name="nim" placeholder="NIM" required />
+        </div>
+        <div class="form-group">
+            <x-adminlte-input type="text" label="Nama" name="nama" placeholder="Nama" required />
+        </div>
+        <div class="form-group">
+            <x-adminlte-select name="prodi" label="Prodi" required>
+                <x-adminlte-options :options="$dataProdi" disabled="1" empty-option="Select an option..." />
+            </x-adminlte-select>
+        </div>
+        <div class="form-group">
+            <x-adminlte-input type="text" label="Tempat Lahir" name="tempat_lahir" placeholder="Tempat Lahir"
+                required />
+        </div>
+        <div class="form-group">
+            <x-adminlte-input type="date" label="Tanggal Lahir" name="tanggal_lahir" placeholder="Tanggal Lahir"
+                required />
+        </div>
+        <div class="form-group">
+            <x-adminlte-input type="email" label="Email" name="email" placeholder="Email" required />
+        </div>
+        <div class="form-group">
+            <x-adminlte-input type="number" label="No HP" name="email" placeholder="No HP" required />
+        </div>
+        <x-slot name="footerSlot">
+            <x-adminlte-button class="mr-auto" theme="success" label="Save" />
+            <x-adminlte-button theme="danger" label="Close" data-dismiss="modal" />
+        </x-slot>
+    </form>
+</x-adminlte-modal>
 @endsection

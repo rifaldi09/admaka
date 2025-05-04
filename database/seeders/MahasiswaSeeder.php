@@ -17,6 +17,11 @@ class MahasiswaSeeder extends Seeder
             [
                 'nim' => '133',
                 'nama' => 'Mahasiswa 1',
+                'email' => 'mhs@gmail.com',
+                'id_prodi' => '1',
+                'tempat_lahir' => 'Bengkulu',
+                'tanggal_lahir' => '2025-05-04',
+                'no_hp' => '012235662781',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

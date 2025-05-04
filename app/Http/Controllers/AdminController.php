@@ -8,13 +8,15 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\ViewMenusByRole;
 use App\Models\Menu;
+use App\Models\Prodi;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
     public function dataMaster()
     {
-        return view('admin.data-master');
+        $dataProdi = Prodi::all()->pluck('nama', 'id')->toArray();
+        return view('admin.data-master',compact('dataProdi'));
     }
 
     // untuk kehalaman Hak Akses admin

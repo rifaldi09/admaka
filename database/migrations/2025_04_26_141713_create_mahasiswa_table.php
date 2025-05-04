@@ -15,7 +15,16 @@ return new class extends Migration
         Schema::create('mahasiswa', function (Blueprint $table) {
             $table->id('nim');
             $table->string('nama');
+            $table->string('email');
+            $table->unsignedBigInteger('id_prodi');
+            $table->string('tempat_lahir');
+            $table->date('tanggal_lahir');
+            $table->string('no_hp');
             $table->timestamps();
+
+
+             // Penghubungan ke tabel prodi
+             $table->foreign('id_prodi')->references('id')->on('prodi')->onDelete('cascade');
         });
     }
 

@@ -13,6 +13,17 @@ class Mahasiswa extends Model
 
     protected $fillable = [
         'nim',
-        'nama'
+        'nama',
+        'email',
+        'id_prodi',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'no_hp'
     ];
+
+    // relasi ke tabel prodi (1 mahasiswa punya 1 prodi)
+    public function roleAkses()
+    {
+        return $this->belongsTo(Prodi::class, 'id_prodi');
+    }
 }
