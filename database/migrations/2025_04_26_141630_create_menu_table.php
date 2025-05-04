@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('menu', function (Blueprint $table) {
             $table->id('id_menu')->autoIncrement();
-            $table->string('header');
+            $table->string('header')->nullable();
             $table->string('menu');
             $table->string('url');
             $table->string('icon')->nullable();

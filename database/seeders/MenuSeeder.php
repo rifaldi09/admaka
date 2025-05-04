@@ -15,6 +15,14 @@ class MenuSeeder extends Seeder
          // Hak Akses
          \App\Models\Menu::insert([
             [
+                'header' => 'Dashboard',
+                'menu' => 'Dashboard',
+                'url' => 'dashboard',
+                'icon' => 'fa-solid fa-circle fa-2xs',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
                 'header' => 'Surat',
                 'menu' => 'Surat Persetujuan Sidang Skripsi',
                 'url' => 'sidang-skripsi',
@@ -47,8 +55,16 @@ class MenuSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'header' => 'Admin',
-                'menu' => 'Data Mahasiswa dan Dosen',
+                'header' => 'Data Master',
+                'menu' => 'Data Mahasiswa',
+                'url' => 'data-master',
+                'icon' => 'fa-solid fa-circle fa-2xs',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'header' => 'Data Master',
+                'menu' => 'Data Dosen',
                 'url' => 'data-master',
                 'icon' => 'fa-solid fa-circle fa-2xs',
                 'created_at' => now(),

@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 use App\Models\RoleAkses;
 use App\Models\User;
+use App\Models\Role;
 use App\Models\ViewMenusByRole;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,52 +20,67 @@ class AdminLTEServiceProvider extends ServiceProvider
         // Tidak ada yang perlu didaftarkan di sini
     }
 
-    /**
-     * Bootstrap services.
-     */
+
+    //! 100% chatGPT,  
     public function boot()
     {
-        // Pakai event BuildingMenu untuk menambah menu
         \Event::listen(BuildingMenu::class, function (BuildingMenu $event) {
-            // Ambil data hak akses dari model HakAkses sesuai dengan role user yang sedang login
-           
             $role = Auth::user()->id_role;
-           
-            // $menus = RoleAkses::with('hakAkses')->orderBy('id_menu')->where('id_role', $role)->get();
-            // $menus = User::with('roleAkses.hakAkses')->where('id_role',$role)->first();
-            $menus = ViewMenusByRole::where('id_role',$role)->get();
-            // dd( $menus);
-            // penampungan menu berdasarkan header
-            $menuGroups = [];
+            $roleUser = Role::where('id', $role)->first();
+            $menus = ViewMenusByRole::where('id_role', $role)->get();
 
-            // Kelompokkan menu berdasarkan header
+            $dashboardMenus = [];
+            $groupedMenus = [];
+
             foreach ($menus as $menu) {
-                $menuGroups[$menu->header]['header'] = $menu->header;  // set header berdasarkan relasi hakAkses
-                $menuGroups[$menu->header]['menus'][] = [               // Set menu-item berdasarkan relasi hakAkses
-                    'text' => $menu->menu,
-                    'url'  => $menu->url,
-                    'icon' => $menu->icon,
-                ];
+                if (strtolower($menu->header) === 'dashboard') {
+                    // Masukkan ke menu Dashboard
+                    $dashboardMenus[] = [
+                        'text' => $menu->menu,
+                        'url'  => $menu->url,
+                        'icon' => $menu->icon,
+                    ];
+                } else {
+                    // Kelompokkan berdasarkan header selain Dashboard
+                    $groupedMenus[$menu->header][] = [
+                        'text' => $menu->menu,
+                        'url'  => $menu->url,
+                        'icon' => $menu->icon,
+                    ];
+                }
             }
 
-            // Tambahkan menu ke dalam sidebar berdasarkan grup menu
-            foreach ($menuGroups as $group) {
-                // Tambahkan header ke admin LTE
-                $event->menu->add([
-                    'header' => $group['header'],
-                ]);
-                
-                // Tambahkan menu-item ke admin LTE
-                foreach ($group['menus'] as $menuItem) {
+            // === 1. Tambahkan Header: Dashboard ===
+            if (count($dashboardMenus) > 0) {
+                $event->menu->add(['header' => 'Dashboard']);
+                foreach ($dashboardMenus as $item) {
+                    $event->menu->add($item);
+                }
+            }
 
-                    // Tambahkan menu-item ke admin LTE
-                    $event->menu->add([
-                        'text' => $menuItem['text'] ,
-                        'url'  => $menuItem['url'],
-                        'icon' => $menuItem['icon'],
-                        // notofikasi menu sementara
-                        'label' => '3'
-                    ]);
+            // === 2. Tambahkan Header Role ===
+            if (count($groupedMenus) > 0) {
+                $event->menu->add(['header' => $roleUser->name_role]);
+
+                foreach ($groupedMenus as $group => $items) {
+                    if (count($items) > 1) {
+                        // Jika lebih dari satu item → submenu
+                        $event->menu->add([
+                            'text'    => $group,
+                            'icon'    => 'fas fa-folder',
+                            'submenu' => $items,
+                        ]);
+                    } else {
+                        // Jika hanya satu item → simpan dulu untuk ditaruh di bawah
+                        $singleItems[] = $items[0]; // simpan di array sementara
+                    }
+                }
+
+                // Setelah semua submenu ditambahkan, baru tambahkan single item-nya
+                if (!empty($singleItems)) {
+                    foreach ($singleItems as $item) {
+                        $event->menu->add($item); // ditaruh setelah semua submenu
+                    }
                 }
             }
         });
