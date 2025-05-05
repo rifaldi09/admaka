@@ -36,6 +36,9 @@ Route::post('store-role', [AdminController::class, 'storeRole'])->name('store-ro
 // Menghapus Role
 Route::post('destroy-role/{id}', [AdminController::class, 'destroyRole'])->name('destroy-role');
 
+//menambah data mahasiswa
+Route::post('add_mhs', [MahasiswaController::class, 'storeMhs'])->name('add_mhs');
+
 // Login
 Route::controller(AuthController::class)->group(function () {
     Route::get('login', 'login')->name('login');

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\ViewMenusByRole;
 use App\Models\Menu;
 use App\Models\Prodi;
+use App\Models\Mahasiswa;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
@@ -16,7 +17,29 @@ class AdminController extends Controller
     public function dataMaster()
     {
         $dataProdi = Prodi::all()->pluck('nama', 'id')->toArray();
-        return view('admin.data-master',compact('dataProdi'));
+        // Ambil semua data mahasiswa
+        $dataMhs = Mahasiswa::all();
+        if(empty($dataMhs)){
+            $dataMhsFormatted = [];
+        }else{
+              // Buat array dengan format yang diinginkan
+            $dataMhsFormatted = $dataMhs->map(function($mahasiswa) {
+                // Button edit, delete, dan details bisa kamu sesuaikan dengan route atau URL yang sesuai
+                $btnEdit = '<button class="btn btn-sm btn-default text-primary  " title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i></button>';
+                $btnDelete = '<button class="btn btn-sm btn-default text-danger  " title="Delete"><i class="fa fa-lg fa-fw fa-trash"></i></button>';
+                // $btnDetails = '<button class="btn btn-sm btn-default text-teal  " title="Details"><i class="fa fa-lg fa-fw fa-eye"></i></button>';
+
+                // Mengembalikan data dalam bentuk array yang diinginkan
+                return [
+                    $mahasiswa->nim,
+                    $mahasiswa->nama,
+                    $mahasiswa->email,
+                    $mahasiswa->no_hp,
+                    '<nobr>' . $btnEdit . $btnDelete . '</nobr>', // gabungkan tombol
+                ];
+            })->toArray();
+        }
+        return view('admin.data-master',compact('dataProdi', 'dataMhsFormatted'));
     }
 
     // untuk kehalaman Hak Akses admin

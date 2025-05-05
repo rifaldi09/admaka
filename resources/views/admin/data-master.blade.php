@@ -39,19 +39,10 @@
                 ['label' => 'Actions', 'no-export' => true, 'width' => 5],
                 ];
 
-                $btnEdit = '<button class="btn btn-sm btn-default text-primary  " title="Edit">
-                    <i class="fa fa-lg fa-fw fa-pen"></i>
-                </button>';
-                $btnDelete = '<button class="btn btn-sm btn-default text-danger  " title="Delete">
-                    <i class="fa fa-lg fa-fw fa-trash"></i>
-                </button>';
-                $btnDetails = '<button class="btn btn-sm btn-default text-teal  " title="Details">
-                    <i class="fa fa-lg fa-fw fa-eye"></i>
-                </button>';
+
 
                 $config = [
-                'data' => [
-                ],
+                'data' => $dataMhsFormatted,
                 'order' => [[1, 'asc']],
                 'columns' => [null, null, null, ['orderable' => true]],
                 ];
@@ -122,9 +113,9 @@
     </div>
 </div>
 {{-- INSERT DATA MAHASISWA --}}
-<x-adminlte-modal id="modalMhs" title="Tambah Mahasiswa">
-    <form>
-
+<x-adminlte-modal id="modalMhs" title="Tambah Mahasiswa" v-centered static-backdrop scrollable>
+    <form action="{{ route('add_mhs') }}" method="post" id="form-mhs" enctype="multipart/form-data">
+        @csrf
         <div class="form-group">
             <x-adminlte-input type="text" label="NIM" name="nim" placeholder="NIM" required />
         </div>
@@ -133,7 +124,7 @@
         </div>
         <div class="form-group">
             <x-adminlte-select name="prodi" label="Prodi" required>
-                <x-adminlte-options :options="$dataProdi" disabled="1" empty-option="Select an option..." />
+                <x-adminlte-options :options="$dataProdi" empty-option="Select an option..." />
             </x-adminlte-select>
         </div>
         <div class="form-group">
@@ -148,12 +139,13 @@
             <x-adminlte-input type="email" label="Email" name="email" placeholder="Email" required />
         </div>
         <div class="form-group">
-            <x-adminlte-input type="number" label="No HP" name="email" placeholder="No HP" required />
+            <x-adminlte-input type="number" label="No HP" name="no_hp" placeholder="No HP" required />
         </div>
-        <x-slot name="footerSlot">
-            <x-adminlte-button class="mr-auto" theme="success" label="Save" />
-            <x-adminlte-button theme="danger" label="Close" data-dismiss="modal" />
-        </x-slot>
     </form>
+    <x-slot name="footerSlot">
+        <x-adminlte-button form="form-mhs" type="submit" class="mr-auto" theme="success" label="Save" />
+        <x-adminlte-button theme="danger" label="Close" data-dismiss="modal" />
+    </x-slot>
+
 </x-adminlte-modal>
 @endsection
