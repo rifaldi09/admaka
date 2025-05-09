@@ -29,12 +29,12 @@ class RoleSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name_role' => 'Ketua Jurusan',
+                'name_role' => 'Ketua Prodi',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name_role' => 'Ketua Prodi',
+                'name_role' => 'Koordinator Kerja Praktik',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

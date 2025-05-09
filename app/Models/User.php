@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(RoleAkses::class, 'id_role');
     }
+
+    public function pengajuanKp()
+    {
+        return $this->hasMany(PengajuanKP::class, 'user_id');
+    }
 }
