@@ -77,6 +77,30 @@ class MenuSeeder extends Seeder
                 'icon' => 'fa-solid fa-circle fa-2xs',
                 'created_at' => now(),
                 'updated_at' => now(),
+            ],
+            [
+                'header' => 'Surat',
+                'menu' => 'Surat Pengajuan Kerja Praktik',
+                'url' => 'pengajuan-kp',
+                'icon' => 'fa-solid fa-circle fa-2xs',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'header' => 'Surat',
+                'menu' => 'Surat Pengajuan Kerja Praktik',
+                'url' => 'pengajuan-kp-admin',
+                'icon' => 'fa-solid fa-circle fa-2xs',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'header' => 'Surat',
+                'menu' => 'Surat Pengajuan Kerja Praktik',
+                'url' => 'pengajuan-kp-koordinator',
+                'icon' => 'fa-solid fa-circle fa-2xs',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ]);
     }
