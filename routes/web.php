@@ -24,11 +24,19 @@ Route::get('/', [HomepageController::class, "index"])->name('home');
 // Admin (sementara)
 // Route, nama route, sama method diganti ke dashboard untuk sementara
 Route::get('dashboard', [HomepageController::class, 'dashboard'])->name('dashboard');
-Route::get('lihat-profil', [MahasiswaController::class, 'lihatProfil'])->name('lihat-profil');
-Route::get('hak-akses', [AdminController::class, 'hakAkses'])->name('hak-akses');
-Route::get('data-master', [AdminController::class, 'dataMaster'])->name('data-master');
 
-// Edit Hak Akses
+// Akses Menu
+Route::get('lihat-profil', [MahasiswaController::class, 'lihatProfil'])->name('lihat-profil');
+Route::get('data-master', [AdminController::class, 'dataMaster'])->name('data-master');
+Route::get('menu-mahasiswa', [MahasiswaController::class, 'menuMahasiswa'])->name('menu-mahasiswa');
+
+// Surat menu
+Route::get('permohonana-kerja-praktik-mahasiswa', [MahasiswaController::class, 'kerjaPraktik'])->name('permohonana-kerja-praktik-mahasiswa');
+Route::get('aktif-kuliah-mahasiswa', [MahasiswaController::class, 'aktifKuliah'])->name('aktif-kuliah-mahasiswa');
+Route::get('permohonana-kerja-praktik-mahasiswa', [MahasiswaController::class, 'kerjaPraktik'])->name('permohonana-kerja-praktik-mahasiswa');
+
+// Hak Akses
+Route::get('hak-akses', [AdminController::class, 'hakAkses'])->name('hak-akses');
 Route::get('edit-hak-akses/{id}', [AdminController::class, 'editHakAkses'])->name('edit-hak-akses');
 Route::post('update-hak-akses', [AdminController::class, 'updateHakAkses'])->name('update-hak-akses');
 
