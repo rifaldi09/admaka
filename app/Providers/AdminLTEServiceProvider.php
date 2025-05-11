@@ -29,6 +29,7 @@ class AdminLTEServiceProvider extends ServiceProvider
             $roleUser = Role::where('id', $role)->first();
             $menus = ViewMenusByRole::where('id_role', $role)->get();
 
+
             $dashboardMenus = [];
             $groupedMenus = [];
 
@@ -44,7 +45,7 @@ class AdminLTEServiceProvider extends ServiceProvider
                     // Kelompokkan berdasarkan header selain Dashboard
                     $groupedMenus[$menu->header][] = [
                         'text' => $menu->menu,
-                        'url'  => $menu->url,
+                        'url'  => url(str_replace('{role}', $roleUser->name_role, $menu->url)),
                         'icon' => $menu->icon,
                     ];
                 }

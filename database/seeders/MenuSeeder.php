@@ -7,9 +7,7 @@ use Illuminate\Database\Seeder;
 
 class MenuSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+
     public function run(): void
     {
          // Hak Akses
@@ -22,10 +20,12 @@ class MenuSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            //! Menu surat menggunakan {role} yang dimana untuk membedakan role
+            //! yang ada di dalam menu, misal {role} = mahasiswa, maka urlnya menjadi mahasiswa/aktif-kuliah
             [
                 'header' => 'Surat',
-                'menu' => 'Surat Aktif Kulaih',
-                'url' => 'aktif-kuliah',
+                'menu' => 'Surat Aktif Kuliah',
+                'url' => '{role}/aktif-kuliah',
                 'icon' => 'fa-solid fa-circle fa-2xs',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -62,30 +62,16 @@ class MenuSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            //! Menu surat menggunakan {role} yang dimana untuk membedakan role
+            //! yang ada di dalam menu, misal {role} = mahasiswa, maka urlnya menjadi mahasiswa/pengajuan-kp
             [
                 'header' => 'Surat',
                 'menu' => 'Surat Pengajuan Kerja Praktik',
-                'url' => 'pengajuan-kp',
+                'url' => '{role}/pengajuan-kp',
                 'icon' => 'fa-solid fa-circle fa-2xs',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            [
-                'header' => 'Surat',
-                'menu' => 'Surat Pengajuan Kerja Praktik',
-                'url' => 'pengajuan-kp-admin',
-                'icon' => 'fa-solid fa-circle fa-2xs',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'header' => 'Surat',
-                'menu' => 'Surat Pengajuan Kerja Praktik',
-                'url' => 'pengajuan-kp-koordinator',
-                'icon' => 'fa-solid fa-circle fa-2xs',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
         ]);
     }
 }

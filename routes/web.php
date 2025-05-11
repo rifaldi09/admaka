@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AktifKuliahController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\MahasiswaController;
@@ -54,16 +55,43 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
     //menambah data mahasiswa
     // pengajuan kp
     Route::controller(PengajuanKPController::class)->group(function() {
-        Route::get('pengajuan-kp', 'pengajuanKp')->name('pengajuan_kp');
-        Route::get('pengajuan-kp-admin', 'pengajuanKpAdmin')->name('pengajuan_kp_admin');
-        Route::get('pengajuan-kp-koordinator', 'pengajuanKpKoordinator')->name('pengajuan-kp-koordinator');
+        // Route ke halaman pengajuan KP Mahasiswa
+        Route::get('Mahasiswa/pengajuan-kp', 'pengajuanKp')->name('pengajuan_kp');
+        // Route ke halaman pengajuan KP Admin
+        Route::get('Administrator/pengajuan-kp', 'pengajuanKpAdmin')->name('pengajuan_kp_admin');
+        // Route ke halaman pengajuan KP Koordinator
+        Route::get('Koordinator Kerja Praktik/pengajuan-kp', 'pengajuanKpKoordinator')->name('pengajuan-kp-koordinator');
+
+        // mengunduh PDF oleh admin agar bisa di TTD oleh dekan
         Route::get('pdf-pengajuan/{pengajuan:id_pengajuan}', 'pdfPengajuan')->name('pdf-pengajuan');
+
+        // membuat surat pengajuan
         Route::post('create-pengajuan', 'createPengajuan')->name('create-pengajuan');
+
+        // upload surat pengajuan oleh admin ketika selesai di TTD olek dekan
         Route::post('upload-pengajuan/{pengajuan:id_pengajuan}', 'uploadPengajuan')->name('upload-pengajuan');
+
+        // pengubahan status pengajuan surat
         Route::post('terima-pengajuan/{pengajuan:id_pengajuan}', 'terimaPengajuan')->name('terima-pengajuan');
         Route::post('tolak-pengajuan/{pengajuan:id_pengajuan}', 'tolakPengajuan')->name('tolak-pengajuan');
         Route::post('edit-pengajuan/{pengajuan:id_pengajuan}', 'editPengajuan')->name('edit-pengajuan');
         Route::post('penerbitan-pengajuan/{pengajuan:id_pengajuan}', 'penerbitanPengajuan')->name('penerbitan-pengajuan');
+    });
+
+    // Surat Pengajuan Aktif Kuliah
+    Route::controller(AktifKuliahController::class)->group(function () {
+        // Route ke halaman Surat Aktif Kuliah Mahasiswa
+        Route::get('Mahasiswa/aktif-kuliah', 'aktifKuliah')->name('Mahasiswa/aktif-kuliah');
+        // Route ke halaman Surat Aktif Kuliah Mahasiswa
+        Route::get('Administrator/aktif-kuliah', 'aktifKuliahAdmin')->name('Administrator/aktif-kuliah');
+
+        // membuat surat pengajuan
+        Route::post('create-surat-aktif', 'createSuratAktif')->name('create-surat-aktif');
+
+        //! MASIH BELUM SELESAI
+        // pengubahan status pengajuan surat
+        Route::post('terima-aktif-kuliah', 'terimaAktifKuliah')->name('terima-aktif-kuliah'); // proses mengubah status disetujui
+        Route::post('tolak-aktif-kuliah', 'tolakAktifKuliah')->name('tolak-aktif-kuliah'); // proses mengubah status ditolak
     });
 
     //Admin Data Master Mahasiswa
