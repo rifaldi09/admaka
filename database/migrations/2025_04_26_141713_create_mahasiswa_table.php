@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('tanggal_lahir');
             $table->string('no_hp');
             $table->timestamps();
-
+            $table->softDeletes(); 
 
              // Penghubungan ke tabel prodi
              $table->foreign('id_prodi')->references('id')->on('prodi')->onDelete('cascade');

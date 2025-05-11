@@ -41,7 +41,7 @@ class MenuSeeder extends Seeder
             [
                 'header' => 'Data Master',
                 'menu' => 'Data Mahasiswa',
-                'url' => 'data-master',
+                'url' => 'data-mhs',
                 'icon' => 'fa-solid fa-circle fa-2xs',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -49,7 +49,7 @@ class MenuSeeder extends Seeder
             [
                 'header' => 'Data Master',
                 'menu' => 'Data Dosen',
-                'url' => 'data-master',
+                'url' => 'data-dosen',
                 'icon' => 'fa-solid fa-circle fa-2xs',
                 'created_at' => now(),
                 'updated_at' => now(),

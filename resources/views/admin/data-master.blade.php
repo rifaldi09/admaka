@@ -39,8 +39,6 @@
                 ['label' => 'Actions', 'no-export' => true, 'width' => 5],
                 ];
 
-
-
                 $config = [
                 'data' => $dataMhsFormatted,
                 'order' => [[1, 'asc']],
