@@ -22,15 +22,6 @@ class MenuSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // surat baru ada 2 menu, yang lain menyusul
-            [
-                'header' => 'Surat',
-                'menu' => 'Surat Permohonan Kerja Praktik',
-                'url' => 'permohonana-kerja-praktik',
-                'icon' => 'fa-solid fa-circle fa-2xs',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
             [
                 'header' => 'Surat',
                 'menu' => 'Surat Aktif Kulaih',
