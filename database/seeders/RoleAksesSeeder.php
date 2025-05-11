@@ -24,7 +24,7 @@ class RoleAksesSeeder extends Seeder
             ['id_role' => 3, 'id_menu' => 5, 'created_at' => now(), 'updated_at' => now()],
             ['id_role' => 3, 'id_menu' => 6, 'created_at' => now(), 'updated_at' => now()],
             ['id_role' => 3, 'id_menu' => 8, 'created_at' => now(), 'updated_at' => now()],
-            ['id_role' => 5, 'id_menu' => 10, 'created_at' => now(), 'updated_at' => now()]
+            ['id_role' => 5, 'id_menu' => 9, 'created_at' => now(), 'updated_at' => now()]
         ]);
     }
 }
