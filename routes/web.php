@@ -60,6 +60,12 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
     Route::controller(DataDosen::class)->group(function () {
         Route::get('data-dosen', 'index')->name('data-dosen');
         Route::delete('destroy-dosen/{nidn}', 'destroyDosen')->name('destroy-dosen');
+        Route::post('add_dosen', 'storeDosen')->name('add_dosen');
+        Route::get('update-dosen/{nim}', 'updateDosen')->name('update-dosen');
+        Route::put('update_datadosen/{nim}', 'updatedataDosen')->name('update_datadosen');
+        Route::post('dosen-preview',  'previewCSVDosen')->name('dosen-preview');
+        Route::post('import-dosen', 'importDosen')->name('import-dosen');
+
     });
 
     // Sesi Mahasiswa

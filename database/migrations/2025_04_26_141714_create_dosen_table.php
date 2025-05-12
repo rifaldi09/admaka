@@ -16,12 +16,15 @@ return new class extends Migration
             $table->string('nip')->unique();
             $table->string('nama');
             $table->string('email');
-            $table->foreignId('prodi_id');
+            $table->unsignedBigInteger('id_prodi');
             $table->string('tempat_lahir')->nullable();
             $table->date('tanggal_lahir')->nullable();
             $table->string('no_hp')->nullable();
-            $table->string('avatar')->nullable();
             $table->timestamps();
+            $table->softDeletes(); 
+
+            // Penghubungan ke tabel prodi
+            $table->foreign('id_prodi')->references('id')->on('prodi')->onDelete('cascade');
         });
     }
 

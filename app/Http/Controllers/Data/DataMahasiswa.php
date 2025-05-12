@@ -260,7 +260,7 @@ class DataMahasiswa extends Controller
             $processedData[] = $rowData;
         }
 
-        return view('admin.priviewImportMhs', [
+        return view('admin.data-master.priviewImportMhs', [
             'header' => $header,
             'data' => $processedData,
             'file' => $request->file('file')->hashName(),
