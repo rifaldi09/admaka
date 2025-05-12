@@ -16,7 +16,7 @@
     {{-- cdn toastr.js buat notif --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.css" integrity="sha512-oe8OpYjBaDWPt2VmSFR+qYOdnTjeV9QPLJUeqZyprDEQvQLJ9C5PCFclxwNuvb/GQgQngdCXzKSFltuHD3eCxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <title>ADMAKA</title>
+    <title>{{ $title }}</title>
 </head>
 <body>
     <div class="uf-form-signin">
