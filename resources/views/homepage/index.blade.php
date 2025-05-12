@@ -9,7 +9,7 @@
         <div class="container text-center">
             <div class="d-flex flex-column justify-content-center align-items-center">
                 <h1 data-aos="fade-up">Welcome to <span>ADMAKA</span></h1>
-                <p data-aos="fade-up" data-aos-delay="100">Pelayanan Akademik Fakultas Teknik<br></p>
+                <p data-aos="fade-up" data-aos-delay="100">Pelayanan Akademik Fakultas Teknik dan Teknologi Kemaritiman (FTTK)<br></p>
             </div>
         </div>
     </section><!-- /Hero Section -->
