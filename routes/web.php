@@ -3,10 +3,11 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AktifKuliahController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Data\DataDosen;
+use App\Http\Controllers\Data\DataMahasiswa;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PengajuanKPController;
-use App\Models\PengajuanKP;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 Route::get('/', [HomepageController::class, "index"])->name('home');
 // Login
 Route::controller(AuthController::class)->group(function () {
@@ -28,33 +30,51 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 Route::middleware(['auth', 'handle.session'])->group(function () {
-    // Admin (sementara)
-    // Route, nama route, sama method diganti ke dashboard untuk sementara
+    // Dashboard
     Route::get('dashboard', [HomepageController::class, 'dashboard'])->name('dashboard');
 
-    // Akses Menu
-    Route::get('lihat-profil', [MahasiswaController::class, 'lihatProfil'])->name('lihat-profil');
-    Route::get('menu-mahasiswa', [MahasiswaController::class, 'menuMahasiswa'])->name('menu-mahasiswa');
+    // Sesi Admin
+    Route::controller(AdminController::class)->group(function () {
+        // Hak Akses
+        Route::get('hak-akses', 'hakAkses')->name('hak-akses');
+        Route::get('edit-hak-akses/{id}', 'editHakAkses')->name('edit-hak-akses');
+        Route::post('update-hak-akses', 'updateHakAkses')->name('update-hak-akses');
 
-    // Surat menu
-    Route::get('permohonana-kerja-praktik-mahasiswa', [MahasiswaController::class, 'kerjaPraktik'])->name('permohonana-kerja-praktik-mahasiswa');
-    Route::get('aktif-kuliah-mahasiswa', [MahasiswaController::class, 'aktifKuliah'])->name('aktif-kuliah-mahasiswa');
-    Route::get('permohonana-kerja-praktik-mahasiswa', [MahasiswaController::class, 'kerjaPraktik'])->name('permohonana-kerja-praktik-mahasiswa');
+        // Role
+        Route::post('store-role', 'storeRole')->name('store-role');
+        Route::post('destroy-role/{id}', 'destroyRole')->name('destroy-role');
+    });
 
-    // Hak Akses
-    Route::get('hak-akses', [AdminController::class, 'hakAkses'])->name('hak-akses');
-    Route::get('edit-hak-akses/{id}', [AdminController::class, 'editHakAkses'])->name('edit-hak-akses');
-    Route::post('update-hak-akses', [AdminController::class, 'updateHakAkses'])->name('update-hak-akses');
+    // Data Master - Mahasiswa
+    Route::controller(DataMahasiswa::class)->group(function () {
+        Route::get('data-mahasiswa', 'index')->name('data-mahasiswa');
+        Route::post('add_mhs', 'storeMhs')->name('add_mhs');
+        Route::delete('destroy-mhs/{nim}', 'destroyMhs')->name('destroy-mhs');
+        Route::get('update-mhs/{nim}', 'updateMhs')->name('update-mhs');
+        Route::put('update_datamhs/{nim}', 'updatedataMhs')->name('update_datamhs');
+        Route::post('mhs-preview', 'previewCSV')->name('mhs-preview');
+        Route::post('import-mahasiswa', 'importMahasiswa')->name('import-mahasiswa');
+    });
 
-    // Menamabahkan Role
-    Route::post('store-role', [AdminController::class, 'storeRole'])->name('store-role');
+    // Data Master - Dosen
+    Route::controller(DataDosen::class)->group(function () {
+        Route::get('data-dosen', 'index')->name('data-dosen');
+        Route::delete('destroy-dosen/{nidn}', 'destroyDosen')->name('destroy-dosen');
+    });
 
-    // Menghapus Role
-    Route::post('destroy-role/{id}', [AdminController::class, 'destroyRole'])->name('destroy-role');
+    // Sesi Mahasiswa
+    Route::controller(MahasiswaController::class)->group(function () {
+        // Akses Menu
+        Route::get('lihat-profil', 'lihatProfil')->name('lihat-profil');
+        Route::get('menu-mahasiswa', 'menuMahasiswa')->name('menu-mahasiswa');
 
-    //menambah data mahasiswa
-    // pengajuan kp
-    Route::controller(PengajuanKPController::class)->group(function() {
+        // Surat Menu
+        Route::get('permohonan-kerja-praktik-mahasiswa', 'kerjaPraktik')->name('permohonan-kerja-praktik-mahasiswa');
+        Route::get('aktif-kuliah-mahasiswa', 'kerjaPraktik')->name('aktif-kuliah-mahasiswa');
+    });
+
+    // Pengajuan kp
+    Route::controller(PengajuanKPController::class)->group(function () {
         // Route ke halaman pengajuan KP Mahasiswa
         Route::get('Mahasiswa/pengajuan-kp', 'pengajuanKp')->name('pengajuan_kp');
         // Route ke halaman pengajuan KP Admin
@@ -94,12 +114,36 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::post('tolak-aktif-kuliah', 'tolakAktifKuliah')->name('tolak-aktif-kuliah'); // proses mengubah status ditolak
     });
 
+
+    // Tinggal dihapus kalau tidak digunakan
+    // Akses Menu
+    // Route::get('lihat-profil', [MahasiswaController::class, 'lihatProfil'])->name('lihat-profil');
+    // Route::get('menu-mahasiswa', [MahasiswaController::class, 'menuMahasiswa'])->name('menu-mahasiswa');
+
+    // Surat menu
+    // Route::get('permohonana-kerja-praktik-mahasiswa', [MahasiswaController::class, 'kerjaPraktik'])->name('permohonana-kerja-praktik-mahasiswa');
+    // Route::get('aktif-kuliah-mahasiswa', [MahasiswaController::class, 'aktifKuliah'])->name('aktif-kuliah-mahasiswa');
+    // Route::get('permohonana-kerja-praktik-mahasiswa', [MahasiswaController::class, 'kerjaPraktik'])->name('permohonana-kerja-praktik-mahasiswa');
+
+    // Hak Akses
+    // Route::get('hak-akses', [AdminController::class, 'hakAkses'])->name('hak-akses');
+    // Route::get('edit-hak-akses/{id}', [AdminController::class, 'editHakAkses'])->name('edit-hak-akses');
+    // Route::post('update-hak-akses', [AdminController::class, 'updateHakAkses'])->name('update-hak-akses');
+
+    // Menamabahkan Role
+    // Route::post('store-role', [AdminController::class, 'storeRole'])->name('store-role');
+
+    // Menghapus Role
+    // Route::post('destroy-role/{id}', [AdminController::class, 'destroyRole'])->name('destroy-role');
+
+    //menambah data mahasiswa
+
     //Admin Data Master Mahasiswa
-    Route::get('data-mhs', [AdminController::class, 'dataMhs'])->name('data-mhs');
-    Route::post('add_mhs', [AdminController::class, 'storeMhs'])->name('add_mhs');
-    Route::delete('destroy-mhs/{nim}', [AdminController::class, 'destroyMhs'])->name('destroy-mhs');
-    Route::get('update-mhs/{nim}', [AdminController::class, 'updateMhs'])->name('update-mhs');
-    Route::put('update_datamhs/{nim}', [AdminController::class, 'updatedataMhs'])->name('update_datamhs');
-    Route::post('mhs-preview', [AdminController::class, 'previewCSV'])->name('mhs-preview');
-    Route::post('import-mahasiswa', [AdminController::class, 'importMahasiswa'])->name('import-mahasiswa');
+    // Route::get('data-mhs', [AdminController::class, 'dataMhs'])->name('data-mhs');
+    // Route::post('add_mhs', [AdminController::class, 'storeMhs'])->name('add_mhs');
+    // Route::delete('destroy-mhs/{nim}', [AdminController::class, 'destroyMhs'])->name('destroy-mhs');
+    // Route::get('update-mhs/{nim}', [AdminController::class, 'updateMhs'])->name('update-mhs');
+    // Route::put('update_datamhs/{nim}', [AdminController::class, 'updatedataMhs'])->name('update_datamhs');
+    // Route::post('mhs-preview', [AdminController::class, 'previewCSV'])->name('mhs-preview');
+    // Route::post('import-mahasiswa', [AdminController::class, 'importMahasiswa'])->name('import-mahasiswa');
 });
