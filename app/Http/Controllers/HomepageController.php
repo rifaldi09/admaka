@@ -6,7 +6,7 @@ class HomepageController extends Controller
 {
     public function index()
     {
-        return view('homepage.index');
+        return view('homepage.index', ['title' => 'ADMAKA - FTTK UMRAH']);
     }
 
     // untuk kehalaman dashboard
