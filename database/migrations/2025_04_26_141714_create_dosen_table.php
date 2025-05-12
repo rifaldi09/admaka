@@ -11,10 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // database dosen (field sementara)
         Schema::create('dosen', function (Blueprint $table) {
             $table->id('nidn');
+            $table->string('nip')->unique();
             $table->string('nama');
+            $table->string('email');
+            $table->foreignId('prodi_id');
+            $table->string('tempat_lahir')->nullable();
+            $table->date('tanggal_lahir')->nullable();
+            $table->string('no_hp')->nullable();
+            $table->string('avatar')->nullable();
             $table->timestamps();
         });
     }
