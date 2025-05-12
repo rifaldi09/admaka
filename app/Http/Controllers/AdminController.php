@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -236,6 +236,7 @@ class AdminController extends Controller
         }
       }
       
+    // fungsi get data mhs berdasarkan nim
     public function updateMhs($nim)
     {
         $mhs = Mahasiswa::select('nama', 'email', 'no_hp','id_prodi','tanggal_lahir','tempat_lahir')
@@ -249,7 +250,7 @@ class AdminController extends Controller
         $mhs->key = $nim;
         return response()->json($mhs);
     }
-    
+    // fungsi update data
     public function updatedataMhs(Request $request, $nim)
     {
         try {
@@ -295,6 +296,175 @@ class AdminController extends Controller
             return redirect()->back()->withInput()->with('error', 'Data mahasiswa tidak ditemukan atau terjadi error.');
         }
     }
+
+// privew data dari csv
+    public function previewCSV(Request $request)
+    {
+        // Validasi file
+        $request->validate([
+            'file' => 'required|mimes:csv,txt|max:2048',
+        ]);
     
+        // Simpan sementara
+        $path = $request->file('file')->store('temp');
+        $fullPath = storage_path('app/' . $path);
+    
+        // Hapus BOM UTF-8
+        $raw = file_get_contents($fullPath);
+        $raw = preg_replace('/^\xEF\xBB\xBF/', '', $raw); // Remove BOM
+        file_put_contents($fullPath, $raw);
+    
+        // Buka file dan deteksi delimiter
+        $handle = fopen($fullPath, 'r');
+        $firstLine = fgets($handle);
+        $delimiter = strpos($firstLine, ';') !== false ? ';' : (strpos($firstLine, ',') !== false ? ',' : "\t");
+        rewind($handle);
+    
+        // Baca isi file
+        $data = [];
+        while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
+            $data[] = $row;
+        }
+        fclose($handle);
+    
+        if (empty($data)) {
+            return back()->with('error', 'File CSV kosong atau tidak bisa dibaca.');
+        }
+    
+        $header = $data[0];
+        $dataRows = array_slice($data, 1);
+
+        // Pengecekan error pada setiap baris
+        $processedData = [];
+        foreach ($dataRows as $index => $row) {
+            $rowData = [];
+            $hasError = false;
+    
+            $nim = $row[0] ?? '';
+            $nama = $row[1] ?? '';
+            $tempat = $row[2] ?? '';
+            $tgl = $row[3] ?? '';
+            $id_prodi = $row[4] ?? '';
+            $email = $row[5] ?? '';
+            $no_hp = $row[6] ?? '';
+            
+            // Validasi tanggal
+            $validDate = true;
+            if (!empty($tgl)) {
+                try {
+                    $parsed = \Carbon\Carbon::createFromFormat('Y-m-d', $tgl);
+                    $validDate = $parsed && $parsed->format('Y-m-d') === $tgl;
+                } catch (\Exception $e) {
+                    $validDate = false;
+                }
+            }
+            
+            $rowData[] = ['value' => $nim, 'error' => empty($nim) || Mahasiswa::where('nim', $nim)->exists()];
+            $rowData[] = ['value' => $nama, 'error' => empty($nama)];
+            $rowData[] = ['value' => $tempat, 'error' => empty($tempat)];
+            $rowData[] = ['value' => $tgl, 'error' => empty($tgl) || !$validDate];
+            $rowData[] = ['value' => $id_prodi, 'error' => !Prodi::where('nama', $id_prodi)->exists()];
+            $rowData[] = ['value' => $email, 'error' => empty($email) || Mahasiswa::where('email', $email)->exists()];
+            $rowData[] = ['value' => $no_hp, 'error' => empty($no_hp)];
+    
+            $processedData[] = $rowData;
+        }
+
+        return view('admin.priviewImportMhs', [
+            'header' => $header,
+            'data' => $processedData,
+            'file' => $request->file('file')->hashName(),
+        ]);
+    }
+    // insert data yang telah di priview
+    public function importMahasiswa(Request $request)
+    {
+        $file = $request->input('file');
+        $fullPath = storage_path('app/temp/' . $file);
+
+        if (!file_exists($fullPath)) {
+            return back()->with('error', 'File tidak ditemukan.');
+        }
+
+        // Baca ulang isi CSV
+        $handle = fopen($fullPath, 'r');
+        $firstLine = fgets($handle);
+        $delimiter = strpos($firstLine, ';') !== false ? ';' : (strpos($firstLine, ',') !== false ? ',' : "\t");
+        rewind($handle);
+
+        $data = [];
+        while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
+            $data[] = $row;
+        }
+        fclose($handle);
+
+        if (count($data) < 2) {
+            return back()->with('error', 'Data kosong.');
+        }
+
+        $rows = array_slice($data, 1); // Lewati header
+
+        foreach ($rows as $row) {
+            // Ambil dan bersihkan nilai
+            $nim = $row[0] ?? '';
+            $nama = $row[1] ?? '';
+            $tempat = $row[2] ?? '';
+            $tgl = $row[3] ?? '';
+            $prodi = $row[4] ?? '';
+            $email = $row[5] ?? '';
+            $no_hp = $row[6] ?? '';
+           
+ 
+            // Validasi sederhana sebelum insert
+            if (!$nim || !$nama || !$email || !$prodi || !$tempat || !$tgl || !$no_hp) {
+                continue; // skip baris invalid
+            }
+            
+           //cek prodi
+           $prodiMap = Prodi::pluck('id', 'nama')->mapWithKeys(function($id, $nama) {
+                return [strtolower(trim($nama)) => $id]; // pakai lowercase untuk pencocokan aman
+            })->toArray();
+
+            $id_prodi = $prodiMap[strtolower(trim($prodi))] ?? null;
+            
+            if (!$id_prodi) {
+                continue; // skip baris jika prodi tidak dikenali
+            }
+            
+            // Cek duplikat
+            if (Mahasiswa::where('nim', $nim)->exists() || Mahasiswa::where('email', $email)->exists()) {
+                continue;
+            }
+
+            // Validasi tanggal
+            try {
+                $tgl_lahir = \Carbon\Carbon::createFromFormat('Y-m-d', $tgl);
+            } catch (\Exception $e) {
+                continue; // skip jika tanggal salah format
+            }
+
+            // Insert ke database
+            Mahasiswa::create([
+                'nim'           => $nim,
+                'nama'          => $nama,
+                'email'         => $email,
+                'id_prodi'      => $id_prodi,
+                'tempat_lahir'  => $tempat,
+                'tanggal_lahir' => $tgl_lahir,
+                'no_hp'         => $no_hp,
+            ]);
+
+            User::create([
+                'id_user' => $nim,
+                'password'=> Hash::make($nim),
+                'id_role' => 1,
+            ]);
+        }
+
+        // Hapus file sementara
+        Storage::delete('temp/' . $file);
+
+        return redirect()->route('data-mhs')->with('success', 'Data Mahasiswa berhasil ditambahkan');
+    }
     
 }

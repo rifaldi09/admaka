@@ -12,7 +12,8 @@
         <button class="btn btn-primary btn-sm" id="tambahMhs" data-toggle="modal" data-target="#modalMhs"><i
                 class="fa-solid fa-plus"></i> Tambah
             Data</button>
-        <button class="btn btn-success btn-sm" id="importMhs"><i class="fa-solid fa-arrow-up-from-bracket"></i>
+        <button class="btn btn-success btn-sm" id="importMhs" data-toggle="modal" data-target="#import-Mhs"><i
+                class="fa-solid fa-arrow-up-from-bracket"></i>
             Import Data</button>
         <br><br>
 
@@ -116,6 +117,20 @@
     </x-slot>
 
 </x-adminlte-modal>
+{{-- IMPORT --}}
+<x-adminlte-modal id="import-Mhs" title="Import Data Mahasiswa" v-centered static-backdrop scrollable>
+    <form action="{{ route('mhs-preview') }}" method="post" id="import-mhs" enctype="multipart/form-data">
+        @csrf
+        <label for="file">Upload file (.csv)</label>
+        <input type="file" name="file" class="form-control" id="file" accept=".csv" required>
+    </form>
+    <a href="{{ asset('template/template_mahasiswa.csv') }}" class="btn btn-link" download>Donwload Template</a>
+    <x-slot name="footerSlot">
+        <x-adminlte-button form="import-mhs" type="submit" class="mr-auto" theme="success" label="Save" />
+        <x-adminlte-button theme="danger" label="Close" data-dismiss="modal" />
+    </x-slot>
+
+</x-adminlte-modal>
 <script>
 // Menambahkan sweetalert2 untuk konfirmasi hapus role
 document.addEventListener('DOMContentLoaded', function() {
@@ -184,4 +199,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
 @endsection

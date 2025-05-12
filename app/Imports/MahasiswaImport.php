@@ -2,26 +2,24 @@
 
 namespace App\Imports;
 
-use App\Models\Mahasiswa;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithHeadingRow; // jika file punya header
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 
-class MahasiswaImport implements ToModel
+class MahasiswaImport implements ToCollection, WithCustomCsvSettings
 {
-    /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
-    public function model(array $row)
+    public $rows;
+
+    public function collection(Collection $collection)
     {
-        return new Mahasiswa([
-            //
-        ]);
+        $this->rows = $collection;
     }
+    
     public function getCsvSettings(): array
     {
         return [
-            'delimiter' => ","
+            'delimiter' => ',',
         ];
     }
 }

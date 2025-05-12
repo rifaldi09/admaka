@@ -100,4 +100,6 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
     Route::delete('destroy-mhs/{nim}', [AdminController::class, 'destroyMhs'])->name('destroy-mhs');
     Route::get('update-mhs/{nim}', [AdminController::class, 'updateMhs'])->name('update-mhs');
     Route::put('update_datamhs/{nim}', [AdminController::class, 'updatedataMhs'])->name('update_datamhs');
+    Route::post('mhs-preview', [AdminController::class, 'previewCSV'])->name('mhs-preview');
+    Route::post('import-mahasiswa', [AdminController::class, 'importMahasiswa'])->name('import-mahasiswa');
 });
