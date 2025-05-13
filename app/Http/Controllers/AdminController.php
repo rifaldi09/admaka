@@ -25,8 +25,40 @@ class AdminController extends Controller
         // ambil data dari mahasiswa dan dosen
         // untuk ditampilkan di form table
         $dataRole = Role::all();
-
-        return view('admin.hakAkses', compact('dataRole'));
+        if (empty($dataRole)) {
+            $dataRoleFormatted = [];
+        } else {
+            // Buat array dengan format yang diinginkan
+            $dataRoleFormatted = $dataRole->map(function ($role) {
+                $token = csrf_token();
+                $editUrl = route('edit-hak-akses', encrypt($role->id));
+                $deleteUrl = route('destroy-role', encrypt($role->id));
+            
+                $btnEdit ='
+                    <form class="m-0 p-0" action="'.$editUrl.'" method="get" enctype="multipart/form-data">
+                        <input type="hidden" name="_token" value="' . $token . '">
+                        <button class="btn btn-sm btn-default text-primary update-mhs" id="updateMhs" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i>
+                            </button>
+                    </form>
+                ';
+                $btnDelete = '
+                    <form class="m-0 p-0" action="'.$deleteUrl.'" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="_token" value="' . $token . '">
+                            <button type="button" class="btn btn-sm btn-default text-danger delet-mhs" title="Delete">
+                            <i class="fa fa-lg fa-fw fa-trash"></i></button>
+                        </form>
+                ';
+                // $btnDetails = '<button class="btn btn-sm btn-default text-teal  " title="Details"><i class="fa fa-lg fa-fw fa-eye"></i></button>';
+        
+                // Mengembalikan data dalam bentuk array yang diinginkan
+                return [
+                    $role->id,
+                    $role->name_role,
+                    '<div class="d-flex gap-1">' . $btnEdit . $btnDelete . '</div>', // gabungkan tombol
+                ];
+            })->toArray();
+        }
+        return view('admin.hakAkses', compact('dataRoleFormatted'));
     }
 
     // untuk kehalaman edit hak akses admin
