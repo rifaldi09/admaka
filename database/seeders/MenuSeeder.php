@@ -79,6 +79,16 @@ class MenuSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+
+            [
+                'kelompok_menu'=>'Setting',
+                'header' => 'Menu',
+                'menu' => 'Menu',
+                'url' => 'manajemen-menu',
+                'icon' => 'fa-solid fa-circle fa-2xs',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

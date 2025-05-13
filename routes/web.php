@@ -45,11 +45,11 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::post('destroy-role/{id}', 'destroyRole')->name('destroy-role');
 
         // Manajemen Menu
-        Route::get('manajemen-menu', 'manajemenMenu')->name('manajemen-menu');
+        Route::get('manajemen-menu', 'menuAll')->name('manajemen-menu');
         Route::post('store-menu', 'storeMenu')->name('store-menu');
-        Route::get('edit-menu/{id}', 'editMenu')->name('edit-menu');
-        Route::post('update-menu', 'updateMenu')->name('update-menu');
-        Route::post('destroy-menu/{id}', 'destroyMenu')->name('destroy-menu');
+        Route::get('edit-menu/{id}', 'updateMenu')->name('edit-menu');
+        Route::put('update-menu/{id}', 'updatedataMenu')->name('update-menu');
+        Route::delete('destroy-menu/{id}', 'destroyMenu')->name('destroy-menu');
     });
 
     // Data Master - Mahasiswa
