@@ -18,6 +18,7 @@ return new class extends Migration
             CREATE VIEW view_menus_by_role AS
             SELECT 
                 m.id_menu,
+                m.kelompok_menu,
                 m.header,
                 m.menu,
                 m.url,

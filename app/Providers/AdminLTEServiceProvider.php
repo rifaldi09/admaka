@@ -26,62 +26,54 @@ class AdminLTEServiceProvider extends ServiceProvider
     {
         \Event::listen(BuildingMenu::class, function (BuildingMenu $event) {
             $role = Auth::user()->id_role;
-            $roleUser = Role::where('id', $role)->first();
+            $roleUser = \App\Models\Role::find($role);
+        
             $menus = ViewMenusByRole::where('id_role', $role)->get();
-
-
-            $dashboardMenus = [];
-            $groupedMenus = [];
-
-            foreach ($menus as $menu) {
-                if (strtolower($menu->header) === 'dashboard') {
-                    // Masukkan ke menu Dashboard
-                    $dashboardMenus[] = [
-                        'text' => $menu->menu,
-                        'url'  => $menu->url,
-                        'icon' => $menu->icon,
-                    ];
-                } else {
-                    // Kelompokkan berdasarkan header selain Dashboard
-                    $groupedMenus[$menu->header][] = [
+        
+            // Kelompokkan berdasarkan kelompok_menu (header AdminLTE)
+            $groupedByKelompok = $menus->groupBy('kelompok_menu');
+        
+            foreach ($groupedByKelompok as $kelompok => $menusInKelompok) {
+                // Tambahkan sebagai header AdminLTE
+                $event->menu->add(['header' => $kelompok]);
+        
+                // Di dalam kelompok, kelompokkan berdasarkan header
+                $groupedByHeader = $menusInKelompok->groupBy('header');
+        
+                // Inisialisasi single item holder
+                $singleItems = [];
+        
+                foreach ($groupedByHeader as $header => $menuItems) {
+                    if ($menuItems->count() > 1) {
+                        // Jika lebih dari 1 menu → buat submenu
+                        $submenu = [];
+        
+                        foreach ($menuItems as $menu) {
+                            $submenu[] = [
+                                'text' => $menu->menu,
+                                'url'  => url(str_replace('{role}', $roleUser->name_role, $menu->url)),
+                                'icon' => $menu->icon,
+                            ];
+                        }
+        
+                        $event->menu->add([
+                            'text'    => $header,
+                            'icon'    => 'fas fa-folder',
+                            'submenu' => $submenu,
+                        ]);
+                    } else {
+                        // Jika hanya satu menu → simpan dulu untuk ditambahkan nanti
+                        $singleItems[] = $menuItems->first();
+                    }
+                }
+       
+                // Tambahkan semua menu tunggal setelah submenu
+                foreach ($singleItems as $menu) {
+                    $event->menu->add([
                         'text' => $menu->menu,
                         'url'  => url(str_replace('{role}', $roleUser->name_role, $menu->url)),
                         'icon' => $menu->icon,
-                    ];
-                }
-            }
-
-            // === 1. Tambahkan Header: Dashboard ===
-            if (count($dashboardMenus) > 0) {
-                $event->menu->add(['header' => 'Dashboard']);
-                foreach ($dashboardMenus as $item) {
-                    $event->menu->add($item);
-                }
-            }
-
-            // === 2. Tambahkan Header Role ===
-            if (count($groupedMenus) > 0) {
-                $event->menu->add(['header' => $roleUser->name_role]);
-
-                foreach ($groupedMenus as $group => $items) {
-                    if (count($items) > 1) {
-                        // Jika lebih dari satu item → submenu
-                        $event->menu->add([
-                            'text'    => $group,
-                            'icon'    => 'fas fa-folder',
-                            'submenu' => $items,
-                        ]);
-                    } else {
-                        // Jika hanya satu item → simpan dulu untuk ditaruh di bawah
-                        $singleItems[] = $items[0]; // simpan di array sementara
-                    }
-                }
-
-                // Setelah semua submenu ditambahkan, baru tambahkan single item-nya
-                if (!empty($singleItems)) {
-                    foreach ($singleItems as $item) {
-                        $event->menu->add($item); // ditaruh setelah semua submenu
-                    }
+                    ]);
                 }
             }
         });

@@ -11,6 +11,7 @@ class Menu extends Model
     protected $table = 'menu';
     protected $primaryKey = 'id_menu';
     protected $fillable = [
+        'kelompok_menu',
         'header',
         'menu',
         'url',

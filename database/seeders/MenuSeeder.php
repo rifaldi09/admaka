@@ -13,6 +13,7 @@ class MenuSeeder extends Seeder
          // Hak Akses
          \App\Models\Menu::insert([
             [
+                'kelompok_menu'=>'Dashboard',
                 'header' => 'Dashboard',
                 'menu' => 'Dashboard',
                 'url' => 'dashboard',
@@ -23,6 +24,7 @@ class MenuSeeder extends Seeder
             //! Menu surat menggunakan {role} yang dimana untuk membedakan role
             //! yang ada di dalam menu, misal {role} = mahasiswa, maka urlnya menjadi mahasiswa/aktif-kuliah
             [
+                'kelompok_menu'=>'Surat',
                 'header' => 'Surat',
                 'menu' => 'Surat Aktif Kuliah',
                 'url' => '{role}/aktif-kuliah',
@@ -31,6 +33,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'kelompok_menu'=>'Setting',
                 'header' => 'Profil',
                 'menu' => 'Lihat Profil',
                 'url' => 'lihat-profil',
@@ -39,6 +42,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'kelompok_menu'=>'Administrator',
                 'header' => 'Data Master',
                 'menu' => 'Data Mahasiswa',
                 'url' => 'data-mahasiswa',
@@ -47,6 +51,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'kelompok_menu'=>'Administrator',
                 'header' => 'Data Master',
                 'menu' => 'Data Dosen',
                 'url' => 'data-dosen',
@@ -55,6 +60,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'kelompok_menu'=>'Setting',
                 'header' => 'Admin',
                 'menu' => 'Hak Akses',
                 'url' => 'hak-akses',
@@ -65,6 +71,7 @@ class MenuSeeder extends Seeder
             //! Menu surat menggunakan {role} yang dimana untuk membedakan role
             //! yang ada di dalam menu, misal {role} = mahasiswa, maka urlnya menjadi mahasiswa/pengajuan-kp
             [
+                'kelompok_menu'=>'Surat',
                 'header' => 'Surat',
                 'menu' => 'Surat Pengajuan Kerja Praktik',
                 'url' => '{role}/pengajuan-kp',
