@@ -1,6 +1,6 @@
 @extends('dashboard.home')
 
-@section('title', 'Data Master')
+@section('title', 'Data Master - Dosen')
 
 @section('content')
 <div class="card mt-3">
