@@ -43,6 +43,13 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         // Role
         Route::post('store-role', 'storeRole')->name('store-role');
         Route::post('destroy-role/{id}', 'destroyRole')->name('destroy-role');
+
+        // Manajemen Menu
+        Route::get('manajemen-menu', 'manajemenMenu')->name('manajemen-menu');
+        Route::post('store-menu', 'storeMenu')->name('store-menu');
+        Route::get('edit-menu/{id}', 'editMenu')->name('edit-menu');
+        Route::post('update-menu', 'updateMenu')->name('update-menu');
+        Route::post('destroy-menu/{id}', 'destroyMenu')->name('destroy-menu');
     });
 
     // Data Master - Mahasiswa
@@ -65,7 +72,6 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::put('update_datadosen/{nim}', 'updatedataDosen')->name('update_datadosen');
         Route::post('dosen-preview',  'previewCSVDosen')->name('dosen-preview');
         Route::post('import-dosen', 'importDosen')->name('import-dosen');
-
     });
 
     // Sesi Mahasiswa

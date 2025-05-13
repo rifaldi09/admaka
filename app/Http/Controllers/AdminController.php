@@ -33,23 +33,23 @@ class AdminController extends Controller
                 $token = csrf_token();
                 $editUrl = route('edit-hak-akses', encrypt($role->id));
                 $deleteUrl = route('destroy-role', encrypt($role->id));
-            
-                $btnEdit ='
-                    <form class="m-0 p-0" action="'.$editUrl.'" method="get" enctype="multipart/form-data">
+
+                $btnEdit = '
+                    <form class="m-0 p-0" action="' . $editUrl . '" method="get" enctype="multipart/form-data">
                         <input type="hidden" name="_token" value="' . $token . '">
                         <button class="btn btn-sm btn-default text-primary update-mhs" id="updateMhs" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i>
                             </button>
                     </form>
                 ';
                 $btnDelete = '
-                    <form class="m-0 p-0" action="'.$deleteUrl.'" method="post" enctype="multipart/form-data">
+                    <form class="m-0 p-0" action="' . $deleteUrl . '" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="_token" value="' . $token . '">
                             <button type="button" class="btn btn-sm btn-default text-danger delet-mhs" title="Delete">
                             <i class="fa fa-lg fa-fw fa-trash"></i></button>
                         </form>
                 ';
                 // $btnDetails = '<button class="btn btn-sm btn-default text-teal  " title="Details"><i class="fa fa-lg fa-fw fa-eye"></i></button>';
-        
+
                 // Mengembalikan data dalam bentuk array yang diinginkan
                 return [
                     $role->id,
@@ -153,4 +153,79 @@ class AdminController extends Controller
         return redirect()->route('hak-akses')->with('success', 'Role Berhasil Dihapus');
     }
 
+    // Halaman Manajemen Menu
+    public function manajemenMenu()
+    {
+        // Get all data menu
+        $dataMenu = Menu::all();
+        if (empty($dataMenu)) {
+            $dataMenuFormatted = [];
+        } else {
+            // Buat array dengan format yang diinginkan
+            $dataMenuFormatted = $dataMenu->map(function ($menu) {
+                $token = csrf_token();
+                $editUrl = route('edit-menu', encrypt($menu->id_menu));
+                $deleteUrl = route('destroy-menu', encrypt($menu->id_menu));
+
+                $btnEdit = '
+                    <form class="m-0 p-0" action="' . $editUrl . '" method="get">
+                        <input type="hidden" name="_token" value="' . $token . '">
+                        <button class="btn btn-sm btn-default text-primary update-mhs" id="updateMenu" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i>
+                            </button>
+                    </form>
+                ';
+                $btnDelete = '
+                    <form class="m-0 p-0" action="' . $deleteUrl . '" method="post">
+                            <input type="hidden" name="_token" value="' . $token . '">
+                            <button type="button" class="btn btn-sm btn-default text-danger delet-mhs" title="Delete">
+                            <i class="fa fa-lg fa-fw fa-trash"></i></button>
+                        </form>
+                ';
+                // $btnDetails = '<button class="btn btn-sm btn-default text-teal  " title="Details"><i class="fa fa-lg fa-fw fa-eye"></i></button>';
+
+                // Mengembalikan data dalam bentuk array yang diinginkan
+                return [
+                    $menu->id_menu,
+                    $menu->kelompok_menu,
+                    $menu->header,
+                    $menu->menu,
+                    '<div class="d-flex gap-1">' . $btnEdit . $btnDelete . '</div>', // gabungkan tombol
+                ];
+            })->toArray();
+        }
+        return view('admin.manajemen_menu', compact('dataMenuFormatted'));
+    }
+
+    // Tambah Menu
+    public function storeMenu(Request $request)
+    {
+        // Validasi Input
+        $data = $request->validate([
+            'kelompok_menu' => 'required|min:3|max:100',
+            'header' => 'required|min:3|max:100',
+            'menu' => 'required|min:3|max:100|unique:menu,menu',
+            'url' => 'required|min:6|unique:menu,url',
+            'icon' => 'required|min:4'
+        ]);
+
+        // Simpan data
+        Menu::create($data);
+
+        return redirect()->route('manajemen-menu')->with('success', 'Menu Baru Berhasil Ditambahkan');
+    }
+
+    // Hapus Menu
+    public function destroyMenu($id_menu)
+    {
+        // Get id menu
+        $idMenu = decrypt($id_menu);
+
+        // Hapus menu
+        Menu::where('id_menu', $idMenu)->delete();
+
+        // Hapus juga pada role akses
+        RoleAkses::where('id_menu', $idMenu)->delete();
+
+        return redirect()->route('manajemen-menu')->with('success', 'Menu Berhasil Dihapus');
+    }
 }
