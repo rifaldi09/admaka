@@ -17,7 +17,7 @@ class AktifKuliah extends Model
         "user_id",
         "keperluan",
         "status",
-        "alasan_ditolak"
+        "alasan"
     ];
     protected static function boot()
     {
@@ -33,6 +33,7 @@ class AktifKuliah extends Model
     {
         return $this->belongsTo(User::class);
     }
+    
     public function filePengajuan()
     {
         return $this->hasMany(FilePengajuan::class, 'id_pengajuan', 'id_aktif_kuliah');

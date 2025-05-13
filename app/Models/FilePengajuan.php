@@ -16,8 +16,15 @@ class FilePengajuan extends Model
         "id_pengajuan"
     ];
 
-    public function pengajuanKp()
+    // mengambil 1 data pengajuan KP
+    public function dataPengajuanKP()
     {
-        return $this->belongsTo(PengajuanKP::class);
+        return $this->hasOne(PengajuanKP::class, 'id_pengajuan', 'id_pengajuan');
+    }
+
+    // mengambil 1 data Aktif Kuliah
+    public function dataAktifKuliah()
+    {
+        return $this->hasOne(AktifKuliah::class, 'id_aktif_kuliah', 'id_pengajuan');
     }
 }

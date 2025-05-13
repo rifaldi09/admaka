@@ -1,0 +1,23 @@
+<div class="modal fade" id="modalUpload" tabindex="-1" role="dialog" aria-labelledby="modalUploadLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Upload File Pengajuan</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <form action="{{ route('upload-aktif-kuliah') }}" method="post" enctype="multipart/form-data">
+            <div class="modal-body">
+                @csrf
+                <label for="pdf">Tambahkan File PDF</label>
+                <input type="hidden" id="id_upload" name="id">
+                <input type="file" id="pdf" name="file" accept=".pdf" required class="form-control">
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Kirim</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>

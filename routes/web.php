@@ -114,10 +114,13 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         // membuat surat pengajuan
         Route::post('create-surat-aktif', 'createSuratAktif')->name('create-surat-aktif');
 
-        //! MASIH BELUM SELESAI
+        Route::post('upload-aktif-kuliah', 'uploadAktifKuliah')->name('upload-aktif-kuliah');
+        
         // pengubahan status pengajuan surat
         Route::post('terima-aktif-kuliah', 'terimaAktifKuliah')->name('terima-aktif-kuliah'); // proses mengubah status disetujui
         Route::post('tolak-aktif-kuliah', 'tolakAktifKuliah')->name('tolak-aktif-kuliah'); // proses mengubah status ditolak
+        Route::post('penerbitan-aktif-kuliah', 'penerbitanAktifKuliah')->name('penerbitan-aktif-kuliah'); // proses mengubah status penerbitan 
+        Route::post('edit-penolakan-surat', 'editPenolakanSurat')->name('edit-penolakan-surat');
     });
 
 

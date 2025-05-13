@@ -1,5 +1,5 @@
-{{--! MASIH BELUM SELESAI --}}
-{{--! PROGRES 50%-70% --}}
+{{-- ! MASIH BELUM SELESAI --}}
+{{-- ! PROGRES 50%-70% --}}
 @extends('dashboard.home')
 
 @section('title', 'Surat Aktif Kuliah')
@@ -65,9 +65,10 @@
                                 ['label' => 'NIM', 'no-export' => true, 'width' => 10],
                                 'Nama',
                                 'Prodi',
-                                ['label' => 'Status', 'no-export' => true, 'width' => 5],
+                                ['label' => 'Status', 'no-export' => true, 'width' => 3],
                                 'Tanggal Pengajuan',
                                 ['label' => 'Actions', 'no-export' => true, 'width' => 7],
+                                'Upload Surat',
                             ];
 
                             $config = [
@@ -93,201 +94,78 @@
         </div>
     </div>
 
-    {{-- Modal ketika surat ditolak --}}
-    <div class="modal fade" id="modalTolak" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-
-            <form action="{{ route('tolak-aktif-kuliah') }}" class="modal-content" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Detail Surat</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-
-                    {{-- Content Penolakan Surat Aktif Kuliah --}}
-                    <input type="hidden" name="id" id="id">
-                    <div class="form-group">
-                        <label for="keperluan">Alasan</label>
-                        {{-- alasan/deskripsi surat di tolak --}}
-                        <textarea class="form-control" name="deskripsi" id="deskripsi" rows="6" required></textarea>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-
-                    {{-- button untuk memunculkan modal ketika surat ingin di tolak --}}
-                    <button type="button" class="btn btn-danger btn-tolak"><i class="fa-solid fa-xmark"></i> Tolak
-                        Surat</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    {{-- Modal ketika surat disetujui --}}
-    <div class="modal fade" id="modalLihat" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-
-            <form action="{{ route('terima-aktif-kuliah') }}" class="modal-content" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Detail Surat</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-
-                    {{-- Content Persetujuan Surat Aktif Kuliaj --}}
-
-                    <input type="hidden" name="id" id="id">
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="id_user">NIM</label>
-                            <input type="text" class="form-control"name="id_user" id="nim" disabled>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="nama">Nama</label>
-                            <input type="text" class="form-control" id="nama" name="nama" id="nama"
-                                disabled>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" id="email"
-                                disabled>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="prodi">Program Studi</label>
-                            <input type="text" class="form-control" id="prodi" name="prodi" id="prodi"
-                                disabled>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="tempat_lahir">Tempat Lahir</label>
-                            <input type="text" class="form-control" name="tempat_lahir" id="tempatLhr" disabled>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="tanggal_lahir">Tanggal Lahir</label>
-                            <input type="date" class="form-control" name="tanggal_lahir" id="tanggalLhr" disabled>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="nohp">No Handphone</label>
-                            <input type="text" class="form-control" name="nohp" id="nohp" disabled>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="status">Status</label>
-                            <input type="text" class="form-control" name="status" id="status" disabled>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="keperluan">Keperluan</label>
-                        <textarea class="form-control" id="keperluan" name="keperluan" id="keperluan" disabled></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="keperluan">Alasan <small
-                                style="font-size: 11px; color: red">*opsional</small></label>
-                        <textarea class="form-control" name="deskripsi" id="deskripsi"></textarea>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-
-                    {{-- button untuk memunculkan modal ketika mau di setujui --}}
-                    <button type="button" class="btn btn-success btn-setujui"><i class="fa-solid fa-check"></i> Setujui
-                        Surat</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    {{-- modal --}}
+    @include('admin.aktif-kuliah.modal.tolak')
+    @include('admin.aktif-kuliah.modal.detail')
+    @include('admin.aktif-kuliah.modal.detailDiterima')
+    @include('admin.aktif-kuliah.modal.upload')
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-
-            // memasukkan data ke dalam modal ketika tombol edit diklik
-            $(document).on('click', '.btn-edit', function() {
-                const id = $(this).data('id');
-                const nim = $(this).data('nim');
-                const nama = $(this).data('nama');
-                const prodi = $(this).data('prodi');
-                const keperluan = $(this).data('keperluan');
-                const deskripsi = $(this).data('deskripsi');
-                const email = $(this).data('email');
-                const nohp = $(this).data('nohp');
-                const status = $(this).data('status');
-                const tempatLhr = $(this).data('tempatlhr');
-                const tanggalLhr = $(this).data('tanggallhr');
-
-                // Isi ke dalam form modal
-                $('#id').val(id);
-                $('#nim').val(nim);
-                $('#nama').val(nama);
-                $('#prodi').val(prodi);
-                $('#keperluan').val(keperluan);
-                $('#deskripsi').val(deskripsi);
-                $('#email').val(email);
-                $('#nohp').val(nohp);
-                $('#status').val(status);
-                $('#tempatLhr').val(tempatLhr);
-                $('#tanggalLhr').val(tanggalLhr);
-            });
-
-            // memanggil class dari tombol setujui dan tolak dari modal
-            const confirmButtons = document.querySelectorAll('.btn-setujui');
-            const rejectButtons = document.querySelectorAll('.btn-tolak');
-
-            // sweet alert ketika tombol setujui
-            confirmButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const form = this.closest('form');
-
-                    Swal.fire({
-                        title: 'Apakah Kamu Yakin?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#14A44D',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Ya, setujui suratnya',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
+            // Handle edit and reject button clicks
+            $(document)
+                .on('click', '.btn-edit', function() {
+                    const data = $(this).data();
+                    // console.log(data);
+                    
+                    Object.keys(data).forEach(key => {
+                        $(`#${key}`).val(data[key]);
+                    });
+                })
+                .on('click', '.btn-tolak', function() {
+                    $('#id_tolak').val($(this).data('id'));
+                })
+                .on('click', '.btn-upload', function() {
+                    $('#id_upload').val($(this).data('id'));
+                    console.log($(this).data('id'));
+                    
+                });
+            $(document)
+                .on('click', '.btn-detail-terima', function() {
+                    const data = $(this).data();
+                    
+                    Object.keys(data).forEach(key => {
+                        $(`#${key}-terima`).val(data[key]);
                     });
                 });
+
+            // Handle confirmation actions
+            $(document).on('click', '.btn-setujui, .tolak', function(e) {
+                e.preventDefault();
+                const form = $(this).closest('form')[0];
+                const isApprove = $(this).hasClass('btn-setujui');
+
+                // Validation for reject form
+                if (!isApprove && !form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Apakah Kamu Yakin?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: isApprove ? '#14A44D' : '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: isApprove ? 'Ya, setujui suratnya' : 'Ya, tolak suratnya',
+                    cancelButtonText: 'Batal'
+                }).then((result) => result.isConfirmed && form.submit());
             });
 
-            // sweet alert ketika tombol tolak
-            rejectButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const form = this.closest('form');
+            $(document).on('click', '.penerbitan', function(e) {
+                e.preventDefault();
+                const form = $(this).closest('form')[0];
 
-                    Swal.fire({
-                        title: 'Apakah Kamu Yakin?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Ya, tolak suratnya',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
+                Swal.fire({
+                    title: 'Apakah Kamu Yakin?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#14A44D',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Terbitkan Surat Ini',
+                    cancelButtonText: 'Batal'
+                }).then((result) => result.isConfirmed && form.submit());
             });
-
         });
     </script>
 
