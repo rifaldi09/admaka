@@ -1,15 +1,18 @@
 <table class="table table-bordered">
     <tr>
         <th>No</th>
-        <th class="w-75">Nama</th>
-        <th class="w-25">Aksi</th>
+        <th class="w-50">Nama</th>
+        <th class="w-25">Status</th>
+        <th class="w-50">Aksi</th>
     </tr>
+    {{-- {{ dd($draft->toArray()) }} --}}
     @forelse ($draft as $key => $data)
         <tr>
             <td>{{ 1 + $key }}</td>
             <td>{{ $data->dataMahasiswa->nama }}</td>
-            <td class="d-flex">
             @foreach ($data->pengajuanKp as $kp)
+            <td>{{ $kp->status }}</td>
+            <td class="d-flex">
                 <form action="{{ route('terima-pengajuan', $kp->id_pengajuan) }}" class="mr-2" method="post">
                     @csrf
                     <button class="btn btn-success">Terima</button>

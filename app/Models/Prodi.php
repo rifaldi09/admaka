@@ -15,4 +15,10 @@ class Prodi extends Model
         'id',
         'nama'
     ];
+
+    // relasi prodi ke user
+    public function mahasiswa()
+    {
+        return $this->hasMany(User::class);
+    }
 }

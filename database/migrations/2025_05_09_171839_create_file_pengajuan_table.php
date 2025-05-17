@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('file_pengajuan', function (Blueprint $table) {
             $table->id();
-            $table->string('id_pengajuan'); // foreign key yang berisi id dari setiap surat
+            $table->uuid('id_pengajuan'); // foreign key ke tabel pengajuan kp
             $table->string('path');
             $table->timestamps();
+
+            $table->foreign('id_pengajuan')->references('id_pengajuan')->on('pengajuan_kp')->onDelete('cascade');
         });
     }
 

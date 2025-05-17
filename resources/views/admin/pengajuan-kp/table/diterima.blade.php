@@ -1,7 +1,8 @@
 <table class="table table-bordered">
     <tr>
         <th>No</th>
-        <th class="w-50">Nama</th>
+        <th class="w-25">Nama</th>
+        <th class="w-25">Status</th>
         <th class="w-25">Aksi</th>
         <th class="w-75">Upload File Bertanda Tangan</th>
     </tr>
@@ -10,9 +11,13 @@
             <td>{{ 1 + $key }}</td>
             <td>{{ $data->dataMahasiswa->nama }}</td>
             @foreach ($data->pengajuanKp as $kp)
+            <td>{{ $kp->status }}</td>
             <td class="d-flex">
                 @if($kp->status == 'Penerbitan')
-                <a href="{{ route('pdf-pengajuan', $kp->id_pengajuan) }}" class="btn btn-success mr-2">Generate</a>
+                <button type="button" class="btn btn-success mr-2 align-self-start" data-toggle="modal" data-target="#generateModal-{{ $kp->id_pengajuan }}">
+                    Generate
+                </button>
+                @include('admin.pengajuan-kp.modal.generate')
                 @endif
                 <button type="button" class="btn btn-primary align-self-start" data-toggle="modal" data-target="#detailModal-{{ $kp->id_pengajuan }}">
                     Detail

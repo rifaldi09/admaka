@@ -17,6 +17,8 @@ class PengajuanKP extends Model
 
     protected $fillable = [
         "user_id",
+        "id_prodi",
+        "no_surat",
         "tujuan_surat",
         "alamat_surat",
         "tanggal_mulai",
