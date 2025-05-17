@@ -26,5 +26,19 @@ class MahasiswaSeeder extends Seeder
                 'updated_at' => now(),
             ]
         ]);
+
+        \App\Models\Mahasiswa::insert([
+            [
+                'nim' => '1334',
+                'nama' => 'Mahasiswa 2',
+                'email' => 'mhs2@gmail.com',
+                'id_prodi' => '1',
+                'tempat_lahir' => 'Bengkulu',
+                'tanggal_lahir' => '2025-05-04',
+                'no_hp' => '012235662782',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        ]);
     }
 }

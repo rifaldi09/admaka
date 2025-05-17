@@ -94,8 +94,8 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         // Route ke halaman pengajuan KP Koordinator
         Route::get('Koordinator Kerja Praktik/pengajuan-kp', 'pengajuanKpKoordinator')->name('pengajuan-kp-koordinator');
 
-        // mengunduh PDF oleh admin agar bisa di TTD oleh dekan
-        Route::get('pdf-pengajuan/{pengajuan:id_pengajuan}', 'pdfPengajuan')->name('pdf-pengajuan');
+        // mengunduh word oleh admin agar bisa di TTD oleh dekan
+        Route::put('word-pengajuan/{id}', 'wordPengajuan')->name('word-pengajuan');
 
         // membuat surat pengajuan
         Route::post('create-pengajuan', 'createPengajuan')->name('create-pengajuan');

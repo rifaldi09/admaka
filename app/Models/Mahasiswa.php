@@ -26,7 +26,7 @@ class Mahasiswa extends Model
     ];
 
     // relasi ke tabel prodi (1 mahasiswa punya 1 prodi)
-    public function roleAkses()
+    public function prodi()
     {
         return $this->belongsTo(Prodi::class, 'id_prodi');
     }
