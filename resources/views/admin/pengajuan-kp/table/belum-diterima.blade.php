@@ -7,10 +7,10 @@
     </tr>
     {{-- {{ dd($draft->toArray()) }} --}}
     @forelse ($draft as $key => $data)
+    @foreach ($data->pengajuanKp as $kp)
         <tr>
             <td>{{ 1 + $key }}</td>
             <td>{{ $data->dataMahasiswa->nama }}</td>
-            @foreach ($data->pengajuanKp as $kp)
             <td>{{ $kp->status }}</td>
             <td class="d-flex">
                 <form action="{{ route('terima-pengajuan', $kp->id_pengajuan) }}" class="mr-2" method="post">
@@ -21,9 +21,9 @@
                     Detail
                 </button>
                 @include('admin.pengajuan-kp.modal.detail-kp', ['id' => $kp->id_pengajuan])
-            @endforeach
             </td>
         </tr>
+    @endforeach
     @empty
         <tr>
             <td colspan="8" class="text-secondary text-center">Tidak ada data</td>

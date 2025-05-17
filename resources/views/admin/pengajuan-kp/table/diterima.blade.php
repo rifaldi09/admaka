@@ -7,10 +7,10 @@
         <th class="w-75">Upload File Bertanda Tangan</th>
     </tr>
     @forelse ($diterima as $key => $data)
+    @foreach ($data->pengajuanKp as $kp)
         <tr>
-            <td>{{ 1 + $key }}</td>
+            <td>{{ ++$key }}</td>
             <td>{{ $data->dataMahasiswa->nama }}</td>
-            @foreach ($data->pengajuanKp as $kp)
             <td>{{ $kp->status }}</td>
             <td class="d-flex">
                 @if($kp->status == 'Penerbitan')
@@ -32,8 +32,8 @@
                 @include('admin.pengajuan-kp.modal.upload')
                 @endif
             </td>
-            @endforeach
         </tr>
+    @endforeach
     @empty
         <tr>
             <td colspan="8" class="text-secondary text-center">Tidak ada data</td>
