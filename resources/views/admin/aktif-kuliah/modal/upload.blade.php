@@ -1,4 +1,4 @@
-<div class="modal fade" id="modalUpload" tabindex="-1" role="dialog" aria-labelledby="modalUploadLabel" aria-hidden="true">
+<div class="modal fade" id="modalUpload-{{ $id }}" tabindex="-1" role="dialog" aria-labelledby="modalUpload-{{ $id }}" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         <div class="modal-header">
@@ -11,8 +11,8 @@
             <div class="modal-body">
                 @csrf
                 <label for="pdf">Tambahkan File PDF</label>
-                <input type="hidden" id="id_upload" name="id">
-                <input type="file" id="pdf" name="file" accept=".pdf" required class="form-control">
+                <input type="hidden" value="{{ encrypt($id) }}" name="id">
+                <input type="file" id="pdf" name="file" accept=".pdf" required class="form-file">
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-success">Kirim</button>

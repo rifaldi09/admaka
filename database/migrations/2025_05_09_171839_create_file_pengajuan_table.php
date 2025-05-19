@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('path');
             $table->timestamps();
 
-            $table->foreign('id_pengajuan')->references('id_pengajuan')->on('pengajuan_kp')->onDelete('cascade');
+            // $table->foreign('id_pengajuan')->references('id_pengajuan')->on('pengajuan_kp')->onDelete('cascade');
         });
     }
 

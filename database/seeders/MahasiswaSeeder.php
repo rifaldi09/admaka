@@ -22,6 +22,11 @@ class MahasiswaSeeder extends Seeder
                 'tempat_lahir' => 'Bengkulu',
                 'tanggal_lahir' => '2025-05-04',
                 'no_hp' => '012235662781',
+                'jenjang' => 'Strata 1',
+                'semester' => 2,
+                'tahun_akademik' => '2024/2025',
+                'ipk' => 4.0,
+                'sks' => 66,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
@@ -36,6 +41,11 @@ class MahasiswaSeeder extends Seeder
                 'tempat_lahir' => 'Bengkulu',
                 'tanggal_lahir' => '2025-05-04',
                 'no_hp' => '012235662782',
+                'jenjang' => 'Strata 1',
+                'semester' => 2,
+                'tahun_akademik' => '2024/2025',
+                'ipk' => 4.0,
+                'sks' => 66,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

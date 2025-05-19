@@ -1,5 +1,6 @@
 {{-- Modal ketika surat disetujui --}}
-<div class="modal fade" id="modalDetailTerima" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalDetailTerima-{{ $id }}" tabindex="-1"
+    aria-labelledby="modalDetailTerima-{{ $id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg">
 
         <form action="{{ route('terima-aktif-kuliah') }}" class="modal-content" method="post"
@@ -15,54 +16,115 @@
 
                 {{-- Content Persetujuan Surat Aktif Kuliaj --}}
 
-                <input type="hidden" name="id" id="id-terima">
+                <input type="hidden" name="id" value="{{ $id }}">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="id_user">NIM</label>
-                        <input type="text" class="form-control"name="id_user" id="nim-terima" disabled>
+                        <input type="text" class="form-control"name="id_user"
+                            value="{{ $data->user->dataMahasiswa->nim }}" disabled>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="nama">Nama</label>
-                        <input type="text" class="form-control" id="nama-terima" name="nama" 
-                            disabled>
+                        <input type="text" class="form-control" value="{{ $data->user->dataMahasiswa->nama }}"
+                            name="nama" disabled>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email-terima" name="email" 
-                            disabled>
+                        <input type="email" class="form-control" value="{{ $data->user->dataMahasiswa->email }}"
+                            name="email" disabled>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="prodi">Program Studi</label>
-                        <input type="text" class="form-control" id="prodi-terima" name="prodi"
-                            disabled>
+                        <input type="text" class="form-control" value="{{ $data->user->dataMahasiswa->prodi->nama }}"
+                            name="prodi" disabled>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="tempat_lahir">Tempat Lahir</label>
-                        <input type="text" class="form-control" name="tempat_lahir" id="tempatlhr-terima" disabled>
+                        <input type="text" class="form-control" name="tempat_lahir"
+                            value="{{ $data->user->dataMahasiswa->tempat_lahir }}" disabled>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="tanggal_lahir">Tanggal Lahir</label>
-                        <input type="date" class="form-control" name="tanggal_lahir" id="tanggallhr-terima" disabled>
+                        <input type="date" class="form-control" name="tanggal_lahir"
+                            value="{{ $data->user->dataMahasiswa->tanggal_lahir }}" disabled>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="nohp">No Handphone</label>
-                        <input type="text" class="form-control" name="nohp" id="nohp-terima" disabled>
+                        <label for="jenjang">Jenjang</label>
+                        <input type="text" class="form-control" name="jenjang"
+                            value="{{ $data->user->dataMahasiswa->jenjang }}" disabled>
                     </div>
                     <div class="form-group col-md-6">
-                        <label for="status">Status</label>
-                        <input type="text" class="form-control" name="status" id="status-terima" disabled>
+                        <label for="semester">Semester</label>
+                        @php
+                            $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
+                            $numberSemester = $formatter->format($data->user->dataMahasiswa->semester);
+                        @endphp
+                        <input type="text" class="form-control" name="semester"
+                            value="{{ $data->user->dataMahasiswa->semester }} ({{ $numberSemester }})" disabled>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-row col-md-6">
+                        <div class="form-group col-md-6">
+                            <label for="tahun_akademik">Tahun Akademik</label>
+                            <input type="text" class="form-control" name="tahun_akademik"
+                                value="{{ $data->user->dataMahasiswa->tahun_akademik }}" disabled>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="ipk">IPK</label>
+                            <input type="number" class="form-control" name="ipk"
+                                value="{{ $data->user->dataMahasiswa->ipk }}" disabled>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="sks">SKS</label>
+                            <input type="text" class="form-control" name="sks"
+                                value="{{ $data->user->dataMahasiswa->sks }}" disabled>
+                        </div>
+                    </div>
+                    <div class="form-row col-md-6">
+                        <div class="form-group col-md-6">
+                            <label for="no_hp">No Handphone</label>
+                            <input type="text" class="form-control" id="no_hp" name="no_hp"
+                                value="{{ $data->user->dataMahasiswa->no_hp }}" disabled>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="status">Status</label>
+                            <input type="text" class="form-control" name="status" value="{{ $data->status }}"
+                                disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-row col-md-6">
+                        <div class="form-group col-md-6">
+                            <label for="semester_awal">Semester Awal</label>
+                            <input type="number" class="form-control" name="semester_awal"
+                                value="{{ $data->semester_awal }}" disabled>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="semester_akhir">Semester Akhir</label>
+                            <input type="number" class="form-control" name="semester_akhir"
+                                value="{{ $data->semester_akhir }}" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="status_mahaisiswa">Status Mahasiswa</label>
+                        <input type="text" class="form-control" name="status_kuliah"
+                                value="{{ $data->status_kuliah }}" disabled>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="keperluan">Keperluan</label>
-                    <textarea class="form-control" name="keperluan" id="keperluan-terima" disabled></textarea>
+                    <div>
+                        <label for="keperluan">Keperluan</label>
+                        <textarea class="form-control" name="keperluan" disabled>{{ $data->keperluan }}</textarea>
+                    </div>
                 </div>
 
             </div>

@@ -16,6 +16,10 @@ class AktifKuliah extends Model
     protected $fillable = [
         "user_id",
         "keperluan",
+        "nomor_surat",
+        "semester_awal",
+        "semester_akhir",
+        "status_kuliah",
         "status",
         "alasan"
     ];

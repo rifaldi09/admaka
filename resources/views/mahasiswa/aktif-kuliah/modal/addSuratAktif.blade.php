@@ -1,11 +1,11 @@
 <!-- Modal Penambahan Surat Aktif Kuliah-->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalTambahSuratAktif" tabindex="-1" aria-labelledby="modalTambahSuratAktif" aria-hidden="true">
     <div class="modal-dialog modal-lg">
 
         <form action="{{ route('create-surat-aktif') }}" class="modal-content" method="post" enctype="multipart/form-data">
             @csrf
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Pengajuan Surat Aktif Kuliah</h5>
+                <h5 class="modal-title" id="modalTambahSuratAktif">Pengajuan Surat Aktif Kuliah</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -17,7 +17,7 @@
                 {{-- id_role & nama_role --}}
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="id_user">NIM / NIDN</label>
+                        <label for="id_user">NIM</label>
                         <input type="text" class="form-control" id="id_user" name="id_user"
                             value="{{ $dataUser->nim }}" disabled>
                     </div>
@@ -42,7 +42,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="tempat_lahir">Tempat Lahir</label>
-                        <input type="text" class="form-control" id="tempat_lahi" name="tempat_lahi"
+                        <input type="text" class="form-control" id="tempat_lahir" name="tempat_lahi"
                             value="{{ $dataUser->tempat_lahir }}" disabled>
                     </div>
                     <div class="form-group col-md-6">
@@ -53,15 +53,60 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
+                        <label for="jenjang">Jenjang</label>
+                        <input type="text" class="form-control" id="jenjang" name="jenjang"
+                            value="{{ $dataUser->jenjang }}" disabled>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="semester">Semester</label>
+                        @php
+                            $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
+                            $numberSemester = $formatter->format($dataUser->semester);
+                        @endphp
+                        <input type="text" class="form-control" id="semester" name="semester"
+                            value="{{ $dataUser->semester }} ({{ $numberSemester }})" disabled>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="tahun_akademik">Tahun Akademik</label>
+                        <input type="text" class="form-control" id="tahun_akademik" name="tahun_akademik"
+                            value="{{ $dataUser->tahun_akademik }}" disabled>
+                    </div>
+                    <div class="form-row col-md-6">
+                        <div class="form-group col-md-6">
+                            <label for="ipk">IPK</label>
+                            <input type="number" class="form-control" id="ipk" name="ipk"
+                                value="{{ $dataUser->ipk }}" disabled>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="sks">SKS</label>
+                            <input type="text" class="form-control" id="sks" name="sks"
+                                value="{{ $dataUser->sks }}" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
                         <label for="no_hp">No Handphone</label>
                         <input type="text" class="form-control" id="no_hp" name="no_hp"
-                            value="{{ $dataUser->no_hp }}" disabled>
+                        value="{{ $dataUser->no_hp }}" disabled>
+                    </div>
+                    <div class="form-row col-md-6">
+                        <div class="form-group col-md-6">
+                            <label for="semester_awal">Semester Awal</label>
+                            <input type="number" class="form-control" id="semester_awal" name="semester_awal" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="semester_akhir">Semester Akhir</label>
+                            <input type="number" class="form-control" id="semester_akhir" name="semester_akhir" required>
+                        </div>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="keperluan">Keperluan</label>
-                    <textarea class="form-control" id="keperluan" name="keperluan"></textarea>
+                    <textarea class="form-control" id="keperluan" name="keperluan" required></textarea>
                 </div>
 
             </div>

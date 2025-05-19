@@ -37,20 +37,41 @@
                                 ['label' => 'Actions', 'no-export' => true, 'width' => 7],
                             ];
 
-                            $config = [
-                                'data' => $dataBelumDisetujui,
-                                'order' => [[1, 'asc']],
-                                'columns' => [null, null, null, ['orderable' => true]],
-                            ];
+                            // $config = [
+                            //     'data' => $dataBelumDisetujui,
+                            //     'order' => [[1, 'asc']],
+                            //     'columns' => [null, null, null, ['orderable' => true]],
+                            // ];
+
                         @endphp
 
                         <x-adminlte-datatable id="table1" :heads="$heads">
-                            @foreach ($config['data'] as $row)
-                                <tr>
-                                    @foreach ($row as $cell)
-                                        <td>{!! $cell !!}</td>
-                                    @endforeach
-                                </tr>
+                            @foreach ($dataSurat as $data)
+                                @if ($data->status == 'Belum Diterima')
+                                    <tr>
+                                        <td>{{ $data->user->dataMahasiswa->nim }}</td>
+                                        <td>{{ $data->user->dataMahasiswa->nama }}</td>
+                                        <td>{{ $data->user->dataMahasiswa->prodi->nama }}</td>
+                                        <td>
+                                            <div class="border border-warning btn-sm text-warning text-center">
+                                                {{ $data->status }}</div>
+                                        </td>
+                                        <td>{{ $data->created_at }}</td>
+                                        <td>
+                                            <nobr>
+                                                <button class="btn btn-primary btn-edit btn-sm mr-3" title="Detail"
+                                                    data-toggle="modal"
+                                                    data-target="#modalLihat-{{ $data->id_aktif_kuliah }}">
+                                                    <i class="fa-solid fa-eye"></i> Lihat
+                                                </button>
+                                                <button class="btn btn-danger btn-tolak btn-sm" data-toggle="modal"
+                                                    data-target="#modalTolak-{{ $data->id_aktif_kuliah }}" title="Tolak">
+                                                    <i class="fa-solid fa-circle-info"></i> Tolak
+                                                </button>
+                                            </nobr>
+                                        </td>
+                                    </tr>
+                                @endif
                             @endforeach
                         </x-adminlte-datatable>
                     </div>
@@ -70,21 +91,72 @@
                                 ['label' => 'Actions', 'no-export' => true, 'width' => 7],
                                 'Upload Surat',
                             ];
-
-                            $config = [
-                                'data' => $dataDisetujui,
-                                'order' => [[1, 'asc']],
-                                'columns' => [null, null, null, ['orderable' => true]],
-                            ];
                         @endphp
 
                         <x-adminlte-datatable id="table2" :heads="$heads">
-                            @foreach ($config['data'] as $row)
-                                <tr>
-                                    @foreach ($row as $cell)
-                                        <td>{!! $cell !!}</td>
-                                    @endforeach
-                                </tr>
+                            @foreach ($dataSurat as $data)
+                                @if ($data->status != 'Belum Diterima')
+                                    <tr>
+                                        <td>{{ $data->user->dataMahasiswa->nim }}</td>
+                                        <td>{{ $data->user->dataMahasiswa->nama }}</td>
+                                        <td>{{ $data->user->dataMahasiswa->prodi->nama }}</td>
+                                        <td>
+                                            @if ($data->status == 'Diterima')
+                                                <div class="border border-success btn-sm text-success text-center">
+                                                    {{ $data->status }}</div>
+                                            @elseif ($data->status == 'Penerbitan')
+                                                <div class="border border-primary btn-sm text-primary text-center">
+                                                    {{ $data->status }}</div>
+                                            @else
+                                                <div class="border border-danger btn-sm text-danger text-center">
+                                                    {{ $data->status }}</div>
+                                            @endif
+                                        </td>
+                                        <td>{{ $data->created_at }}</td>
+                                        <td>
+                                            <nobr>
+                                                <button class="btn btn-primary btn-detail-terima btn-sm mr-3"
+                                                    data-toggle="modal"
+                                                    data-target="#modalDetailTerima-{{ $data->id_aktif_kuliah }}"
+                                                    title="Detail">
+                                                    <i class="fa-solid fa-eye"></i> Detail
+                                                </button>
+                                                @if ($data->status != 'Ditolak')
+                                                    @if ($data->status == 'Penerbitan')
+                                                        <form
+                                                            action="{{ route('penerbitan-aktif-kuliah', encrypt($data->id_aktif_kuliah)) }}" method="POST" class="d-inline" enctype="multipart/form-data">
+                                                            @csrf
+                                                            <input type="hidden" name="status"
+                                                                value="{{ $data->status }}">
+                                                            <button class="btn btn-primary btn-sm download "
+                                                                title="Download" type="submit">
+                                                                <i class="fa-solid fa-download"></i>
+                                                                Download
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <button class="btn btn-primary btn-sm" data-toggle="modal"
+                                                            data-target="#penerbitanSurat-{{ $data->id_aktif_kuliah }}"
+                                                            title="Terbitkan" type="button">
+                                                            <i class="fa-solid fa-download"></i>
+                                                            Terbitkan
+                                                        </button>
+                                                    @endif
+                                                @endif
+                                            </nobr>
+                                        </td>
+                                        <td>
+                                            <nobr>
+                                                @if ($data->status == 'Penerbitan')
+                                                    <button class="btn btn-success btn-sm btn-upload" data-toggle="modal"
+                                                        data-target="#modalUpload-{{ $data->id_aktif_kuliah }}"title="Upload">
+                                                        <i class="fa-solid fa-upload"></i> Upload
+                                                    </button>
+                                                @endif
+                                            </nobr>
+                                        </td>
+                                    </tr>
+                                @endif
                             @endforeach
                         </x-adminlte-datatable>
                     </div>
@@ -95,41 +167,31 @@
     </div>
 
     {{-- modal --}}
-    @include('admin.aktif-kuliah.modal.tolak')
-    @include('admin.aktif-kuliah.modal.detail')
-    @include('admin.aktif-kuliah.modal.detailDiterima')
-    @include('admin.aktif-kuliah.modal.upload')
+    @foreach ($dataSurat as $data)
+        @if ($data->status != 'Belum Diterima')
+            @include('admin.aktif-kuliah.modal.detailDiterima', [
+                'id' => $data->id_aktif_kuliah,
+            ])
+            @include('admin.aktif-kuliah.modal.upload', [
+                'id' => $data->id_aktif_kuliah,
+            ])
+            @include('admin.aktif-kuliah.modal.penerbitanSurat', [
+                'id' => $data->id_aktif_kuliah,
+            ])
+        @else
+            @include('admin.aktif-kuliah.modal.tolak', [
+                'id' => $data->id_aktif_kuliah,
+            ])
+            @include('admin.aktif-kuliah.modal.detail', [
+                'id' => $data->id_aktif_kuliah,
+            ])
+        @endif
+    @endforeach
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle edit and reject button clicks
-            $(document)
-                .on('click', '.btn-edit', function() {
-                    const data = $(this).data();
-                    // console.log(data);
-                    
-                    Object.keys(data).forEach(key => {
-                        $(`#${key}`).val(data[key]);
-                    });
-                })
-                .on('click', '.btn-tolak', function() {
-                    $('#id_tolak').val($(this).data('id'));
-                })
-                .on('click', '.btn-upload', function() {
-                    $('#id_upload').val($(this).data('id'));
-                    console.log($(this).data('id'));
-                    
-                });
-            $(document)
-                .on('click', '.btn-detail-terima', function() {
-                    const data = $(this).data();
-                    
-                    Object.keys(data).forEach(key => {
-                        $(`#${key}-terima`).val(data[key]);
-                    });
-                });
 
-            // Handle confirmation actions
+            // Sweet Alert
             $(document).on('click', '.btn-setujui, .tolak', function(e) {
                 e.preventDefault();
                 const form = $(this).closest('form')[0];
@@ -155,14 +217,21 @@
             $(document).on('click', '.penerbitan', function(e) {
                 e.preventDefault();
                 const form = $(this).closest('form')[0];
+                const isApprove = $(this).hasClass('.penerbitan');
+
+                // Validation for reject form
+                if (!isApprove && !form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
 
                 Swal.fire({
-                    title: 'Apakah Kamu Yakin?',
+                    title: 'Mau di Terbitkan?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#14A44D',
                     cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, Terbitkan Surat Ini',
+                    confirmButtonText: 'Yes',
                     cancelButtonText: 'Batal'
                 }).then((result) => result.isConfirmed && form.submit());
             });

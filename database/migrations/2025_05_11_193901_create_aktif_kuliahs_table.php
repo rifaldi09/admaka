@@ -16,6 +16,10 @@ return new class extends Migration
             $table->uuid('id_aktif_kuliah')->primary();
             $table->foreignIdFor(User::class)->constrained();
             $table->text('keperluan');
+            $table->text('nomor_surat')->nullable();
+            $table->integer('semester_awal');
+            $table->integer('semester_akhir');
+            $table->enum('status_kuliah',['Aktif','Tidak Aktif'])->nullable();
             $table->enum('status',['Belum Diterima', 'Diterima', 'Ditolak','Penerbitan'])->default('Belum Diterima');
             $table->string('alasan')->nullable();
             $table->timestamps();

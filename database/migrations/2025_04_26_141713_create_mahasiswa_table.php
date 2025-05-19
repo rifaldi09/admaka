@@ -20,6 +20,11 @@ return new class extends Migration
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->string('no_hp');
+            $table->enum('jenjang',['Strata 1','Strata 2'])->default('Strata 1');
+            $table->integer('semester');
+            $table->string('tahun_akademik');
+            $table->float('ipk');
+            $table->integer('sks');
             $table->timestamps();
             $table->softDeletes(); 
 

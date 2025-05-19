@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Prodi;
 use App\Models\AktifKuliah;
-use App\Models\Mahasiswa;
+use App\Models\User;
 use App\Models\FilePengajuan;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use PhpOffice\PhpWord\Shared\Validate;
+use PhpOffice\PhpWord\TemplateProcessor;
+
+Carbon::setLocale('id');
 
 class AktifKuliahController extends Controller
 {
@@ -21,201 +26,21 @@ class AktifKuliahController extends Controller
 
         // data yang akan tampil pada tabel
         // Mengambil data surat aktif kuliah berdasarkan user_id
-        $dataTable = AktifKuliah::with('filePengajuan')->where('user_id', Auth::user()->id)->get();
+        $dataSurat = AktifKuliah::with('filePengajuan')->where('user_id', Auth::user()->id)->get();
         // dd($dataTable);
 
-        // Validasi data table jika kosong
-        if (empty($dataTable)) {
-            $dataSuratFormatted = [];
-        } else {
-            // Buat array untuk dikirim ke view
-            $dataSuratFormatted = $dataTable->map(function ($surat, $index) {
-
-                // Defaultkan status dan tombol Aksi
-                $status = '';
-                $btnActions = '';
-
-                // Tentukan status dan tombol Aksi berdasarkan status surat
-                switch ($surat->status) {
-                    case 'Ditolak':
-                        $status = '<div class="border border-danger btn-sm text-danger text-center">' . $surat->status . '</div>';
-                        $btnActions = '<button class="btn btn-default text-warning btn-edit"
-                        data-toggle="modal"
-                        data-target="#modalEdit"
-                        data-id="' . e($surat->id_aktif_kuliah) . '"
-                        data-keperluan="' . e($surat->keperluan) . '"
-                        data-status="' . e($surat->status) . '"
-                        data-alasan="' . e($surat->alasan) . '"
-                        title="Edit"><i class="fa-solid fa-pen-to-square"></i> Edit</button>';
-                        break;
-                    case 'Penerbitan':
-                        $status = '<div class="border border-primary btn-sm text-primary text-center">' . $surat->status . '</div>';
-                        foreach ($surat->filePengajuan as $file) {
-                            $btnActions = '<button class="btn btn-default text-primary" title="Unduh"><i class="fa-solid fa-download"></i> Unduh</button>';
-                        }
-                        break;
-                    case 'Diterima':
-                        $status = '<div class="border border-success btn-sm text-success text-center">' . $surat->status . '</div>';
-                        break;
-                    default:
-                        $status = '<div class="border border-warning btn-sm text-warning text-center">' . $surat->status . '</div>';
-                        break;
-                }
-
-                //! belum siap
-                // $pengajuan = FilePengajuan::where('id_pengajuan', Auth::id())->get();
-
-                // Mengembalikan data dalam bentuk array 
-                return [
-                    $index + 1,
-                    $surat->keperluan,
-                    $status,
-                    '<nobr>' . $btnActions . '</nobr>',
-                ];
-            })->toArray();
-            // $dataSuratRaw = $dataTable->toArray();
-        }
         // dd($dataTable);
-        return view('mahasiswa.aktif-kuliah.index', compact('dataUser', 'prodi', 'dataSuratFormatted'));
+        return view('mahasiswa.aktif-kuliah.index', compact('dataUser', 'prodi', 'dataSurat'));
     }
 
     // Fungsi untuk menampilkan halaman aktif kuliah role admin
     public function aktifKuliahAdmin()
     {
 
-        $dataSurat = AktifKuliah::with('user')->get();
+        $dataSurat = AktifKuliah::with('user.dataMahasiswa.prodi')->get();
+        // dd($dataSurat);
 
-        // gak tau gimana cara menjelaskannya
-        // yang penting untuk menampilkan data surat aktif kuliah beserta data mahasiswa
-        // data yang ditampilkan sudah di golongkan atara surat yang sudah disetujui/tolak/penerbitan dan belum disetujui
-        $data = collect();
-        foreach ($dataSurat as $surat) {
-            $mahasiswa = Mahasiswa::where('nim', $surat->user->id_user)->first();
-            if ($mahasiswa) {
-                $prodi = Prodi::where('id', $mahasiswa->id_prodi)->first();
-                $mahasiswa->id = $surat->id_aktif_kuliah;
-                $mahasiswa->keperluan = $surat->keperluan;
-                $mahasiswa->status = $surat->status;
-                $mahasiswa->deskripsi = $surat->deskripsi;
-                $mahasiswa->prodi = $prodi ? $prodi->nama : '-';
-                $mahasiswa->created_at = $surat->created_at;
-                $data->push($mahasiswa);
-            }
-        }
-        // dd($data);
-
-        // data surat yang sudah disetujui dan ditolak
-        $dataDisetujui = $data->filter(function ($item) {
-            return $item->status !== 'Belum Diterima';
-        })->map(function ($item, $index) {
-            $status = '';
-            $btnTerbit = '';
-            $btnDetail = '';
-            $btnUpload = '';
-
-            // jika status ditolak maka hanya menampikan data dan status tanpa tombol aksi
-            // jika status diterima maka menampilkan tombol aksi
-            if ($item->status == 'Ditolak') {
-                $status = '<div class="border border-danger btn-sm text-danger text-center">' . e($item->status) . '</div>';
-            } else {
-                $status = '<div class="border border-success btn-sm text-success text-center">' . e($item->status) . '</div>';
-                $btnTerbit = '
-                <form action="' . route('penerbitan-aktif-kuliah') . '" method="POST" class="d-inline">
-                    ' . csrf_field() . '
-                    <input type="hidden" name="id" value="' . e($item->id) . '" >
-                    <input type="hidden" name="status" value="' . e($item->status) . '">
-                    <button class="btn btn-primary btn-sm penerbitan " title="Terbitkan" type="button">
-                        <i class="fa-solid fa-download"></i> Terbitkan
-                    </button>
-                </form>';
-
-                // set button dengan data agar bisa di kirim ke modal
-                // ada alternatif lain tetapi harus akses route untuk mendapatkan data
-                $btnDetail = '<button class="btn btn-primary btn-detail-terima btn-sm mr-3"
-                    data-toggle="modal"
-                    data-target="#modalDetailTerima"
-                    data-id="' . e($item->id) . '"
-                    data-nim="' . e($item->nim) . '"
-                    data-nama="' . e($item->nama) . '"
-                    data-prodi="' . e($item->prodi) . '"
-                    data-keperluan="' . e($item->keperluan) . '"
-                    data-deskripsi="' . e($item->deskripsi) . '"
-                    data-email="' . e($item->email) . '"
-                    data-nohp="' . e($item->no_hp) . '"
-                    data-status="' . e($item->status) . '"
-                    data-tempatLhr="' . e($item->tempat_lahir) . '"
-                    data-tanggalLhr="' . e($item->tanggal_lahir) . '"
-                    title="Detail">
-                        <i class="fa-solid fa-eye"></i> Detail
-                    </button>';
-
-                if ($item->status == 'Penerbitan') {
-                    $btnUpload = '<button class="btn btn-success btn-sm btn-upload"
-                        data-toggle="modal"
-                        data-target="#modalUpload"
-                        data-id="' . e($item->id) . '"
-                            title="Upload">
-                            <i class="fa-solid fa-upload"></i> Upload
-                        </button>';
-                }
-            }
-
-            // jika sudah di set untuk setiap variabel button maka tinggal mengembalikannya ke halaman view
-            // dengan format array
-            return [
-                e($item->nim),
-                e($item->nama),
-                e($item->prodi),
-                $status,
-                $item->created_at->format('d-m-Y'),
-                '<nobr>' . $btnDetail . $btnTerbit . '</nobr>',
-                '<nobr>' . $btnUpload . '</nobr>',
-            ];
-        })->values()->toArray();
-        // dd($data);
-
-        // data surat yang belum disetujui
-        //! sama seperti yang sebelumnya
-        $dataBelumDisetujui = $data->filter(function ($item) {
-            return $item->status === 'Belum Diterima';
-        })->map(function ($item, $index) {
-            $status = '<div class="border border-warning btn-sm text-warning text-center">' . e($item->status) . '</div>';
-            $btnLihat = '<button class="btn btn-primary btn-edit btn-sm mr-3"
-                    data-toggle="modal"
-                    data-target="#modalLihat"
-                    data-id="' . e($item->id) . '"
-                    data-nim="' . e($item->nim) . '"
-                    data-nama="' . e($item->nama) . '"
-                    data-prodi="' . e($item->prodi) . '"
-                    data-keperluan="' . e($item->keperluan) . '"
-                    data-deskripsi="' . e($item->deskripsi) . '"
-                    data-email="' . e($item->email) . '"
-                    data-nohp="' . e($item->no_hp) . '"
-                    data-status="' . e($item->status) . '"
-                    data-tempatLhr="' . e($item->tempat_lahir) . '"
-                    data-tanggalLhr="' . e($item->tanggal_lahir) . '"
-                    title="Detail">
-                    <i class="fa-solid fa-eye"></i> Lihat
-                </button>';
-            $btnTolak = '<button class="btn btn-danger btn-tolak btn-sm"
-                    data-toggle="modal"
-                    data-target="#modalTolak"
-                    data-id="' . e($item->id) . '"
-                    title="Tolak">
-                    <i class="fa-solid fa-circle-info"></i> Tolak
-                </button>';
-
-            return [
-                e($item->nim),
-                e($item->nama),
-                e($item->prodi),
-                $status,
-                $item->created_at->format('d-m-Y'),
-                '<nobr>' . $btnLihat . $btnTolak . '</nobr>',
-            ];
-        })->values()->toArray();
-
-        return view('admin.aktif-kuliah.index', compact('dataDisetujui', 'dataBelumDisetujui'));
+        return view('admin.aktif-kuliah.index', compact('dataSurat'));
     }
 
     // Fungsi untuk input pengajuan surat aktif kuliah dari mahasiswa
@@ -223,12 +48,16 @@ class AktifKuliahController extends Controller
     {
         // Validasi inputan
         $request->validate([
-            'keperluan' => 'required|string|max:255',
+            'keperluan' => 'required|string',
+            'semester_awal' => 'required',
+            'semester_akhir' => 'required',
         ]);
 
         // Cek apakah surat aktif kuliah sudah ada
         $validasi = AktifKuliah::create([
             'keperluan' => $request->keperluan,
+            'semester_awal' => $request->semester_awal,
+            'semester_akhir' => $request->semester_akhir,
             'user_id' => Auth::user()->id,
         ]);
 
@@ -244,20 +73,15 @@ class AktifKuliahController extends Controller
     public function terimaAktifKuliah(Request $request)
     {
         // dd($request->all());
+        $validasi = $request->validate(['status_mahasiswa' => 'required']);
         $id = $request->id;
-        $deskripsi = $request->deskripsi;
 
         // update status aktif kuliah
-        if ($deskripsi == null) {
-            AktifKuliah::where('id_aktif_kuliah', $id)->update([
-                'status' => 'Diterima',
-            ]);
-        } else {
-            AktifKuliah::where('id_aktif_kuliah', $id)->update([
-                'status' => 'Diterima',
-                'alasan' => $deskripsi,
-            ]);
-        }
+
+        AktifKuliah::where('id_aktif_kuliah', $id)->update([
+            'status' => 'Diterima',
+            'status_kuliah' => $validasi['status_mahasiswa'],
+        ]);
 
         return redirect()->route('Administrator/aktif-kuliah')->with('success', 'Status Aktif Kuliah Berhasil Diubah');
     }
@@ -280,24 +104,59 @@ class AktifKuliahController extends Controller
     }
 
     // Fungsi untuk mengupload surat aktif kuliah
-    public function penerbitanAktifKuliah(Request $request)
+    public function penerbitanAktifKuliah(Request $request, $id)
     {
+        // dd($request->all());
+        $idAktifKuliah = decrypt($id);
+        $dataSurat = AktifKuliah::with('user.dataMahasiswa.prodi')->where('id_aktif_kuliah', $idAktifKuliah)->first();
 
-        $dataStatus = AktifKuliah::where('id_aktif_kuliah', $request->id)->first();
+        $genapGanjil = $dataSurat->user->dataMahasiswa->semester % 2 == 0 ? 'Genap' : 'Ganjil';
 
-        // mengecek apakah surat tersebut sudah di ubah atau belum untuk status penerbitan
-        // jika sudah di ubah maka hanya bisa unduh surat
-        // jika belum di ubah maka status akan di ubah dan akan mengunduh surat
-        if ($dataStatus->status != 'Penerbitan') {
-            AktifKuliah::where('id_aktif_kuliah', $request->id)->update([
-                'status' => 'Penerbitan',
+        $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
+        $numberSemester = $dataSurat->user->dataMahasiswa->semester . ' (' . $formatter->format($dataSurat->user->dataMahasiswa->semester) . ')';
+
+        $template = new TemplateProcessor(storage_path('app/public/aktif-kuliah/template-surat-aktif-kuliah.docx'));
+
+        if ($dataSurat->status != 'Penerbitan') {
+            $validasi = $request->validate([
+                'nomor_surat' => 'required',
             ]);
-            // Unduh surat aktif kuliah
+
+            AktifKuliah::where('id_aktif_kuliah', $idAktifKuliah)->update([
+                'status' => 'Penerbitan',
+                'nomor_surat' => $validasi['nomor_surat'],
+            ]);
+            $template->setValue('nomor_surat', $validasi['nomor_surat']);
         } else {
-            // Unduh surat aktif kuliah
+            $nomorSurat = AktifKuliah::where('id_aktif_kuliah', $idAktifKuliah)->first();
+            $template->setValue('nomor_surat', $nomorSurat->nomor_surat);
         }
 
-        return back()->with('success', 'Status diperbaharui');
+        $template->setValue('nama', $dataSurat->user->dataMahasiswa->nama);
+        $template->setValue('status', $dataSurat->status_kuliah);
+        $template->setValue('semester_awal', $dataSurat->semester_awal);
+        $template->setValue('semester_akhir', $dataSurat->semester_akhir);
+        $template->setValue('nim', $dataSurat->user->dataMahasiswa->nim);
+        $template->setValue('tempat_lahir', $dataSurat->user->dataMahasiswa->tempat_lahir);
+        $template->setValue('tanggal_lahir', $dataSurat->user->dataMahasiswa->tanggal_lahir);
+        $template->setValue('prodi', $dataSurat->user->dataMahasiswa->prodi->nama);
+        $template->setValue('jenjang', $dataSurat->user->dataMahasiswa->jenjang);
+        $template->setValue('semester', $numberSemester);
+        $template->setValue('genap_ganjil', $genapGanjil);
+        $template->setValue('tahun_akademik', $dataSurat->user->dataMahasiswa->tahun_akademik);
+        $template->setValue('no_hp', $dataSurat->user->dataMahasiswa->no_hp);
+        $template->setValue('sks', $dataSurat->user->dataMahasiswa->sks);
+        $template->setValue('ipk', $dataSurat->user->dataMahasiswa->ipk);
+        $template->setValue('tahun_now', now()->format('Y'));
+        $template->setValue('tanggal_now', Carbon::now()->translatedFormat('d F Y'));
+
+        $fileName = 'aktif_kuliah_' . $dataSurat->user->dataMahasiswa->nim . '.docx';
+
+
+        $temp_file = tempnam(sys_get_temp_dir(), 'word_');
+        $template->saveAs($temp_file);
+
+        return response()->download($temp_file, $fileName)->deleteFileAfterSend(true);
     }
 
     // Fungsi untuk mengupload surat aktif kuliah
@@ -305,19 +164,20 @@ class AktifKuliahController extends Controller
     {
         // dd($request->all());
         $request->validate([
-            'file' => 'required|mimes:pdf|max:2048', // Maks 2MB
+            'file' => 'required|mimes:pdf', // Maks 2MB
         ]);
 
         $file = $request->file('file');
+        $idAktifKuliah = decrypt($request->id);
 
         if ($file) {
-            $fileName = 'pengajuan_aktif_kuliah_' . time() . '.' . $file->getClientOriginalExtension();
+            $fileName = 'surat_aktif_kuliah_' . time() . '.' . $file->getClientOriginalExtension();
 
-            $path = $file->storeAs('public/aktif-kuliah', $fileName);
+            $path = $file->storeAs('public/aktif-kuliah/pdf', $fileName);
 
             FilePengajuan::create([
-                'path' => $path,
-                'id_pengajuan' => $request->id,
+                'path' => 'app/' . $path,
+                'id_pengajuan' => $idAktifKuliah,
             ]);
 
             return back()->with('success', 'File telah diupload');
@@ -340,5 +200,13 @@ class AktifKuliahController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Data berhasil diubah');
+    }
+
+    public function unduhPDF(Request $request)
+    {
+        $idPengajuan = decrypt($request->id);
+        $pathSurat = FilePengajuan::where('id_pengajuan', $idPengajuan)->first();
+        $path = storage_path($pathSurat->path);
+        return response()->download($path)->deleteFileAfterSend(false);
     }
 }
