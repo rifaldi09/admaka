@@ -52,8 +52,15 @@ class User extends Authenticatable
         return $this->hasMany(RoleAkses::class, 'id_role');
     }
 
+    // relasi ke tabel pengajuan-kp
     public function pengajuanKp()
     {
         return $this->hasMany(PengajuanKP::class, 'user_id');
+    }
+
+    // relasi ke tabel permohonan-pengambilan
+    public function permohonanPengambilan()
+    {
+        return $this->hasMany(PPDP::class, 'user_id');
     }
 }

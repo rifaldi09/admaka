@@ -112,7 +112,6 @@ class PengajuanKPController extends Controller
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
             'alamat_surat' => $request->alamat_surat,
-            'user_id' => Auth::user()->id,
             'alasan_ditolak' => '',
             'status' => 'Belum Diterima'
         ];

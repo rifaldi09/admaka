@@ -8,6 +8,7 @@ use App\Http\Controllers\Data\DataMahasiswa;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PengajuanKPController;
+use App\Http\Controllers\PPDPController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -105,7 +106,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
 
         // pengubahan status pengajuan surat
         Route::post('terima-pengajuan/{pengajuan:id_pengajuan}', 'terimaPengajuan')->name('terima-pengajuan');
-        Route::post('tolak-pengajuan/{pengajuan:id_pengajuan}', 'tolakPengajuan')->name('tolak-pengajuan');
+        Route::put('tolak-pengajuan/{pengajuan:id_pengajuan}', 'tolakPengajuan')->name('tolak-pengajuan');
         Route::post('edit-pengajuan/{pengajuan:id_pengajuan}', 'editPengajuan')->name('edit-pengajuan');
         Route::post('penerbitan-pengajuan/{pengajuan:id_pengajuan}', 'penerbitanPengajuan')->name('penerbitan-pengajuan');
     });
@@ -128,6 +129,29 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::post('penerbitan-aktif-kuliah/{id}', 'penerbitanAktifKuliah')->name('penerbitan-aktif-kuliah'); // proses mengubah status penerbitan 
         Route::post('edit-penolakan-surat', 'editPenolakanSurat')->name('edit-penolakan-surat');
         Route::post('unduh-pdf-surat-aktif-kuliah', 'unduhPDF')->name('unduh-pdf-surat-aktif-kuliah');
+    });
+
+    // Permohonan Pengambilan Data Penelitian
+    Route::controller(PPDPController::class)->group(function() {
+        // Route get untuk tampilan awal mahasiswa,admin,dosen-koordinator
+        Route::get('Mahasiswa/permohonan-pengambilan', 'ppdpMahasiswa')->name('ppdp-mahasiswa');
+        Route::get('Administrator/permohonan-pengambilan', 'ppdpAdmin')->name('ppdp-admin');
+        Route::get('Koordinator Pengambilan Data/permohonan-pengambilan', 'ppdpKoordinator')->name('ppdp-koordinator');
+
+        // membuat surat permohonan - mahasiswa
+        Route::post('create-permohonan-mahasiswa', 'createPermohonan')->name('create-permohonan-mahasiswa');
+
+        // upload surat permohonan jika sudah di tanda tangani- admin (TU)
+        Route::post('upload-permohonan/{permohonan:id_permohonan}', 'uploadPermohonan')->name('upload-permohonan');
+
+        // generate surat dengan format docx/word - admin
+        Route::put('generate-permohonan/{permohonan:id_permohonan}', 'generatePermohonan')->name('generate-permohonan');
+        
+        // route buat ubah status surat permohonan
+        Route::put('terima-permohonan-mahasiswa/{permohonan:id_permohonan}', 'terimaPermohonan')->name('terima-permohonan-mahasiswa');
+        Route::put('penerbitan-permohonan/{permohonan:id_permohonan}', 'penerbitanPermohonan')->name('penerbitan-permohonan');
+        Route::put('tolak-permohonan/{permohonan:id_permohonan}', 'tolakPermohonan')->name('tolak-permohonan');
+        Route::put('edit-permohonan/{permohonan:id_permohonan}', 'editPermohonan')->name('edit-permohonan');
     });
 
 

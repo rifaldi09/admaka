@@ -7,9 +7,10 @@
             <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <form action="{{ route('tolak-pengajuan', $id) }}" method="post">
+        <form action="{{ route($route, $id) }}" method="post">
             <div class="modal-body">
                 @csrf
+                @method('PUT')
                 <label for="alasan">Alasan</label>
                 <textarea name="alasan_ditolak" id="alasan" cols="30" rows="3" class="form-control"></textarea>
             </div>

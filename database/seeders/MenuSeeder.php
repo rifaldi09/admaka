@@ -89,6 +89,15 @@ class MenuSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'kelompok_menu'=> 'Surat',
+                'header' => 'Surat',
+                'menu' => 'Surat Permohonan Pengambilan Data Penelitian',
+                'url' => '{role}/permohonan-pengambilan',
+                'icon' => 'fa-solid fa-circle fa-2xs',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
         ]);
     }
 }
