@@ -48,6 +48,14 @@ class UserSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'id' => 5,
+                'id_user' => '2026',
+                'password' => Hash::make('123'),
+                'id_role' => '6',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
         ]);
     }
 }

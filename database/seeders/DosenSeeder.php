@@ -25,6 +25,18 @@ class DosenSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'nidn' => '2026',
+                'nip' => '19911919919191918',
+                'nama' => 'Dosen Koordinator Permohonan Pengambilan Data Penelitian',
+                'email' => 'koordinatorppdp@gmail.com',
+                'id_prodi' => '1',
+                'tempat_lahir' => 'Malang',
+                'tanggal_lahir' => '2025-05-04',
+                'no_hp' => '012235662781',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
         ]);
     }
 }

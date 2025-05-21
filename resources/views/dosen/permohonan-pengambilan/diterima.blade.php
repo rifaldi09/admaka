@@ -5,23 +5,24 @@
         <th class="w-25">Aksi</th>
     </tr>
     @forelse ($diterima as $key => $data)
-        @foreach ($data->pengajuanKp as $kp)
+        @foreach ($data->permohonanPengambilan as $pp)
             <tr>
                 <td>{{ ++$key }}</td>
                 <td>{{ $data->dataMahasiswa->nama }}</td>
                 <td class="d-flex">
-                    <button type="button" class="btn btn-danger mr-2 align-self-start" data-toggle="modal" data-target="#tolakModal-{{ $kp->id_pengajuan }}">
+                    <button type="button" class="btn btn-danger mr-2 align-self-start" data-toggle="modal" data-target="#tolakModal-{{ $pp->id_permohonan }}">
                         Tolak
                     </button>
-                    <form action="{{ route('penerbitan-pengajuan', $kp->id_pengajuan) }}" class="mr-2" method="post">
+                    <form action="{{ route('penerbitan-permohonan', $pp->id_permohonan) }}" class="mr-2" method="post">
                         @csrf
+                        @method('PUT')
                         <button class="btn btn-success">Terbitkan</button>
                     </form>
-                    <button type="button" class="btn btn-primary align-self-start" data-toggle="modal" data-target="#detailModal-{{ $kp->id_pengajuan }}">
+                    <button type="button" class="btn btn-primary align-self-start" data-toggle="modal" data-target="#detailModal-{{ $pp->id_permohonan }}">
                         Detail
                     </button>
-                    @include('dosen.modal.tolak-modal', ['id' => $kp->id_pengajuan, 'route' => 'tolak_pengajuan'])
-                    @include('admin.pengajuan-kp.modal.detail-kp', ['id' => $kp->id_pengajuan])
+                    @include('dosen.modal.tolak-modal', ['id' => $pp->id_permohonan, 'route' => 'tolak-permohonan'])
+                    @include('admin.permohonan-pengambilan.modal.detail-pp')
                 </td>
             </tr>
         @endforeach

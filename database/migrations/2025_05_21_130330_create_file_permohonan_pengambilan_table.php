@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('file_pengajuan', function (Blueprint $table) {
+        Schema::create('file_permohonan_pengambilan', function (Blueprint $table) {
             $table->id();
-            $table->uuid('id_pengajuan'); // foreign key ke tabel pengajuan kp
+            $table->uuid('id_permohonan'); // foreign key ke tabel pengajuan permohonan_pengambilan
             $table->string('path');
             $table->timestamps();
 
-            // $table->foreign('id_pengajuan')->references('id_pengajuan')->on('pengajuan_kp')->onDelete('cascade');y
+            $table->foreign('id_permohonan')->references('id_permohonan')->on('permohonan_pengambilan')->onDelete('cascade');
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('file_pengajuan');
+        Schema::dropIfExists('file_permohonan_pengambilan');
     }
 };

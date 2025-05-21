@@ -38,6 +38,11 @@ class RoleSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'name_role' => 'Koordinator Pengambilan Data',
+                'created_at' => now(),
+                'updated_at' => now()
+            ]
         ]);
     }
 }
