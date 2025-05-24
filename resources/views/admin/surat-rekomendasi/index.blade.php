@@ -1,12 +1,12 @@
 @extends('dashboard.home')
 
-@section('title', 'Surat Aktif Kuliah')
+@section('title', 'Surat Rekomendasi')
 
 @section('content')
 
     <div class="card mt-3">
         <div class="card-header">
-            <h1 class="card-title font-weight-bold">Surat Aktif Kuliah</h1>
+            <h1 class="card-title font-weight-bold">Surat Rekomendasi</h1>
         </div>
         <div class="card-body">
 
@@ -35,12 +35,6 @@
                                 ['label' => 'Actions', 'no-export' => true, 'width' => 7],
                             ];
 
-                            // $config = [
-                            //     'data' => $dataBelumDisetujui,
-                            //     'order' => [[1, 'asc']],
-                            //     'columns' => [null, null, null, ['orderable' => true]],
-                            // ];
-
                         @endphp
 
                         <x-adminlte-datatable id="table1" :heads="$heads">
@@ -59,11 +53,11 @@
                                             <nobr>
                                                 <button class="btn btn-primary btn-edit btn-sm mr-3" title="Detail"
                                                     data-toggle="modal"
-                                                    data-target="#modalLihat-{{ $data->id_aktif_kuliah }}">
+                                                    data-target="#detailRekomendasi-{{ $data->id_rekomendasi }}">
                                                     <i class="fa-solid fa-eye"></i> Lihat
                                                 </button>
                                                 <button class="btn btn-danger btn-tolak btn-sm" data-toggle="modal"
-                                                    data-target="#modalTolak-{{ $data->id_aktif_kuliah }}" title="Tolak">
+                                                    data-target="#tolakRekomendasi-{{ $data->id_rekomendasi }}" title="Tolak">
                                                     <i class="fa-solid fa-circle-info"></i> Tolak
                                                 </button>
                                             </nobr>
@@ -115,17 +109,17 @@
                                             <nobr>
                                                 <button class="btn btn-primary btn-detail-terima btn-sm mr-3"
                                                     data-toggle="modal"
-                                                    data-target="#modalDetailTerima-{{ $data->id_aktif_kuliah }}"
+                                                    data-target="#modalDetailTerima-{{ $data->id_rekomendasi }}"
                                                     title="Detail">
                                                     <i class="fa-solid fa-eye"></i> Detail
                                                 </button>
                                                 @if ($data->status != 'Ditolak')
                                                     @if ($data->status == 'Penerbitan')
                                                         <form
-                                                            action="{{ route('penerbitan-aktif-kuliah', encrypt($data->id_aktif_kuliah)) }}" method="POST" class="d-inline" enctype="multipart/form-data">
+                                                            action="{{ route('penerbitan-surat-rekomendasi', encrypt($data->id_rekomendasi)) }}" method="POST" class="d-inline" enctype="multipart/form-data">
                                                             @csrf
-                                                            <input type="hidden" name="status"
-                                                                value="{{ $data->status }}">
+                                                            {{-- <input type="hidden" name="status"
+                                                                value="{{ $data->status }}"> --}}
                                                             <button class="btn btn-primary btn-sm download "
                                                                 title="Download" type="submit">
                                                                 <i class="fa-solid fa-download"></i>
@@ -134,7 +128,7 @@
                                                         </form>
                                                     @else
                                                         <button class="btn btn-primary btn-sm" data-toggle="modal"
-                                                            data-target="#penerbitanSurat-{{ $data->id_aktif_kuliah }}"
+                                                            data-target="#penerbitanSurat-{{ $data->id_rekomendasi }}"
                                                             title="Terbitkan" type="button">
                                                             <i class="fa-solid fa-download"></i>
                                                             Terbitkan
@@ -147,7 +141,7 @@
                                             <nobr>
                                                 @if ($data->status == 'Penerbitan')
                                                     <button class="btn btn-success btn-sm btn-upload" data-toggle="modal"
-                                                        data-target="#modalUpload-{{ $data->id_aktif_kuliah }}"title="Upload">
+                                                        data-target="#modalUpload-{{ $data->id_rekomendasi }}"title="Upload">
                                                         <i class="fa-solid fa-upload"></i> Upload
                                                     </button>
                                                 @endif
@@ -167,21 +161,21 @@
     {{-- modal --}}
     @foreach ($dataSurat as $data)
         @if ($data->status != 'Belum Diterima')
-            @include('admin.aktif-kuliah.modal.detailDiterima', [
-                'id' => $data->id_aktif_kuliah,
+            @include('admin.surat-rekomendasi.modal.detailDiterima', [
+                'id' => $data->id_rekomendasi,
             ])
-            @include('admin.aktif-kuliah.modal.upload', [
-                'id' => $data->id_aktif_kuliah,
+            @include('admin.surat-rekomendasi.modal.upload', [
+                'id' => $data->id_rekomendasi,
             ])
-            @include('admin.aktif-kuliah.modal.penerbitanSurat', [
-                'id' => $data->id_aktif_kuliah,
+            @include('admin.surat-rekomendasi.modal.penerbitanSurat', [
+                'id' => $data->id_rekomendasi,
             ])
         @else
-            @include('admin.aktif-kuliah.modal.tolak', [
-                'id' => $data->id_aktif_kuliah,
+            @include('admin.surat-rekomendasi.modal.tolak', [
+                'id' => $data->id_rekomendasi,
             ])
-            @include('admin.aktif-kuliah.modal.detail', [
-                'id' => $data->id_aktif_kuliah,
+            @include('admin.surat-rekomendasi.modal.detail', [
+                'id' => $data->id_rekomendasi,
             ])
         @endif
     @endforeach

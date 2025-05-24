@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
                 'id_role' => '6',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ]);
     }
 }

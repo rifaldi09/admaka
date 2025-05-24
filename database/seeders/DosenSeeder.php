@@ -36,7 +36,7 @@ class DosenSeeder extends Seeder
                 'no_hp' => '012235662781',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ]);
     }
 }
