@@ -138,6 +138,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::get('Mahasiswa/permohonan-pengambilan', 'ppdpMahasiswa')->name('ppdp-mahasiswa');
         Route::get('Administrator/permohonan-pengambilan', 'ppdpAdmin')->name('ppdp-admin');
         Route::get('Koordinator Pengambilan Data/permohonan-pengambilan', 'ppdpKoordinator')->name('ppdp-koordinator');
+        Route::get('Dosen/permohonan-pengambilan', 'ppdpDosen')->name('ppdp-dosen');
 
         // membuat surat permohonan - mahasiswa
         Route::post('create-permohonan-mahasiswa', 'createPermohonan')->name('create-permohonan-mahasiswa');
