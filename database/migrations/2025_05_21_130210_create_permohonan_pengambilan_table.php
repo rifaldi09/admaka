@@ -16,10 +16,12 @@ return new class extends Migration
             $table->uuid('id_permohonan')->primary();
             $table->foreignIdFor(User::class)->constrained(); // foreign key ke users.id
             $table->unsignedBigInteger('id_prodi');
+            $table->unsignedBigInteger('nidn')->nullable();
             $table->string('no_surat')->nullable()->default('');
             $table->string('tujuan_surat');
             $table->text('alamat_surat');
-            $table->text('judul_skripsi');
+            $table->enum('keperluan', ['skripsi', 'mata_kuliah']);
+            $table->text('judul_skripsi')->nullable()->default('');
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
             $table->enum('status', ['Belum Diterima', 'Diterima', 'Ditolak' , 'Penerbitan'])->default('Belum Diterima');
@@ -27,6 +29,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('id_prodi')->references('id')->on('prodi')->onDelete('cascade');
+            $table->foreign('nidn')->references('nidn')->on('dosen')->onDelete('cascade');
         });
     }
 

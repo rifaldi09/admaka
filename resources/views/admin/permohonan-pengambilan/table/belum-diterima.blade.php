@@ -2,6 +2,7 @@
     <tr>
         <th>No</th>
         <th class="w-50">Nama</th>
+        <th class="w-25">Keperluan</th>
         <th class="w-25">Status</th>
         <th class="w-50">Aksi</th>
     </tr>
@@ -10,6 +11,7 @@
         <tr>
             <td>{{ ++$key }}</td>
             <td>{{ $data->dataMahasiswa->nama }}</td>
+            <td>{{ $pp->keperluan == 'mata_kuliah' ? 'Mata Kuliah' : 'Skripsi' }}</td>
             <td>{{ $pp->status }}</td>
             <td class="d-flex">
                 <form action="{{ route('terima-permohonan-mahasiswa', $pp->id_permohonan) }}" class="mr-2" method="post">

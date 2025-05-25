@@ -16,7 +16,7 @@
                 <th>No</th>
                 <th>Tujuan Surat</th>
                 <th>Alamat Surat</th>
-                <th>Judul Skripsi</th>
+                <th>Keperluan</th>
                 <th>Tanggal Mulai</th>
                 <th>Tanggal Selesai</th>
                 <th>Status</th>
@@ -28,7 +28,7 @@
                     <td>{{ ++$key }}</td>
                     <td>{{ $detail->tujuan_surat }}</td>
                     <td>{{ $detail->alamat_surat }}</td>
-                    <td>{{ $detail->judul_skripsi }}</td>
+                    <td>{{ $detail->keperluan == 'mata_kuliah' ? 'Mata Kuliah' : 'Skripsi' }}</td>
                     <td>{{ \Carbon\Carbon::parse($detail->tanggal_mulai)->translatedFormat('j F Y') }}</td>
                     <td>{{ \Carbon\Carbon::parse($detail->tanggal_selesai)->translatedFormat('j F Y') }}</td>
                     <td>{{ $detail->status }}</td>
