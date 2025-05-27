@@ -6,26 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class PPDP extends Model
+class PermohonanMagang extends Model
 {
     use HasFactory;
-
-    use HasFactory;
-
-    protected $table = "permohonan_pengambilan";
-    protected $primaryKey = "id_permohonan";
+    protected $table = "permohonan_magang";
+    protected $primaryKey = "id_permohonan_magang";
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
         "user_id",
         "id_prodi",
-        "nidn",
         "no_surat",
         "tujuan_surat",
         "alamat_surat",
-        "keperluan",
-        "judul_skripsi",
         "tanggal_mulai",
         "tanggal_selesai",
         "status",
@@ -37,8 +31,8 @@ class PPDP extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            if (empty($model->id_permohonan)) {
-                $model->id_permohonan = (string) Str::uuid();
+            if (empty($model->id_permohonan_magang)) {
+                $model->id_permohonan_magang = (string) Str::uuid();
             }
         });
     }
@@ -48,13 +42,8 @@ class PPDP extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function dosen()
+    public function filePengajuan()
     {
-        return $this->hasOne(Dosen::class, 'nidn', 'nidn');
-    }
-
-    public function filePermohonan()
-    {
-        return $this->hasMany(FilePermohonan::class, 'id_permohonan', 'id_permohonan');
+        return $this->hasMany(FilePengajuan::class, 'id_pengajuan', 'id_permohonan_magang');
     }
 }

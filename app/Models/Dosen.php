@@ -32,4 +32,9 @@ class Dosen extends Authenticatable
     {
         return $this->belongsTo(Prodi::class, 'id_prodi');
     }
+
+    public function ppdp()
+    {
+        return $this->belongsTo(PPDP::class, 'nidn', 'nidn');
+    }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Data\DataMahasiswa;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PengajuanKPController;
+use App\Http\Controllers\PermohonanMagangController;
 use App\Http\Controllers\PPDPController;
 use App\Http\Controllers\TranskripController;
 use Illuminate\Support\Facades\Route;
@@ -138,6 +139,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::get('Mahasiswa/permohonan-pengambilan', 'ppdpMahasiswa')->name('ppdp-mahasiswa');
         Route::get('Administrator/permohonan-pengambilan', 'ppdpAdmin')->name('ppdp-admin');
         Route::get('Koordinator Pengambilan Data/permohonan-pengambilan', 'ppdpKoordinator')->name('ppdp-koordinator');
+        Route::get('Dosen/permohonan-pengambilan', 'ppdpDosen')->name('ppdp-dosen');
 
         // membuat surat permohonan - mahasiswa
         Route::post('create-permohonan-mahasiswa', 'createPermohonan')->name('create-permohonan-mahasiswa');
@@ -171,6 +173,27 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::put('penerbitan-transkrip/{transkrip:id_transkrip}', 'penerbitanTranskrip')->name('penerbitan-transkrip');
         Route::put('tolak-transkrip/{transkrip:id_transkrip}', 'tolakTranskrip')->name('tolak-transkrip');
         Route::put('edit-transkrip/{transkrip:id_transkrip}', 'editTranskrip')->name('edit-transkrip');
+    }
+
+    Route::controller(PermohonanMagangController::class)->group(function() {
+        Route::get('Mahasiswa/permohonan-magang','PermohonanMagangMahasiswa')->name('permohonan-magang-mahasiswa');
+        Route::get('Administrator/permohonan-magang','PermohonanMagangAdmin')->name('permohonan-magang-admin');
+        Route::get('Koordinator Kerja Praktik/permohonan-magang','PermohonanMagangKKP')->name('permohonan-magang-kkp');
+
+        // mengunduh word oleh admin agar bisa di TTD oleh dekan
+        Route::put('word-permohonan-magang/{id}', 'wordPermohonan')->name('word-permohonan-magang');
+
+        // membuat surat pengajuan
+        Route::post('create-permohonan-magang', 'createPermohonan')->name('create-permohonan-magang');
+
+        // upload surat pengajuan oleh admin ketika selesai di TTD olek dekan
+        Route::post('upload-permohonan-magang/{permohonan:id_permohonan_magang}', 'uploadPermohonan')->name('upload-permohonan-magang');
+
+        // pengubahan status pengajuan surat
+        Route::post('terima-permohonan-magang/{permohonan:id_permohonan_magang}', 'terimaPermohonan')->name('terima-permohonan-magang');
+        Route::put('tolak-permohonan-magang/{permohonan:id_permohonan_magang}', 'tolakPermohonan')->name('tolak-permohonan-magang');
+        Route::post('edit-permohonan-magang/{permohonan:id_permohonan_magang}', 'editPermohonan')->name('edit-permohonan-magang');
+        Route::post('penerbitan-permohonan-magang/{permohonan:id_permohonan_magang}', 'penerbitanPermohonan')->name('penerbitan-permohonan-magang');
     });
 
 
