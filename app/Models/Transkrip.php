@@ -12,6 +12,15 @@ class Transkrip extends Model
 
     protected $table = 'transkrip_nilai';
     protected $primaryKey = 'id_transkrip';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    protected $fillable = [
+        'user_id',
+        'keperluan',
+        'status',
+        'alasan_ditolak'
+    ];
 
     protected static function boot()
     {

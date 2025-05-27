@@ -12,7 +12,7 @@ class TranskripController extends Controller
 {
     public function transkripMahasiswa()
     {
-        $transkrip = Transkrip::where('id_user', Auth::user()->id)->get();
+        $transkrip = Transkrip::where('user_id', Auth::user()->id)->get();
 
         return view('mahasiswa.transkrip-nilai.index', compact('transkrip'));
     }
@@ -21,7 +21,7 @@ class TranskripController extends Controller
     {
         $draft = User::select('id', 'id_user', 'id_role')->whereHas('transkrip', function ($query) {
             $query->where('status', 'Belum Diterima');
-        })->with(['pengajuanKp' => function ($query) {
+        })->with(['transkrip' => function ($query) {
             $query->where('status', 'Belum Diterima');
         }, 'dataMahasiswa'])->get();
 
@@ -121,7 +121,7 @@ class TranskripController extends Controller
 
             FilePengajuan::create([
                 'path' => $path,
-                'id_pengajuan' => $transkrip->id_permohonan
+                'id_pengajuan' => $transkrip->id_transkrip
             ]);
             
             return back()->with('success', 'File telah diupload');

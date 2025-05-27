@@ -82,33 +82,43 @@ class PPDPController extends Controller
     }
 
     // create permohonan - mahasiswa
-        public function createPermohonan(Request $request)
-        {
-            // dd($request->toArray());
-            $request->validate([
-                'tujuan_surat' => 'required',
-                'tanggal_mulai' => 'required',
-                'tanggal_selesai' => 'required',
-                'alamat_surat' => 'required',
-                'keperluan' => 'required'
-            ]);
+    public function createPermohonan(Request $request)
+    {
+        $request->validate([
+            'tujuan_surat' => 'required',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'alamat_surat' => 'required',
+            'keperluan' => 'required|in:skripsi,mata_kuliah',
+            'judul_skripsi' => 'required_if:keperluan,skripsi',
+            'dosen' => 'required_if:keperluan,mata_kuliah',
+        ]);
 
-            $data = [
-                'tujuan_surat' => $request->tujuan_surat,
-                'tanggal_mulai' => $request->tanggal_mulai,
-                'tanggal_selesai' => $request->tanggal_selesai,
-                'alamat_surat' => $request->alamat_surat,
-                'judul_skripsi' => $request->judul_skripsi ?? '',
-                'keperluan' => $request->keperluan,
-                'nidn' => $request->dosen,
-                'user_id' => Auth::user()->id,
-                'id_prodi' => Auth::user()->data->id_prodi
-            ];
+        // $request only ini dia tuh ngambil data sesuai nama yang dimasukin ke dalam array
+        // jadi array data otomatis kebuat 
+        // [
+        //     'tujuan_surat' => $request->tujuan_surat
+        // ]
+        // minusnya name di input harus sama kayak di database, kalau ga mirip harus di modif lagi
 
-            PPDP::create($data);
+        $data = $request->only([
+            'tujuan_surat',
+            'tanggal_mulai',
+            'tanggal_selesai',
+            'alamat_surat',
+            'keperluan'
+        ]);
 
-            return back()->with('success', 'Permohonan sudah dibuat');
-        }
+        $data['judul_skripsi'] = $request->keperluan === 'skripsi' ? $request->judul_skripsi : '';
+        $data['nidn'] = $request->keperluan === 'mata_kuliah' ? $request->dosen : null;
+        $data['user_id'] = Auth::id();
+        $data['id_prodi'] = Auth::user()->data->id_prodi;
+
+        PPDP::create($data);
+
+        return back()->with('success', 'Permohonan sudah dibuat');
+    }
+
 
     // terima permohonan mahasiswa
     public function terimaPermohonan(PPDP $permohonan)
@@ -150,21 +160,26 @@ class PPDPController extends Controller
     {
         $request->validate([
             'tujuan_surat' => 'required',
-            'tanggal_mulai' => 'required',
-            'tanggal_selesai' => 'required',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'alamat_surat' => 'required',
-            'judul_skripsi' => 'required'
+            'keperluan' => 'required',
+            'judul_skripsi' => 'required_if:keperluan,skripsi',
+            'dosen' => 'required_if:keperluan,mata_kuliah',
         ]);
 
-        $data = [
-            'tujuan_surat' => $request->tujuan_surat,
-            'tanggal_mulai' => $request->tanggal_mulai,
-            'tanggal_selesai' => $request->tanggal_selesai,
-            'alamat_surat' => $request->alamat_surat,
-            'judul_skripsi' => $request->judul_skripsi,
-            'alasan_ditolak' => '',
-            'status' => 'Belum Diterima'
-        ];
+        $data = $request->only([
+            'tujuan_surat',
+            'tanggal_mulai',
+            'tanggal_selesai',
+            'alamat_surat',
+            'keperluan',
+        ]);
+
+        $data['judul_skripsi'] = $request->keperluan === 'skripsi' ? $request->judul_skripsi : '';
+        $data['nidn'] = $request->keperluan === 'mata_kuliah' ? $request->dosen : null;
+        $data['user_id'] = Auth::id();
+        $data['id_prodi'] = Auth::user()->data->id_prodi;
 
         $permohonan->update($data);
 
