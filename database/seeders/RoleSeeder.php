@@ -42,7 +42,12 @@ class RoleSeeder extends Seeder
                 'name_role' => 'Koordinator Pengambilan Data',
                 'created_at' => now(),
                 'updated_at' => now()
-            ]
+            ],
+            [
+                'name_role' => 'Wakil-Dekan-1',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
         ]);
     }
 }

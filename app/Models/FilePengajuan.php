@@ -22,6 +22,18 @@ class FilePengajuan extends Model
         return $this->hasOne(PengajuanKP::class, 'id_pengajuan', 'id_pengajuan');
     }
 
+    // mengambil 1 data Transkrip
+    public function dataTranskrip()
+    {
+        return $this->hasOne(Transkrip::class, 'id_transkrip', 'id_pengajuan');
+    }
+
+    // mengambil 1 data permohonan
+    public function dataPermohonan()
+    {
+        return $this->hasOne(Transkrip::class, 'id_permohonan', 'id_pengajuan');
+    }
+
     // mengambil 1 data Aktif Kuliah
     public function dataAktifKuliah()
     {
