@@ -63,4 +63,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(PPDP::class, 'user_id');
     }
+
+    // relasi ke transkrip
+    public function transkrip()
+    {
+        return $this->hasMany(Transkrip::class, 'user_id');
+    }
 }
