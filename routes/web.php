@@ -173,7 +173,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::put('penerbitan-transkrip/{transkrip:id_transkrip}', 'penerbitanTranskrip')->name('penerbitan-transkrip');
         Route::put('tolak-transkrip/{transkrip:id_transkrip}', 'tolakTranskrip')->name('tolak-transkrip');
         Route::put('edit-transkrip/{transkrip:id_transkrip}', 'editTranskrip')->name('edit-transkrip');
-    }
+    });
 
     Route::controller(PermohonanMagangController::class)->group(function() {
         Route::get('Mahasiswa/permohonan-magang','PermohonanMagangMahasiswa')->name('permohonan-magang-mahasiswa');
