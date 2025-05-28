@@ -10,6 +10,7 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PengajuanKPController;
 use App\Http\Controllers\PermohonanMagangController;
 use App\Http\Controllers\PPDPController;
+use App\Http\Controllers\RekomendasiController;
 use App\Http\Controllers\TranskripController;
 use Illuminate\Support\Facades\Route;
 
@@ -194,6 +195,18 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::put('tolak-permohonan-magang/{permohonan:id_permohonan_magang}', 'tolakPermohonan')->name('tolak-permohonan-magang');
         Route::post('edit-permohonan-magang/{permohonan:id_permohonan_magang}', 'editPermohonan')->name('edit-permohonan-magang');
         Route::post('penerbitan-permohonan-magang/{permohonan:id_permohonan_magang}', 'penerbitanPermohonan')->name('penerbitan-permohonan-magang');
+    });
+
+    Route::controller(RekomendasiController::class)->group(function(){
+        Route::get('Mahasiswa/surat-rekomendasi', 'rekomendasiMahasiswa')->name('surat-rekomendasi');
+        Route::get('Administrator/surat-rekomendasi','rekomendasiAdmin')->name('surat-rekomendasi');
+        Route::post('create-surat-rekomendasi', 'createRekomendasi')->name('create-surat-rekomendasi');
+        Route::post('edit-penolakan-rekomendasi', 'editRekomendasiMahasiswa')->name('edit-penolakan-rekomendasi');
+        Route::post('terima-surat-rekomendasi', 'terimaSuratRekomendasi')->name('terima-surat-rekomendasi');
+        Route::post('tolak-surat-rekomendasi', 'tolakSuratRekomendasi')->name('tolak-surat-rekomendasi');
+        Route::post('penerbitan-surat-rekomendasi/{id}', 'penerbitanSuratRekomendasi')->name('penerbitan-surat-rekomendasi');
+        Route::post('upload-surat-rekomendasi', 'uploadSuratRekomendasi')->name('upload-surat-rekomendasi');
+        Route::post('unduh-pdf-surat-rekomendasi', 'unduhSuratRekomendasi')->name('unduh-pdf-surat-rekomendasi');
     });
 
 

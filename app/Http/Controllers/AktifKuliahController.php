@@ -115,7 +115,7 @@ class AktifKuliahController extends Controller
         $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
         $numberSemester = $dataSurat->user->dataMahasiswa->semester . ' (' . $formatter->format($dataSurat->user->dataMahasiswa->semester) . ')';
 
-        $template = new TemplateProcessor(storage_path('app/public/aktif-kuliah/template-surat-aktif-kuliah.docx'));
+        $template = new TemplateProcessor(public_path('template/template-surat-aktif-kuliah.docx'));
 
         if ($dataSurat->status != 'Penerbitan') {
             $validasi = $request->validate([
