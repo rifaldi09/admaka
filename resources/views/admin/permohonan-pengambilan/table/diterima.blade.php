@@ -2,8 +2,9 @@
     <tr>
         <th>No</th>
         <th class="w-25">Nama</th>
-        <th class="w-25">Status</th>
-        <th class="w-25">Aksi</th>
+        <th class="w-25">Keperluan</th>
+        <th>Status</th>
+        <th>Aksi</th>
         <th class="w-75">Upload File Bertanda Tangan</th>
     </tr>
     @forelse ($diterima as $key => $data)
@@ -11,6 +12,7 @@
         <tr>
             <td>{{ ++$key }}</td>
             <td>{{ $data->dataMahasiswa->nama }}</td>
+            <td>{{ $pp->keperluan == 'mata_kuliah' ? 'Mata Kuliah' : 'Skripsi' }}</td>
             <td>{{ $pp->status }}</td>
             <td class="d-flex">
                 @if($pp->status == 'Penerbitan')

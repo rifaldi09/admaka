@@ -10,9 +10,14 @@
             <div class="modal-body">
                 <p>Tujuan surat: {{ $pp->tujuan_surat }}</p>
                 <p>Alamat surat: {{ $pp->alamat_surat }}</p>
-                <p>Judul skripsi: {{ $pp->alamat_surat }}</p>
-                <p>Tanggal Mulai: {{ $pp->tanggal_mulai }}</p>
-                <p>Tanggal Selesai: {{ $pp->tanggal_selesai }}</p>
+                <p>Keperluan: {{ $pp->keperluan == 'mata_kuliah' ? 'Mata Kuliah' : 'Skripsi' }}</p>
+                @if($pp->keperluan == 'skripsi')
+                <p>Judul skripsi: {{ $pp->judul_skripsi  }}</p>
+                @else
+                <p>Dosen Pengampu: {{ $pp->dosen->nama }}</p>
+                @endif
+                <p>Tanggal Mulai: {{ \Carbon\Carbon::parse($pp->tanggal_mulai)->translatedFormat('j F Y') }}</p>
+                <p>Tanggal Mulai: {{ \Carbon\Carbon::parse($pp->tanggal_selesai)->translatedFormat('j F Y') }}</p>
                 <p>Status: {{ $pp->status }}</p>
                 @if($pp->status == 'Ditolak')
                 <p>Alasan Ditolak: {{ $pp->alasan_ditolak }}</p>

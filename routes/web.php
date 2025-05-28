@@ -11,6 +11,7 @@ use App\Http\Controllers\PengajuanKPController;
 use App\Http\Controllers\PermohonanMagangController;
 use App\Http\Controllers\PPDPController;
 use App\Http\Controllers\RekomendasiController;
+use App\Http\Controllers\TranskripController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -139,6 +140,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::get('Mahasiswa/permohonan-pengambilan', 'ppdpMahasiswa')->name('ppdp-mahasiswa');
         Route::get('Administrator/permohonan-pengambilan', 'ppdpAdmin')->name('ppdp-admin');
         Route::get('Koordinator Pengambilan Data/permohonan-pengambilan', 'ppdpKoordinator')->name('ppdp-koordinator');
+        Route::get('Dosen/permohonan-pengambilan', 'ppdpDosen')->name('ppdp-dosen');
 
         // membuat surat permohonan - mahasiswa
         Route::post('create-permohonan-mahasiswa', 'createPermohonan')->name('create-permohonan-mahasiswa');
@@ -154,6 +156,24 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::put('penerbitan-permohonan/{permohonan:id_permohonan}', 'penerbitanPermohonan')->name('penerbitan-permohonan');
         Route::put('tolak-permohonan/{permohonan:id_permohonan}', 'tolakPermohonan')->name('tolak-permohonan');
         Route::put('edit-permohonan/{permohonan:id_permohonan}', 'editPermohonan')->name('edit-permohonan');
+    });
+
+    // Transkrip Nilai
+    Route::controller(TranskripController::class)->group(function() {
+        // route ke halaman masing-masing tiap role
+        Route::get('Mahasiswa/transkrip', 'transkripMahasiswa')->name('transkrip-mahasiswa');
+        Route::get('Administrator/transkrip', 'transkripAdmin')->name('transkrip-admin');
+        Route::get('Wakil-Dekan-1/transkrip', 'transkripWD')->name('transkrip-wd');
+
+        // route upload / buat data baru
+        Route::post('create-transkrip', 'createTranskrip')->name('create-transkrip');
+        Route::post('upload-transkrip/{transkrip:id_transkrip}', 'uploadTranskrip')->name('upload-transkrip');
+
+        // route put untuk ubah status transkrip
+        Route::put('terima-transkrip/{transkrip:id_transkrip}', 'terimaTranskrip')->name('terima-transkrip');
+        Route::put('penerbitan-transkrip/{transkrip:id_transkrip}', 'penerbitanTranskrip')->name('penerbitan-transkrip');
+        Route::put('tolak-transkrip/{transkrip:id_transkrip}', 'tolakTranskrip')->name('tolak-transkrip');
+        Route::put('edit-transkrip/{transkrip:id_transkrip}', 'editTranskrip')->name('edit-transkrip');
     });
 
     Route::controller(PermohonanMagangController::class)->group(function() {

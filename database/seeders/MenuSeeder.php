@@ -116,6 +116,15 @@ class MenuSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+                        [
+                'kelompok_menu'=> 'Surat',
+                'header' => 'Surat',
+                'menu' => 'Transkrip Nilai Sementara',
+                'url' => '{role}/transkrip',
+                'icon' => 'fa-solid fa-circle fa-2xs',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
         ]);
     }
 }

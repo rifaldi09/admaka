@@ -37,6 +37,30 @@ class DosenSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'nidn' => '2027',
+                'nip' => '19911919919191921',
+                'nama' => 'Seseorang S. Pd.',
+                'email' => 'seseorang@gmail.com',
+                'id_prodi' => '1',
+                'tempat_lahir' => 'Ngawi',
+                'tanggal_lahir' => '2025-05-21',
+                'no_hp' => '012235662781',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nidn' => '2028',
+                'nip' => '199119199982911',
+                'nama' => 'Manusia S. Kom., M. Kom.',
+                'email' => 'manusia@gmail.com',
+                'id_prodi' => '1',
+                'tempat_lahir' => 'Sumenep',
+                'tanggal_lahir' => '2025-06-21',
+                'no_hp' => '012235662781',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }
