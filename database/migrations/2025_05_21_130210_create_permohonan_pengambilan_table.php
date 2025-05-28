@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('tujuan_surat');
             $table->text('alamat_surat');
             $table->enum('keperluan', ['skripsi', 'mata_kuliah']);
-            $table->text('judul_skripsi')->nullable()->default('');
+            $table->text('judul_skripsi')->nullable();
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
             $table->enum('status', ['Belum Diterima', 'Diterima', 'Ditolak' , 'Penerbitan'])->default('Belum Diterima');
