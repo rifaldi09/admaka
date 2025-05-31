@@ -10,10 +10,10 @@ use App\Models\Menu;
 class MahasiswaController extends Controller
 {
     // Profil Mahasiswa
-    public function lihatProfil()
-    {
-        return view('mahasiswa.profile');
-    }
+    // public function lihatProfil()
+    // {
+    //     return view('mahasiswa.profile');
+    // }
 
     // surat aktif kuliah
     public function aktifKuliah()
@@ -29,7 +29,6 @@ class MahasiswaController extends Controller
     public function menuMahasiswa()
     {
         $menuSurat = Menu::where('header', 'Surat')->get();
-        return view('mahasiswa.menu',compact('menuSurat'));
+        return view('mahasiswa.menu', compact('menuSurat'));
     }
-    
 }

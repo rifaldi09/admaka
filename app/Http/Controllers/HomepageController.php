@@ -8,10 +8,4 @@ class HomepageController extends Controller
     {
         return view('homepage.index', ['title' => 'ADMAKA - FTTK UMRAH']);
     }
-
-    // untuk kehalaman dashboard
-    public function dashboard()
-    {
-        return view('dashboard.home');
-    }
 }

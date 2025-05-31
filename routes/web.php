@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AktifKuliahController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Data\DataDosen;
 use App\Http\Controllers\Data\DataMahasiswa;
 use App\Http\Controllers\HomepageController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\PPDPController;
 use App\Http\Controllers\RekomendasiController;
 use App\Http\Controllers\TranskripController;
 use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Row;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +27,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Homepage
 Route::get('/', [HomepageController::class, "index"])->name('home');
+
 // Login
 Route::controller(AuthController::class)->group(function () {
     Route::get('login', 'login')->name('login');
@@ -35,7 +39,11 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::middleware(['auth', 'handle.session'])->group(function () {
     // Dashboard
-    Route::get('dashboard', [HomepageController::class, 'dashboard'])->name('dashboard');
+    // Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::controller(DashboardController::class)->group(function () {
+        Route::get('dashboard', 'dashboard')->name('dashboard');
+        Route::get('lihat-profil', 'lihatProfil')->name('lihat-profil');
+    });
 
     // Sesi Admin
     Route::controller(AdminController::class)->group(function () {
@@ -81,7 +89,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
     // Sesi Mahasiswa
     Route::controller(MahasiswaController::class)->group(function () {
         // Akses Menu
-        Route::get('lihat-profil', 'lihatProfil')->name('lihat-profil');
+        // Route::get('lihat-profil', 'lihatProfil')->name('lihat-profil');
         Route::get('menu-mahasiswa', 'menuMahasiswa')->name('menu-mahasiswa');
 
         // Surat Menu
@@ -125,17 +133,17 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::post('create-surat-aktif', 'createSuratAktif')->name('create-surat-aktif');
 
         Route::post('upload-aktif-kuliah', 'uploadAktifKuliah')->name('upload-aktif-kuliah');
-        
+
         // pengubahan status pengajuan surat
         Route::post('terima-aktif-kuliah', 'terimaAktifKuliah')->name('terima-aktif-kuliah'); // proses mengubah status disetujui
         Route::post('tolak-aktif-kuliah', 'tolakAktifKuliah')->name('tolak-aktif-kuliah'); // proses mengubah status ditolak
-        Route::post('penerbitan-aktif-kuliah/{id}', 'penerbitanAktifKuliah')->name('penerbitan-aktif-kuliah'); // proses mengubah status penerbitan 
+        Route::post('penerbitan-aktif-kuliah/{id}', 'penerbitanAktifKuliah')->name('penerbitan-aktif-kuliah'); // proses mengubah status penerbitan
         Route::post('edit-penolakan-surat', 'editPenolakanSurat')->name('edit-penolakan-surat');
         Route::post('unduh-pdf-surat-aktif-kuliah', 'unduhPDF')->name('unduh-pdf-surat-aktif-kuliah');
     });
 
     // Permohonan Pengambilan Data Penelitian
-    Route::controller(PPDPController::class)->group(function() {
+    Route::controller(PPDPController::class)->group(function () {
         // Route get untuk tampilan awal mahasiswa,admin,dosen-koordinator
         Route::get('Mahasiswa/permohonan-pengambilan', 'ppdpMahasiswa')->name('ppdp-mahasiswa');
         Route::get('Administrator/permohonan-pengambilan', 'ppdpAdmin')->name('ppdp-admin');
@@ -150,7 +158,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
 
         // generate surat dengan format docx/word - admin
         Route::put('generate-permohonan/{permohonan:id_permohonan}', 'generatePermohonan')->name('generate-permohonan');
-        
+
         // route buat ubah status surat permohonan
         Route::put('terima-permohonan-mahasiswa/{permohonan:id_permohonan}', 'terimaPermohonan')->name('terima-permohonan-mahasiswa');
         Route::put('penerbitan-permohonan/{permohonan:id_permohonan}', 'penerbitanPermohonan')->name('penerbitan-permohonan');
@@ -159,7 +167,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
     });
 
     // Transkrip Nilai
-    Route::controller(TranskripController::class)->group(function() {
+    Route::controller(TranskripController::class)->group(function () {
         // route ke halaman masing-masing tiap role
         Route::get('Mahasiswa/transkrip', 'transkripMahasiswa')->name('transkrip-mahasiswa');
         Route::get('Administrator/transkrip', 'transkripAdmin')->name('transkrip-admin');
@@ -176,10 +184,10 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::put('edit-transkrip/{transkrip:id_transkrip}', 'editTranskrip')->name('edit-transkrip');
     });
 
-    Route::controller(PermohonanMagangController::class)->group(function() {
-        Route::get('Mahasiswa/permohonan-magang','PermohonanMagangMahasiswa')->name('permohonan-magang-mahasiswa');
-        Route::get('Administrator/permohonan-magang','PermohonanMagangAdmin')->name('permohonan-magang-admin');
-        Route::get('Koordinator Kerja Praktik/permohonan-magang','PermohonanMagangKKP')->name('permohonan-magang-kkp');
+    Route::controller(PermohonanMagangController::class)->group(function () {
+        Route::get('Mahasiswa/permohonan-magang', 'PermohonanMagangMahasiswa')->name('permohonan-magang-mahasiswa');
+        Route::get('Administrator/permohonan-magang', 'PermohonanMagangAdmin')->name('permohonan-magang-admin');
+        Route::get('Koordinator Kerja Praktik/permohonan-magang', 'PermohonanMagangKKP')->name('permohonan-magang-kkp');
 
         // mengunduh word oleh admin agar bisa di TTD oleh dekan
         Route::put('word-permohonan-magang/{id}', 'wordPermohonan')->name('word-permohonan-magang');
@@ -197,9 +205,9 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::post('penerbitan-permohonan-magang/{permohonan:id_permohonan_magang}', 'penerbitanPermohonan')->name('penerbitan-permohonan-magang');
     });
 
-    Route::controller(RekomendasiController::class)->group(function(){
+    Route::controller(RekomendasiController::class)->group(function () {
         Route::get('Mahasiswa/surat-rekomendasi', 'rekomendasiMahasiswa')->name('surat-rekomendasi');
-        Route::get('Administrator/surat-rekomendasi','rekomendasiAdmin')->name('surat-rekomendasi');
+        Route::get('Administrator/surat-rekomendasi', 'rekomendasiAdmin')->name('surat-rekomendasi');
         Route::post('create-surat-rekomendasi', 'createRekomendasi')->name('create-surat-rekomendasi');
         Route::post('edit-penolakan-rekomendasi', 'editRekomendasiMahasiswa')->name('edit-penolakan-rekomendasi');
         Route::post('terima-surat-rekomendasi', 'terimaSuratRekomendasi')->name('terima-surat-rekomendasi');
