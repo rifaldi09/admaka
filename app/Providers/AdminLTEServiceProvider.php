@@ -25,10 +25,23 @@ class AdminLTEServiceProvider extends ServiceProvider
     public function boot()
     {
         \Event::listen(BuildingMenu::class, function (BuildingMenu $event) {
-            $role = Auth::user()->id_role;
-            $roleUser = \App\Models\Role::find($role);
-        
-            $menus = ViewMenusByRole::where('id_role', $role)->get();
+            $user = Auth::user()->load('roles');
+
+            // dd($user->toArray());
+
+            if (!$user) {
+                return;
+            }
+
+
+            $roles = $user->roles;
+            $roleIds = $roles->pluck('id')->toArray();
+            $roleMapping = $roles->pluck('name_role', 'id')->toArray();
+
+            $menus = ViewMenusByRole::whereIn('id_role', $roleIds)->get();
+
+            $menus = $menus->unique('id_menu');
+
         
             // Kelompokkan berdasarkan kelompok_menu (header AdminLTE)
             $groupedByKelompok = $menus->groupBy('kelompok_menu');
@@ -49,9 +62,11 @@ class AdminLTEServiceProvider extends ServiceProvider
                         $submenu = [];
         
                         foreach ($menuItems as $menu) {
+                            $roleNames = $roleMapping[$menu->id_role] ?? $roles->first()->name_role ?? '';
+
                             $submenu[] = [
                                 'text' => $menu->menu,
-                                'url'  => url(str_replace('{role}', $roleUser->name_role, $menu->url)),
+                                'url'  => url(str_replace('{role}', $roleNames, $menu->url)),
                                 'icon' => $menu->icon,
                             ];
                         }
@@ -69,9 +84,11 @@ class AdminLTEServiceProvider extends ServiceProvider
        
                 // Tambahkan semua menu tunggal setelah submenu
                 foreach ($singleItems as $menu) {
+                    $roleNames = $roleMapping[$menu->id_role] ?? $roles->first()->name_role ?? '';
+
                     $event->menu->add([
                         'text' => $menu->menu,
-                        'url'  => url(str_replace('{role}', $roleUser->name_role, $menu->url)),
+                        'url'  => url(str_replace('{role}', $roleNames, $menu->url)),
                         'icon' => $menu->icon,
                     ]);
                 }

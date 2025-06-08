@@ -207,7 +207,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
 
     Route::controller(RekomendasiController::class)->group(function () {
         Route::get('Mahasiswa/surat-rekomendasi', 'rekomendasiMahasiswa')->name('surat-rekomendasi');
-        Route::get('Administrator/surat-rekomendasi', 'rekomendasiAdmin')->name('surat-rekomendasi');
+        Route::get('Administrator/surat-rekomendasi', 'rekomendasiAdmin')->name('surat-rekomendasi-admin');
         Route::post('create-surat-rekomendasi', 'createRekomendasi')->name('create-surat-rekomendasi');
         Route::post('edit-penolakan-rekomendasi', 'editRekomendasiMahasiswa')->name('edit-penolakan-rekomendasi');
         Route::post('terima-surat-rekomendasi', 'terimaSuratRekomendasi')->name('terima-surat-rekomendasi');

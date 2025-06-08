@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             DosenSeeder::class,
             MenuSeeder::class,
             RoleAksesSeeder::class, 
+            RoleUserSeeder::class
         ]);
     }
 }

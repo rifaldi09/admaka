@@ -20,7 +20,7 @@
                     <button type="button" class="btn btn-primary align-self-start" data-toggle="modal" data-target="#detailModal-{{ $kp->id_pengajuan }}">
                         Detail
                     </button>
-                    @include('dosen.modal.tolak-modal', ['id' => $kp->id_pengajuan, 'route' => 'tolak_pengajuan'])
+                    @include('dosen.modal.tolak-modal', ['id' => $kp->id_pengajuan, 'route' => 'tolak-pengajuan'])
                     @include('admin.pengajuan-kp.modal.detail-kp', ['id' => $kp->id_pengajuan])
                 </td>
             </tr>

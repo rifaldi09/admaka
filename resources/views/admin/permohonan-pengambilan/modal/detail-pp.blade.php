@@ -1,27 +1,66 @@
 <div class="modal fade" id="detailModal-{{ $pp->id_permohonan }}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel-{{ $pp->id_permohonan }}" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="detailModalLabel->{{ $pp->id_permohonan }}">Detail Permohonan</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel-{{ $pp->id_permohonan }}">Detail Permohonan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
             <div class="modal-body">
-                <p>Tujuan surat: {{ $pp->tujuan_surat }}</p>
-                <p>Alamat surat: {{ $pp->alamat_surat }}</p>
-                <p>Keperluan: {{ $pp->keperluan == 'mata_kuliah' ? 'Mata Kuliah' : 'Skripsi' }}</p>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>Tujuan Surat</label>
+                        <input type="text" class="form-control" value="{{ $pp->tujuan_surat }}" disabled>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Alamat Surat</label>
+                        <input type="text" class="form-control" value="{{ $pp->alamat_surat }}" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Keperluan</label>
+                    <input type="text" class="form-control" value="{{ $pp->keperluan == 'mata_kuliah' ? 'Mata Kuliah' : 'Skripsi' }}" disabled>
+                </div>
+
                 @if($pp->keperluan == 'skripsi')
-                <p>Judul skripsi: {{ $pp->judul_skripsi  }}</p>
+                    <div class="form-group">
+                        <label>Judul Skripsi</label>
+                        <textarea class="form-control" disabled>{{ $pp->judul_skripsi }}</textarea>
+                    </div>
                 @else
-                <p>Dosen Pengampu: {{ $pp->dosen->nama }}</p>
+                    <div class="form-group">
+                        <label>Dosen Pengampu</label>
+                        <input type="text" class="form-control" value="{{ $pp->dosen->nama }}" disabled>
+                    </div>
                 @endif
-                <p>Tanggal Mulai: {{ \Carbon\Carbon::parse($pp->tanggal_mulai)->translatedFormat('j F Y') }}</p>
-                <p>Tanggal Mulai: {{ \Carbon\Carbon::parse($pp->tanggal_selesai)->translatedFormat('j F Y') }}</p>
-                <p>Status: {{ $pp->status }}</p>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>Tanggal Mulai</label>
+                        <input type="date" class="form-control" value="{{ $pp->tanggal_mulai }}" disabled>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Tanggal Selesai</label>
+                        <input type="date" class="form-control" value="{{ $pp->tanggal_selesai }}" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <input type="text" class="form-control" value="{{ $pp->status }}" disabled>
+                </div>
+
                 @if($pp->status == 'Ditolak')
-                <p>Alasan Ditolak: {{ $pp->alasan_ditolak }}</p>
+                    <div class="form-group">
+                        <label>Alasan Ditolak</label>
+                        <textarea class="form-control" disabled>{{ $pp->alasan_ditolak }}</textarea>
+                    </div>
                 @endif
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>

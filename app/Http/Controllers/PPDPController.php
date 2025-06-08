@@ -20,7 +20,9 @@ class PPDPController extends Controller
     public function ppdpMahasiswa()
     {
         $permohonan = PPDP::where('user_id', Auth::id())->get();
-        $dosen = User::where('id_role', 2)->with(['dataDosen:nidn,nama'])->get();
+        $dosen = User::whereHas('roles', function($query) {
+            $query->where('role.id', 2);
+        })->with(['dataDosen:nidn,nama'])->get();
 
         return view('mahasiswa.permohonan-pengambilan.index', compact('permohonan', 'dosen'));
     }
@@ -28,14 +30,14 @@ class PPDPController extends Controller
     // halaman index admin
     public function ppdpAdmin()
     {
-        $draft = User::select('id', 'id_user', 'id_role')->whereHas('permohonanPengambilan', function($query) {
+        $draft = User::select('id', 'id_user')->whereHas('permohonanPengambilan', function($query) {
             $query->where('status', 'Belum Diterima');
         })->with(['permohonanPengambilan' => function($query) {
             $query->where('status', 'Belum Diterima')
             ->with(['dosen:nidn,nama']);
         }, 'dataMahasiswa'])->get();
 
-        $diterima = User::select('id', 'id_user', 'id_role')->whereHas('permohonanPengambilan', function($query) {
+        $diterima = User::select('id', 'id_user')->whereHas('permohonanPengambilan', function($query) {
             $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
         })->with(['permohonanPengambilan' => function($query) {
                 $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan'])

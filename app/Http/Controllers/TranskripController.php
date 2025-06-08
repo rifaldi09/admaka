@@ -19,13 +19,13 @@ class TranskripController extends Controller
 
     public function transkripAdmin()
     {
-        $draft = User::select('id', 'id_user', 'id_role')->whereHas('transkrip', function ($query) {
+        $draft = User::select('id', 'id_user')->whereHas('transkrip', function ($query) {
             $query->where('status', 'Belum Diterima');
         })->with(['transkrip' => function ($query) {
             $query->where('status', 'Belum Diterima');
         }, 'dataMahasiswa'])->get();
 
-        $diterima = User::select('id', 'id_user', 'id_role')->whereHas('transkrip', function ($query) {
+        $diterima = User::select('id', 'id_user')->whereHas('transkrip', function ($query) {
             $query->whereIn('status', ['Diterima', 'Penerbitan']);
         })->with(['transkrip' => function ($query) {
             $query->whereIn('status', ['Diterima', 'Penerbitan']);
@@ -36,7 +36,7 @@ class TranskripController extends Controller
 
     public function transkripWD()
     {
-        $diterima = User::select('id', 'id_user', 'id_role')->whereHas('transkrip', function ($query) {
+        $diterima = User::select('id', 'id_user')->whereHas('transkrip', function ($query) {
             $query->where('status', 'Diterima');
         })->with(['transkrip' => function ($query) {
             $query->where('status', 'Diterima');
