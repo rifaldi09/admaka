@@ -13,12 +13,19 @@ class DashboardController extends Controller
         return view('dashboard.home');
     }
 
-    // User profile page
-    public function lihatProfil()
+    // Mahasiswa profile page
+    public function lihatProfilMhs()
     {
         $user = auth()->user()->data;
-        $userLog = auth()->user();
 
-        return view('dashboard.profile', compact('user', 'userLog'));
+        return view('dashboard.profileMhs', compact('user'), ['titleHeader' => 'Profile Mahasiswa']);
+    }
+
+    // Dosen profile page
+    public function lihatProfilDosen()
+    {
+        $user = auth()->user()->data;
+
+        return view('dashboard.profileDosen', compact('user'), ['titleHeader' => 'Profile Dosen']);
     }
 }

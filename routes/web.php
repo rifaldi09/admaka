@@ -39,10 +39,9 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::middleware(['auth', 'handle.session'])->group(function () {
     // Dashboard
-    // Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::controller(DashboardController::class)->group(function () {
         Route::get('dashboard', 'dashboard')->name('dashboard');
-        Route::get('lihat-profil', 'lihatProfil')->name('lihat-profil');
+        Route::get('lihat-profil', 'lihatProfilMhs')->name('lihat-profil');
     });
 
     // Sesi Admin
@@ -89,7 +88,6 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
     // Sesi Mahasiswa
     Route::controller(MahasiswaController::class)->group(function () {
         // Akses Menu
-        // Route::get('lihat-profil', 'lihatProfil')->name('lihat-profil');
         Route::get('menu-mahasiswa', 'menuMahasiswa')->name('menu-mahasiswa');
 
         // Surat Menu
