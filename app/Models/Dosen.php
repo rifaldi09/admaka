@@ -27,7 +27,13 @@ class Dosen extends Authenticatable
         'tanggal_lahir',
         'no_hp'
     ];
-    // relasi ke tabel prodi (1 mahasiswa punya 1 prodi)
+
+    public function prodi()
+    {
+        return $this->belongsTo(Prodi::class, 'id_prodi');
+    }
+
+    // relasi ke tabel role akses
     public function roleAkses()
     {
         return $this->belongsTo(Prodi::class, 'id_prodi');

@@ -9,11 +9,13 @@ use App\Models\Menu;
 
 class MahasiswaController extends Controller
 {
-    // Profil Mahasiswa
-    // public function lihatProfil()
-    // {
-    //     return view('mahasiswa.profile');
-    // }
+    // Mahasiswa profile page
+    public function lihatProfilMhs()
+    {
+        $user = auth()->user()->data;
+
+        return view('dashboard.profileMhs', compact('user'), ['titleHeader' => 'Profile Mahasiswa']);
+    }
 
     // surat aktif kuliah
     public function aktifKuliah()

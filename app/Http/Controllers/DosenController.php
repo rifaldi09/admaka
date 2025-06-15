@@ -7,5 +7,11 @@ use Illuminate\Http\Request;
 
 class DosenController extends Controller
 {
-    //tempat crud dosen 
+    // Dosen profile page
+    public function lihatProfilDosen()
+    {
+        $user = auth()->user()->data;
+
+        return view('dashboard.profileDosen', compact('user'), ['titleHeader' => 'Profile Dosen']);
+    }
 }
