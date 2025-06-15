@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\FilePengajuan;
 use App\Models\PengajuanKP;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use PDF;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 // set format tanggal ke bahasa indonesia
@@ -72,13 +72,23 @@ class PengajuanKPController extends Controller
             'alamat_surat' => 'required'
         ]);
 
+        $cek_nomor_terakhir = PengajuanKP::orderByDesc('created_at')->value('no_surat');
+
+        if ($cek_nomor_terakhir) {
+            $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
+            $no_surat = 'KP' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+        } else {
+            $no_surat = 'KP0001';
+        }
+
         $data = [
             'tujuan_surat' => $request->tujuan_surat,
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
             'alamat_surat' => $request->alamat_surat,
             'user_id' => Auth::user()->id,
-            'id_prodi' => Auth::user()->data->id_prodi
+            'id_prodi' => Auth::user()->data->id_prodi,
+            'no_surat' => $no_surat
         ];
 
         PengajuanKP::create($data);
@@ -146,51 +156,41 @@ class PengajuanKPController extends Controller
         return back()->with('success', 'Status diperbaharui');
     }
 
-    // unduh + lihat pengajuan
-    public function wordPengajuan(Request $request, $id)
-    {   
-        $request->validate([
-            'no_surat' => 'required|string'
-        ]);
-
-        PengajuanKP::where('id_pengajuan', $id)->update([
-            'no_surat' => $request->no_surat
-        ]);
-
-        $data = User::whereHas('pengajuanKp', function($query) use ($id) {
+    public function generatePengajuan(PengajuanKP $pengajuan)
+    {
+        $user = User::whereHas('pengajuanKp', function($query) use ($pengajuan) {
             $query->where('status', 'Penerbitan')
-            ->where('id_pengajuan', $id);
-        })->with(['pengajuanKp' => function($query) use ($id) {
-            $query->where('status', 'Penerbitan')
-            ->where('id_pengajuan', $id);
-        }, 'dataMahasiswa.prodi'])->first();
+                ->where('id_pengajuan', $pengajuan->id_pengajuan);
+        })->with([
+            'pengajuanKp' => function($query) use ($pengajuan) {
+                $query->where('status', 'Penerbitan')
+                ->where('id_pengajuan', $pengajuan->id_pengajuan);
+            },
+            'dataMahasiswa.prodi'
+        ])->first();
 
-        // dd($data->toArray());
-        $template = new TemplateProcessor(public_path('template_pengajuan_kp.docx'));
-
-        foreach($data->pengajuanKp as $kp) {
-            $tanggal = Carbon::parse($kp->created_at)->translatedFormat('j F Y');
-            $tanggal_mulai = Carbon::parse($kp->tanggal_mulai)->translatedFormat('j F Y');
-            $tanggal_selesai = Carbon::parse($kp->tanggal_selesai)->translatedFormat('j F Y');
-            $template->setValue('created_at', $tanggal);
-            $template->setValue('no_surat', $kp->no_surat);
-            $template->setValue('tujuan_surat', $kp->tujuan_surat);
-            $template->setValue('alamat_surat', $kp->alamat_surat);
-            $template->setValue('tanggal_mulai', $tanggal_mulai);
-            $template->setValue('tanggal_selesai', $tanggal_selesai);
+        if (!$user) {
+            return back()->with('error', 'Data tidak ditemukan.');
         }
 
-        $template->setValue('no', 1);
-        $template->setValue('nama', $data->dataMahasiswa->nama);
-        $template->setValue('id_user', $data->dataMahasiswa->nim);
-        $template->setValue('prodi', $data->dataMahasiswa->prodi->nama);
-        $template->setValue('no_hp', $data->dataMahasiswa->no_hp);
+        $kp = $user->pengajuanKp->first();
 
-        $filename = 'Pengajuan_KP_' . $data->dataMahasiswa->nama . '.docx';
-        $temp_file = tempnam(sys_get_temp_dir(), 'word_');
-        $template->saveAs($temp_file);
+        $data = [
+            'no' => 1,
+            'nama' => $user->dataMahasiswa->nama,
+            'nim' => $user->dataMahasiswa->nim,
+            'prodi' => $user->dataMahasiswa->prodi->nama,
+            'no_hp' => $user->dataMahasiswa->no_hp,
+            'created_at' => Carbon::parse($kp->created_at)->translatedFormat('j F Y'),
+            'no_surat' => 'UNV/'. $kp->no_surat.'/FTTK',
+            'tujuan_surat' => $kp->tujuan_surat,
+            'alamat_surat' => $kp->alamat_surat,
+            'tanggal_mulai' => Carbon::parse($kp->tanggal_mulai)->translatedFormat('j F Y'),
+            'tanggal_selesai' => Carbon::parse($kp->tanggal_selesai)->translatedFormat('j F Y')
+        ];
 
-        return response()->download($temp_file, $filename)->deleteFileAfterSend(true);
+        $pdf = Pdf::loadView('pdf.pengajuan-kp.pdf-kp', $data);
+        return $pdf->download('pengajuan-kp-'.$user->dataMahasiswa->nama.'.pdf');
     }
 
     // upload file pengajuan untuk mahasiswa

@@ -104,8 +104,8 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         // Route ke halaman pengajuan KP Koordinator
         Route::get('Koordinator Kerja Praktik/pengajuan-kp', 'pengajuanKpKoordinator')->name('pengajuan-kp-koordinator');
 
-        // mengunduh word oleh admin agar bisa di TTD oleh dekan
-        Route::put('word-pengajuan/{id}', 'wordPengajuan')->name('word-pengajuan');
+        // mengunduh pdf oleh admin agar bisa di TTD oleh dekan
+        Route::get('generate-pengajuan/{pengajuan:id_pengajuan}', 'generatePengajuan')->name('generate-pengajuan');
 
         // membuat surat pengajuan
         Route::post('create-pengajuan', 'createPengajuan')->name('create-pengajuan');
@@ -155,7 +155,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::post('upload-permohonan/{permohonan:id_permohonan}', 'uploadPermohonan')->name('upload-permohonan');
 
         // generate surat dengan format docx/word - admin
-        Route::put('generate-permohonan/{permohonan:id_permohonan}', 'generatePermohonan')->name('generate-permohonan');
+        Route::get('generate-permohonan/{permohonan:id_permohonan}', 'generatePermohonan')->name('generate-permohonan');
 
         // route buat ubah status surat permohonan
         Route::put('terima-permohonan-mahasiswa/{permohonan:id_permohonan}', 'terimaPermohonan')->name('terima-permohonan-mahasiswa');

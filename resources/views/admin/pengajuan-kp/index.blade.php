@@ -119,15 +119,10 @@
                                                     ])
                                                     @if ($kp->status != 'Ditolak')
                                                         @if ($kp->status == 'Penerbitan')
-                                                            <button class="btn btn-primary btn-sm" data-toggle="modal"
-                                                                data-target="#generateModal-{{ $kp->id_pengajuan }}"
-                                                                title="Generate" type="button">
+                                                            <a href="{{ route('generate-pengajuan', $kp->id_pengajuan) }}" class="btn btn-primary btn-sm">
                                                                 <i class="fa-solid fa-download"></i>
                                                                 Generate
-                                                            </button>
-                                                             @include('admin.pengajuan-kp.modal.generate', [
-                                                                'id' => $kp->id_pengajuan,
-                                                            ])
+                                                            </a>
                                                         @endif
                                                     @endif
                                                 </nobr>

@@ -1,0 +1,24 @@
+body {
+    font-family: "Times New Roman", serif;
+}
+.kop {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.kop p {
+    margin: 0;
+    font-size: 14pt;
+}
+.content {
+    font-size: 12pt;
+    line-height: 1.6;
+}
+.ttd {
+    margin-top: 60px;
+    text-align: left;
+}
+table tr td:first-child {
+    width: 220px;
+    vertical-align: top;
+}

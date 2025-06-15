@@ -27,12 +27,9 @@ class AdminLTEServiceProvider extends ServiceProvider
         \Event::listen(BuildingMenu::class, function (BuildingMenu $event) {
             $user = Auth::user()->load('roles');
 
-            // dd($user->toArray());
-
             if (!$user) {
                 return;
             }
-
 
             $roles = $user->roles;
             $roleIds = $roles->pluck('id')->toArray();
@@ -40,59 +37,64 @@ class AdminLTEServiceProvider extends ServiceProvider
 
             $menus = ViewMenusByRole::whereIn('id_role', $roleIds)->get();
 
-            $menus = $menus->unique('id_menu');
-
-        
-            // Kelompokkan berdasarkan kelompok_menu (header AdminLTE)
             $groupedByKelompok = $menus->groupBy('kelompok_menu');
-        
+
             foreach ($groupedByKelompok as $kelompok => $menusInKelompok) {
-                // Tambahkan sebagai header AdminLTE
+                // Tambahkan header utama AdminLTE
                 $event->menu->add(['header' => $kelompok]);
-        
-                // Di dalam kelompok, kelompokkan berdasarkan header
+
                 $groupedByHeader = $menusInKelompok->groupBy('header');
-        
-                // Inisialisasi single item holder
+
                 $singleItems = [];
-        
+
                 foreach ($groupedByHeader as $header => $menuItems) {
                     if ($menuItems->count() > 1) {
-                        // Jika lebih dari 1 menu → buat submenu
+                        // Jika ada lebih dari 1 menu, buat submenu dan subheader role
                         $submenu = [];
-        
-                        foreach ($menuItems as $menu) {
-                            $roleNames = $roleMapping[$menu->id_role] ?? $roles->first()->name_role ?? '';
+
+                        $menusByRole = $menuItems->groupBy('id_role');
+
+                        foreach ($menusByRole as $roleId => $menusByThisRole) {
+                            $roleName = $roleMapping[$roleId] ?? 'Role Tidak Dikenal';
 
                             $submenu[] = [
-                                'text' => $menu->menu,
-                                'url'  => url(str_replace('{role}', $roleNames, $menu->url)),
-                                'icon' => $menu->icon,
+                                'text' => strtoupper($roleName),
+                                'url' => '#',
+                                'icon' => '',
+                                'classes' => 'text-muted text-xs font-weight-bold px-3',
+                                'escape' => false,
                             ];
+
+                            foreach ($menusByThisRole as $menu) {
+                                $submenu[] = [
+                                    'text' => $menu->menu,
+                                    'url'  => url(str_replace('{role}', $roleName, $menu->url)),
+                                    'icon' => $menu->icon,
+                                ];
+                            }
                         }
-        
+
                         $event->menu->add([
                             'text'    => $header,
                             'icon'    => 'fas fa-folder',
                             'submenu' => $submenu,
                         ]);
                     } else {
-                        // Jika hanya satu menu → simpan dulu untuk ditambahkan nanti
                         $singleItems[] = $menuItems->first();
                     }
                 }
-       
-                // Tambahkan semua menu tunggal setelah submenu
+
                 foreach ($singleItems as $menu) {
-                    $roleNames = $roleMapping[$menu->id_role] ?? $roles->first()->name_role ?? '';
+                    $roleName = $roleMapping[$menu->id_role] ?? $roles->first()->name_role ?? '';
 
                     $event->menu->add([
                         'text' => $menu->menu,
-                        'url'  => url(str_replace('{role}', $roleNames, $menu->url)),
+                        'url'  => url(str_replace('{role}', $roleName, $menu->url)),
                         'icon' => $menu->icon,
                     ]);
                 }
             }
         });
     }
+
 }

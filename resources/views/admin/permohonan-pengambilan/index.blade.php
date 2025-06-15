@@ -124,15 +124,10 @@
                                                     ])
                                                     @if ($pp->status != 'Ditolak')
                                                         @if ($pp->status == 'Penerbitan')
-                                                            <button class="btn btn-primary btn-sm" data-toggle="modal"
-                                                                data-target="#generatePermohonanModal-{{ $pp->id_permohonan }}"
-                                                                title="Generate" type="button">
+                                                            <a href="{{ route('generate-permohonan', $pp->id_permohonan) }}" class="btn btn-primary btn-sm">
                                                                 <i class="fa-solid fa-download"></i>
                                                                 Generate
-                                                            </button>
-                                                             @include('admin.permohonan-pengambilan.modal.generate', [
-                                                                'id' => $pp->id_permohonan,
-                                                            ])
+                                                            </a>
                                                         @endif
                                                     @endif
                                                 </nobr>

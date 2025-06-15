@@ -10,6 +10,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
+
 
 // set format tanggal ke bahasa indonesia
 Carbon::setLocale('id');
@@ -61,6 +64,7 @@ class PPDPController extends Controller
             ->where('keperluan', 'skripsi');
         }, 'dataMahasiswa'])->get();
 
+
         return view('dosen.permohonan-pengambilan.index', compact('diterima'));;
     }
 
@@ -79,6 +83,7 @@ class PPDPController extends Controller
             ->where('nidn', Auth::user()->id_user)
             ->with(['dosen:nidn,nama']);
         }, 'dataMahasiswa'])->get();
+        
 
         return view('dosen.permohonan-pengambilan.index', compact('diterima'));;
     }
@@ -96,12 +101,15 @@ class PPDPController extends Controller
             'dosen' => 'required_if:keperluan,mata_kuliah',
         ]);
 
-        // $request only ini dia tuh ngambil data sesuai nama yang dimasukin ke dalam array
-        // jadi array data otomatis kebuat 
-        // [
-        //     'tujuan_surat' => $request->tujuan_surat
-        // ]
-        // minusnya name di input harus sama kayak di database, kalau ga mirip harus di modif lagi
+        // buat ngakalin no_surat biar ga pakai id
+        $cek_nomor_terakhir = PPDP::orderByDesc('created_at')->value('no_surat');
+
+        if ($cek_nomor_terakhir) {
+            $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
+            $no_surat = 'PPDP' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+        } else {
+            $no_surat = 'PPDP0001';
+        }
 
         $data = $request->only([
             'tujuan_surat',
@@ -115,6 +123,8 @@ class PPDPController extends Controller
         $data['nidn'] = $request->keperluan === 'mata_kuliah' ? $request->dosen : null;
         $data['user_id'] = Auth::id();
         $data['id_prodi'] = Auth::user()->data->id_prodi;
+        $data['no_surat'] = $no_surat;
+
 
         PPDP::create($data);
 
@@ -188,88 +198,73 @@ class PPDPController extends Controller
         return back()->with('success', 'Status permohonan sudah diperbarui');
     }
 
-    // fungsi generate permohonan untuk sementara
-    public function generatePermohonan(Request $request, PPDP $permohonan)
+    public function generatePermohonan(PPDP $permohonan)
     {
-        $request->validate([
-            'no_surat' => 'required'
-        ]);
-
-        $permohonan->update([
-            'no_surat' => $request->no_surat
-        ]);
-
-        if($permohonan->keperluan == 'mata_kuliah') {
-            $data = User::whereHas('permohonanPengambilan', function($query) use ($permohonan) {
+        if ($permohonan->keperluan == 'mata_kuliah') {
+            $data = User::whereHas('permohonanPengambilan', function ($query) use ($permohonan) {
                 $query->where('status', 'Penerbitan')
-                ->where('keperluan', 'mata_kuliah')
-                ->where('id_permohonan', $permohonan->id_permohonan);
-            })->with(['permohonanPengambilan' => function($query) use ($permohonan) {
+                    ->where('keperluan', 'mata_kuliah')
+                    ->where('id_permohonan', $permohonan->id_permohonan);
+            })->with(['permohonanPengambilan' => function ($query) use ($permohonan) {
                 $query->where('status', 'Penerbitan')
-                ->where('keperluan', 'mata_kuliah')
-                ->where('id_permohonan', $permohonan->id_permohonan)
-                ->with(['dosen:nidn,nama']);
+                    ->where('keperluan', 'mata_kuliah')
+                    ->where('id_permohonan', $permohonan->id_permohonan)
+                    ->with(['dosen:nidn,nama']);
             }, 'dataMahasiswa.prodi'])->first();
 
-            // dd($data->toArray());
+            $pp = $data->permohonanPengambilan->first();
 
-            $template = new TemplateProcessor(public_path('template_pengambilan_data_mata_kuliah.docx'));
+            $viewData = [
+                'no_surat' => 'UNV/'. $pp->no_surat.'/FTTK',
+                'tujuan_surat' => $pp->tujuan_surat,
+                'alamat_surat' => $pp->alamat_surat,
+                'created_at' => Carbon::parse($pp->created_at)->translatedFormat('j F Y'),
+                'nama_dosen' => $pp->dosen->nama ?? '-',
+                'nama' => $data->dataMahasiswa->nama,
+                'nim' => $data->dataMahasiswa->nim,
+                'prodi' => $data->dataMahasiswa->prodi->nama,
+                'no_hp' => $data->dataMahasiswa->no_hp,
+                'tempat' => $data->dataMahasiswa->tempat_lahir,
+                'tanggal_lahir' => Carbon::parse($data->dataMahasiswa->tanggal_lahir)->translatedFormat('j F Y'),
+            ];
 
-             foreach($data->permohonanPengambilan as $pp) {
-                $tanggal = Carbon::parse($pp->created_at)->translatedFormat('j F Y');
-                $template->setValue('created_at', $tanggal);
-                $template->setValue('no_surat', $pp->no_surat);
-                $template->setValue('tujuan_surat', $pp->tujuan_surat);
-                $template->setValue('alamat_surat', $pp->alamat_surat);
-                $template->setValue('nama_dosen', $pp->dosen->nama);
-            }
-
-            $template->setValue('no', 1);
-            $template->setValue('nama', $data->dataMahasiswa->nama);
-            $template->setValue('nim', $data->dataMahasiswa->nim);
-            $template->setValue('prodi', $data->dataMahasiswa->prodi->nama);
-            $template->setValue('no_hp', $data->dataMahasiswa->no_hp);
-            $template->setValue('tempat', $data->dataMahasiswa->tempat_lahir);
-            $template->setValue('tanggal_lahir', $data->dataMahasiswa->tanggal_lahir);
+            $view = 'pdf.permohonan-pengambilan.pdf-mk'; 
 
         } else {
-            $data = User::whereHas('permohonanPengambilan', function($query) use ($permohonan) {
+            $data = User::whereHas('permohonanPengambilan', function ($query) use ($permohonan) {
                 $query->where('status', 'Penerbitan')
-                ->where('keperluan', 'skripsi')
-                ->where('id_permohonan', $permohonan->id_permohonan);
-            })->with(['permohonanPengambilan' => function($query) use ($permohonan) {
+                    ->where('keperluan', 'skripsi')
+                    ->where('id_permohonan', $permohonan->id_permohonan);
+            })->with(['permohonanPengambilan' => function ($query) use ($permohonan) {
                 $query->where('status', 'Penerbitan')
-                ->where('keperluan', 'skripsi')
-                ->where('id_permohonan', $permohonan->id_permohonan);
+                    ->where('keperluan', 'skripsi')
+                    ->where('id_permohonan', $permohonan->id_permohonan);
             }, 'dataMahasiswa.prodi'])->first();
 
-            $template = new TemplateProcessor(public_path('template_pengambilan_data_skripsi.docx'));
+            $pp = $data->permohonanPengambilan->first();
 
-            foreach($data->permohonanPengambilan as $pp) {
-                $tanggal = Carbon::parse($pp->created_at)->translatedFormat('j F Y');
-                $template->setValue('created_at', $tanggal);
-                $template->setValue('no_surat', $pp->no_surat);
-                $template->setValue('tujuan_surat', $pp->tujuan_surat);
-                $template->setValue('alamat_surat', $pp->alamat_surat);
-                $template->setValue('judul_skripsi', $pp->judul_skripsi);
-            }
-            
-            $tanggal_lahir = Carbon::parse($data->dataMahasiswa->tanggal_lahir)->translatedFormat('j F Y');
-            $template->setValue('no', 1);
-            $template->setValue('nama', $data->dataMahasiswa->nama);
-            $template->setValue('nim', $data->dataMahasiswa->nim);
-            $template->setValue('prodi', $data->dataMahasiswa->prodi->nama);
-            $template->setValue('no_hp', $data->dataMahasiswa->no_hp);
-            $template->setValue('tempat', $data->dataMahasiswa->tempat_lahir);
-            $template->setValue('tanggal_lahir', $tanggal_lahir);
+            $viewData = [
+                'no_surat' => 'UNV/'. $pp->no_surat.'/FTTK',
+                'tujuan_surat' => $pp->tujuan_surat,
+                'alamat_surat' => $pp->alamat_surat,
+                'judul_skripsi' => $pp->judul_skripsi,
+                'created_at' => Carbon::parse($pp->created_at)->translatedFormat('j F Y'),
+                'nama' => $data->dataMahasiswa->nama,
+                'nim' => $data->dataMahasiswa->nim,
+                'prodi' => $data->dataMahasiswa->prodi->nama,
+                'no_hp' => $data->dataMahasiswa->no_hp,
+                'tempat' => $data->dataMahasiswa->tempat_lahir,
+                'tanggal_lahir' => Carbon::parse($data->dataMahasiswa->tanggal_lahir)->translatedFormat('j F Y'),
+            ];
+
+            $view = 'pdf.permohonan-pengambilan.pdf-skripsi';
         }
-        
-        $filename = 'Permohonan_Pengambilan_Data_' . $data->dataMahasiswa->nama . '.docx';
-        $temp_file = tempnam(sys_get_temp_dir(), 'word_');
-        $template->saveAs($temp_file);
 
-        return response()->download($temp_file, $filename)->deleteFileAfterSend(true);
+        $pdf = Pdf::loadView($view, $viewData);
+        $filename = 'Permohonan_Pengambilan_Data_' . $viewData['nama'] . '.pdf';
+        return $pdf->download($filename);
     }
+
 
     // upload file permohonan
     public function uploadPermohonan(Request $request, PPDP $permohonan)
