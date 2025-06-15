@@ -41,7 +41,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
     // Dashboard
     Route::controller(DashboardController::class)->group(function () {
         Route::get('dashboard', 'dashboard')->name('dashboard');
-        Route::get('lihat-profil', 'lihatProfilMhs')->name('lihat-profil');
+        Route::get('lihat-profil', 'lihatProfil')->name('lihat-profil');
     });
 
     // Sesi Admin

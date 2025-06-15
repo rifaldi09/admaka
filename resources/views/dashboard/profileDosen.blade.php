@@ -15,8 +15,12 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="mb-3">
-                            <label for="nim" class="form-label">NIM</label>
-                            <input type="text" class="form-control" placeholder="NIM" name="nim" id="nim" value={{ old('nim',$user->nim) }} required>
+                            <label for="nidn" class="form-label">NIDN</label>
+                            <input type="number" class="form-control" placeholder="NIDN" name="nidn" id="nidn" value={{ old('nidn',$user->nidn) }} required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nip" class="form-label">NIP</label>
+                            <input type="number" class="form-control" placeholder="NIP" name="nip" id="nip" value={{ old('nip',$user->nip) }} required>
                         </div>
                         <div class="mb-3">
                             <label for="nama" class="form-label">Nama Lengkap</label>
@@ -25,18 +29,6 @@
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="text" class="form-control" placeholder="Email" name="email" id="email" value={{ old('email',$user->email) }} >
-                        </div>
-                        <div class="mb-3">
-                            <label for="id_prodi" class="form-label">Program Studi</label>
-                            <input type="text" class="form-control" placeholder="Program Studi" name="id_prodi" id="id_prodi" value={{ old('id_prodi',$user->prodi->nama) }} >
-                        </div>
-                        <div class="mb-3">
-                            <label for="semester" class="form-label">Semester</label>
-                            <input type="number" class="form-control" placeholder="Semester" name="semester" id="semester" value={{ old('semester',$user->semester) }} >
-                        </div>
-                        <div class="mb-3">
-                            <label for="ipk" class="form-label">IPK</label>
-                            <input type="text" class="form-control" placeholder="IPK" name="ipk" id="ipk" value={{ old('ipk',$user->ipk) }} >
                         </div>
                     </div>
                     <div class="col-6">
@@ -49,20 +41,12 @@
                             <input type="date" class="form-control" placeholder="Tanggal Lahir" name="tanggal_lahir" id="tanggal_lahir" value={{ old('tanggal_lahir',$user->tanggal_lahir) }} >
                         </div>
                         <div class="mb-3">
+                            <label for="id_prodi" class="form-label">Program Studi</label>
+                            <input type="text" class="form-control" placeholder="Program Studi" name="id_prodi" id="id_prodi" value={{ old('id_prodi',$user->prodi->nama) }} >
+                        </div>
+                        <div class="mb-3">
                             <label for="no_hp" class="form-label">No HP</label>
                             <input type="text" class="form-control" placeholder="No HP" name="no_hp" id="no_hp" value={{ old('no_hp',$user->no_hp) }} >
-                        </div>
-                        <div class="mb-3">
-                            <label for="jenjang" class="form-label">Jenjang Studi</label>
-                            <input type="text" class="form-control" placeholder="Jenjang Studi" name="jenjang" id="jenjang" value={{ old('jenjang',$user->jenjang) }} >
-                        </div>
-                        <div class="mb-3">
-                            <label for="tahun_akademik" class="form-label">Tahun Akademik</label>
-                            <input type="text" class="form-control" placeholder="Tahun Akademik" name="tahun_akademik" id="tahun_akademik" value={{ old('tahun_akademik',$user->tahun_akademik) }} >
-                        </div>
-                        <div class="mb-3">
-                            <label for="sks" class="form-label">Jumlah SKS yang Telah Ditempuh</label>
-                            <input type="number" class="form-control" placeholder="Jumlah SKS" name="sks" id="sks" value={{ old('sks',$user->sks) }} >
                         </div>
                     </div>
                     <div class="col-12 mt-3">
