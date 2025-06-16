@@ -1,52 +1,83 @@
 @extends('dashboard.home')
 
-@section('title', 'Dashboard Mahasiswa')
+@section('title', 'Transkrip Nilai Sementara')
 
 @section('content')
-    <div class="d-flex justify-content-between pt-4">
-        <h2>Transkrip Nilai Sementara</h2>
-        <button type="button" class="btn btn-primary align-self-start" data-toggle="modal" data-target="#transkripModal">
-            Buat Transkrip &plus;
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h1 class="card-title font-weight-bold">Transkrip Nilai Sementara</h1>
+        <button type="button" class="btn btn-primary float-right btn-sm" data-toggle="modal" data-target="#transkripModal">
+            <i class="fa-solid fa-square-plus fa-sm mr-2"></i>Buat Transkrip
         </button>
     </div>
-    @include('mahasiswa.transkrip-nilai.modal.create')
-    <div class="d-flex justify-content-center mt-3">
-        <table class="table table-bordered">
-            <tr>
-                <th>No</th>
-                <th>Keperluan</th>
-                <th>Status</th>
-                <th>Alasan Ditolak</th>
-                <th>Aksi</th>
-            </tr>
+
+    <div class="card-body">
+        @php
+            $heads = [
+                ['label' => 'No', 'no-export' => true, 'width' => 1],
+                'Keperluan',
+                ['label' => 'Status', 'no-export' => true, 'width' => 10],
+                ['label' => 'Alasan Ditolak', 'no-export' => true],
+                ['label' => 'Aksi', 'no-export' => true, 'width' => 10],
+            ];
+        @endphp
+
+        <x-adminlte-datatable id="tableTranskrip" :heads="$heads">
             @forelse ($transkrip as $key => $detail)
                 <tr>
-                    <td>{{ ++$key }}</td>
+                    <td>{{ $key + 1 }}</td>
                     <td>{{ $detail->keperluan }}</td>
-                    <td>{{ $detail->status }}</td>
-                    <td>{{ $detail->alasan_ditolak != '' ? $detail->alasan_ditolak : 'Tidak ada' }}</td>
                     <td>
-                        @if($detail->status == 'Penerbitan')
-                        @foreach ($detail->filePermohonan as $file)
-                            <a href="{{ asset('storage/transkrip/'. basename($file->path)) }}" target="_blank">
-                                Lihat File
-                            </a>
-                        @endforeach
-                        @elseif($detail->status == 'Ditolak')
-                        <button type="button" class="btn btn-primary align-self-start" data-toggle="modal" data-target="#editTranskripModal-{{ $detail->id_transkrip }}">
-                            Edit
-                        </button>
-                        @include('mahasiswa.transkrip-nilai.modal.edit')
-                        @else
-                        <i>Sedang di proses</i>
-                        @endif
+                        @switch($detail->status)
+                            @case('Diterima')
+                                <div class="border border-success btn-sm text-success text-center">{{ $detail->status }}</div>
+                                @break
+                            @case('Ditolak')
+                                <div class="border border-danger btn-sm text-danger text-center">{{ $detail->status }}</div>
+                                @break
+                            @case('Penerbitan')
+                                <div class="border border-primary btn-sm text-primary text-center">{{ $detail->status }}</div>
+                                @break
+                            @default
+                                <div class="border border-warning btn-sm text-warning text-center">{{ $detail->status }}</div>
+                        @endswitch
+                    </td>
+                    <td>{{ $detail->alasan_ditolak ?: 'Tidak ada' }}</td>
+                    <td>
+                        <nobr>
+                            @if ($detail->status == 'Penerbitan')
+                                @if($detail->filePermohonan && $detail->filePermohonan->isNotEmpty())
+                                    @foreach ($detail->filePermohonan as $file)
+                                        <a href="{{ asset('storage/transkrip/' . basename($file->path)) }}" target="_blank" class="btn btn-default text-primary">
+                                            <i class="fa-solid fa-download"></i> Lihat File
+                                        </a>
+                                    @endforeach
+                                @else
+                                    <span class="text-muted"><i>Belum diunggah</i></span>
+                                @endif
+                            @elseif ($detail->status == 'Ditolak')
+                                <button type="button" class="btn btn-default text-warning btn-edit" data-toggle="modal" data-target="#editTranskripModal-{{ $detail->id_transkrip }}">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                </button>
+                            @else
+                                <span class="text-muted"><i>Sedang diproses</i></span>
+                            @endif
+                        </nobr>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="text-secondary text-center">Tidak ada data</td>
+                    <td colspan="5" class="text-secondary text-center">Tidak ada data</td>
                 </tr>
             @endforelse
-        </table>
+        </x-adminlte-datatable>
     </div>
+</div>
+
+@include('mahasiswa.transkrip-nilai.modal.create')
+@foreach ($transkrip as $detail)
+    @include('mahasiswa.transkrip-nilai.modal.edit', ['detail' => $detail])
+@endforeach
+
 @endsection

@@ -9,6 +9,7 @@ use App\Models\FilePengajuan;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use PhpOffice\PhpWord\TemplateProcessor;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 Carbon::setLocale('id');
 
@@ -36,17 +37,28 @@ class RekomendasiController extends Controller
             'perihal' => 'required',
         ]);
 
+        $cek_nomor_terakhir = SuratRekomendasi::orderByDesc('created_at')->value('nomor_surat');
+
+        if ($cek_nomor_terakhir) {
+            $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
+            $no_surat = 'AKT' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+        } else {
+            $no_surat = 'AKT0001';
+        }
+
         if ($validasi) {
             if (!empty($req->tempat_perihal)) {
                 SuratRekomendasi::create([
                     'perihal' => $validasi['perihal'],
                     'tempat_perihal' => $req->tempat_perihal,
                     'user_id' => Auth::user()->id,
+                    'nomor_surat' => $no_surat
                 ]);
             } else {
                 SuratRekomendasi::create([
                     'perihal' => $validasi['perihal'],
                     'user_id' => Auth::user()->id,
+                    'nomor_surat' => $no_surat
                 ]);
             }
             return redirect()->back()->with('success', 'Berhasil menambahkan surat');
@@ -107,58 +119,47 @@ class RekomendasiController extends Controller
         }
         return redirect()->back()->with('success', 'Berhasil menolak surat');
     }
-    public function penerbitanSuratRekomendasi(Request $req, $id)
+
+    public function konversiSksRekomendasi(Request $request, $id)
     {
-        // dd($req->all(),$id);
+        $idRekomendasi = decrypt($id);
+        $request->validate([
+            'konversi_sks' => 'required|integer'
+        ]);
+
+        SuratRekomendasi::where('id_rekomendasi', $idRekomendasi)->update([
+            'status' => 'Penerbitan',
+            'konversi_sks' => $request->konversi_sks,
+        ]);
+
+        return redirect()->route('penerbitan-surat-rekomendasi', ['id' => encrypt($idRekomendasi)]);
+    }
+
+    public function penerbitanSuratRekomendasi($id)
+    {
         $idRekomendasi = decrypt($id);
         $dataSurat = SuratRekomendasi::with('user.dataMahasiswa.prodi')->where('id_rekomendasi', $idRekomendasi)->first();
 
         $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
         $numberSemester = $dataSurat->user->dataMahasiswa->semester . ' (' . $formatter->format($dataSurat->user->dataMahasiswa->semester) . ')';
 
-        $template = new TemplateProcessor(public_path('template/template-surat-rekomendasi.docx'));
+        $pdf = Pdf::loadView('pdf.surat-rekomendasi.pdf-surat-rekom', [
+            'nomor_surat'     => $dataSurat->nomor_surat.'/UN53.01/DT.01.01/'.$dataSurat->created_at->format('Y'),
+            'konversi_sks'    => $dataSurat->konversi_sks,
+            'nama_mahasiswa'  => $dataSurat->user->dataMahasiswa->nama,
+            'nim'             => $dataSurat->user->dataMahasiswa->nim,
+            'prodi'           => $dataSurat->user->dataMahasiswa->prodi->nama,
+            'semester'        => $numberSemester,
+            'tahun_akademik'  => $dataSurat->user->dataMahasiswa->tahun_akademik,
+            'ipk'             => $dataSurat->user->dataMahasiswa->ipk,
+            'tanggal_now'     => Carbon::now()->translatedFormat('d F Y'),
+            'perihal'         => $dataSurat->perihal,
+            'tempat_perihal'  => $dataSurat->tempat_perihal,
+        ]);
 
-        if ($dataSurat->status != 'Penerbitan') {
-            $validasi = $req->validate(([
-                'nomor_surat' => 'required',
-                'konversi_sks' => 'required|integer',
-            ]));
-
-            if ($validasi) {
-                SuratRekomendasi::where('id_rekomendasi', $idRekomendasi)->update([
-                    'status' => 'Penerbitan',
-                    'nomor_surat' => $validasi['nomor_surat'],
-                    'konversi_sks' => $validasi['konversi_sks'],
-                ]);
-                $template->setValue('nomor_surat', $validasi['nomor_surat']);
-                $template->setValue('konversi_sks', $validasi['konversi_sks']);
-            } else {
-                return redirect()->back()->with('error', 'Gagal menerbitkan surat');
-            }
-        } else {
-            // $surat = SuratRekomendasi::where('id_rekomendasi', $idRekomendasi)->first();
-            $template->setValue('nomor_surat', $dataSurat->nomor_surat);
-            $template->setValue('konversi_sks', $dataSurat->konversi_sks);
-        }
-
-        $template->setValue('nama_mahasiswa', $dataSurat->user->dataMahasiswa->nama);
-        $template->setValue('nim', $dataSurat->user->dataMahasiswa->nim);
-        $template->setValue('prodi', $dataSurat->user->dataMahasiswa->prodi->nama);
-        $template->setValue('semester', $numberSemester);
-        $template->setValue('tahun_akademik', $dataSurat->user->dataMahasiswa->tahun_akademik);
-        $template->setValue('ipk', $dataSurat->user->dataMahasiswa->ipk);
-        $template->setValue('tanggal_now', Carbon::now()->translatedFormat('d F Y'));
-        $template->setValue('perihal', $dataSurat->perihal);
-        $template->setValue('tempat_perihal', $dataSurat->tempat_perihal);
-
-        $fileName = 'surat_rekomendasi_' . $dataSurat->user->dataMahasiswa->nim . '.docx';
-
-
-        $temp_file = tempnam(sys_get_temp_dir(), 'word_');
-        $template->saveAs($temp_file);
-
-        return response()->download($temp_file, $fileName)->deleteFileAfterSend(true);
+        return $pdf->download('surat_rekomendasi_' . $dataSurat->user->dataMahasiswa->nim . '.pdf');
     }
+    
     public function uploadSuratRekomendasi(Request $req){
         $req->validate([
             'file' => 'required|mimes:pdf', // Maks 2MB

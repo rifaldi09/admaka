@@ -17,7 +17,8 @@ class DashboardController extends Controller
         } else if ($userLog->id === 2) {
             return $this->dashboardDosen();
         } else {
-            return "Sesi Admin";
+            // return "Sesi Admin";
+            return view('dashboard.home');
         }
     }
 

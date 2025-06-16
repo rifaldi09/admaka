@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use PhpOffice\PhpWord\Shared\Validate;
 use PhpOffice\PhpWord\TemplateProcessor;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 Carbon::setLocale('id');
 
@@ -53,12 +54,22 @@ class AktifKuliahController extends Controller
             'semester_akhir' => 'required',
         ]);
 
+        $cek_nomor_terakhir = AktifKuliah::orderByDesc('created_at')->value('nomor_surat');
+
+        if ($cek_nomor_terakhir) {
+            $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
+            $no_surat = 'AKT' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+        } else {
+            $no_surat = 'AKT0001';
+        }
+
         // Cek apakah surat aktif kuliah sudah ada
         $validasi = AktifKuliah::create([
             'keperluan' => $request->keperluan,
             'semester_awal' => $request->semester_awal,
             'semester_akhir' => $request->semester_akhir,
             'user_id' => Auth::user()->id,
+            'nomor_surat' => $no_surat
         ]);
 
 
@@ -104,59 +115,48 @@ class AktifKuliahController extends Controller
     }
 
     // Fungsi untuk mengupload surat aktif kuliah
-    public function penerbitanAktifKuliah(Request $request, $id)
+    public function penerbitanAktifKuliah($id)
     {
-        // dd($request->all());
         $idAktifKuliah = decrypt($id);
         $dataSurat = AktifKuliah::with('user.dataMahasiswa.prodi')->where('id_aktif_kuliah', $idAktifKuliah)->first();
 
-        $genapGanjil = $dataSurat->user->dataMahasiswa->semester % 2 == 0 ? 'Genap' : 'Ganjil';
+        $mahasiswa = $dataSurat->user->dataMahasiswa;
+
+        $genapGanjil = $mahasiswa->semester % 2 == 0 ? 'Genap' : 'Ganjil';
 
         $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
-        $numberSemester = $dataSurat->user->dataMahasiswa->semester . ' (' . $formatter->format($dataSurat->user->dataMahasiswa->semester) . ')';
+        $numberSemester = $mahasiswa->semester . ' (' . $formatter->format($mahasiswa->semester) . ')';
 
-        $template = new TemplateProcessor(public_path('template/template-surat-aktif-kuliah.docx'));
+        $dataSurat->update([
+            'status' => 'Penerbitan',
+        ]);
+       
+        $nomorSurat = $dataSurat->nomor_surat;
+            
+        $data = [
+            'nomor_surat'     => $nomorSurat.'/UN53.01/DT.01.01/'.$dataSurat->created_at->format('Y'),
+            'nama'            => $mahasiswa->nama,
+            'status'          => $dataSurat->status_kuliah,
+            'semester_awal'   => $dataSurat->semester_awal,
+            'semester_akhir'  => $dataSurat->semester_akhir,
+            'nim'             => $mahasiswa->nim,
+            'tempat_lahir'    => $mahasiswa->tempat_lahir,
+            'tanggal_lahir'   => $mahasiswa->tanggal_lahir,
+            'prodi'           => $mahasiswa->prodi->nama,
+            'jenjang'         => $mahasiswa->jenjang,
+            'semester'        => $numberSemester,
+            'genap_ganjil'    => $genapGanjil,
+            'tahun_akademik'  => $mahasiswa->tahun_akademik,
+            'no_hp'           => $mahasiswa->no_hp,
+            'sks'             => $mahasiswa->sks,
+            'ipk'             => $mahasiswa->ipk,
+            'tahun_now'       => now()->format('Y'),
+            'tanggal_now'     => Carbon::now()->translatedFormat('d F Y'),
+        ];
 
-        if ($dataSurat->status != 'Penerbitan') {
-            $validasi = $request->validate([
-                'nomor_surat' => 'required',
-            ]);
+        $pdf = Pdf::loadView('pdf.aktif-kuliah.pdf-aktif-kuliah', $data);
 
-            AktifKuliah::where('id_aktif_kuliah', $idAktifKuliah)->update([
-                'status' => 'Penerbitan',
-                'nomor_surat' => $validasi['nomor_surat'],
-            ]);
-            $template->setValue('nomor_surat', $validasi['nomor_surat']);
-        } else {
-            $nomorSurat = AktifKuliah::where('id_aktif_kuliah', $idAktifKuliah)->first();
-            $template->setValue('nomor_surat', $nomorSurat->nomor_surat);
-        }
-
-        $template->setValue('nama', $dataSurat->user->dataMahasiswa->nama);
-        $template->setValue('status', $dataSurat->status_kuliah);
-        $template->setValue('semester_awal', $dataSurat->semester_awal);
-        $template->setValue('semester_akhir', $dataSurat->semester_akhir);
-        $template->setValue('nim', $dataSurat->user->dataMahasiswa->nim);
-        $template->setValue('tempat_lahir', $dataSurat->user->dataMahasiswa->tempat_lahir);
-        $template->setValue('tanggal_lahir', $dataSurat->user->dataMahasiswa->tanggal_lahir);
-        $template->setValue('prodi', $dataSurat->user->dataMahasiswa->prodi->nama);
-        $template->setValue('jenjang', $dataSurat->user->dataMahasiswa->jenjang);
-        $template->setValue('semester', $numberSemester);
-        $template->setValue('genap_ganjil', $genapGanjil);
-        $template->setValue('tahun_akademik', $dataSurat->user->dataMahasiswa->tahun_akademik);
-        $template->setValue('no_hp', $dataSurat->user->dataMahasiswa->no_hp);
-        $template->setValue('sks', $dataSurat->user->dataMahasiswa->sks);
-        $template->setValue('ipk', $dataSurat->user->dataMahasiswa->ipk);
-        $template->setValue('tahun_now', now()->format('Y'));
-        $template->setValue('tanggal_now', Carbon::now()->translatedFormat('d F Y'));
-
-        $fileName = 'aktif_kuliah_' . $dataSurat->user->dataMahasiswa->nim . '.docx';
-
-
-        $temp_file = tempnam(sys_get_temp_dir(), 'word_');
-        $template->saveAs($temp_file);
-
-        return response()->download($temp_file, $fileName)->deleteFileAfterSend(true);
+        return $pdf->download('aktif_kuliah_' . $mahasiswa->nim . '.pdf');
     }
 
     // Fungsi untuk mengupload surat aktif kuliah

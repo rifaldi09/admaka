@@ -121,17 +121,10 @@
                                                 </button>
                                                 @if ($data->status != 'Ditolak')
                                                     @if ($data->status == 'Penerbitan')
-                                                        <form
-                                                            action="{{ route('penerbitan-aktif-kuliah', encrypt($data->id_aktif_kuliah)) }}" method="POST" class="d-inline" enctype="multipart/form-data">
-                                                            @csrf
-                                                            <input type="hidden" name="status"
-                                                                value="{{ $data->status }}">
-                                                            <button class="btn btn-primary btn-sm download "
-                                                                title="Download" type="submit">
+                                                        <a href="{{ route('penerbitan-aktif-kuliah', encrypt($data->id_aktif_kuliah)) }}" class="btn btn-primary btn-sm">
                                                                 <i class="fa-solid fa-download"></i>
                                                                 Download
-                                                            </button>
-                                                        </form>
+                                                        </a>
                                                     @else
                                                         <button class="btn btn-primary btn-sm" data-toggle="modal"
                                                             data-target="#penerbitanSurat-{{ $data->id_aktif_kuliah }}"

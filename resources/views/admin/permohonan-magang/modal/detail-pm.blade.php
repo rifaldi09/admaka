@@ -8,13 +8,13 @@
             </button>
         </div>
             <div class="modal-body">
-                <p>Tujuan surat: {{ $kp->tujuan_surat }}</p>
-                <p>Alamat surat: {{ $kp->alamat_surat }}</p>
-                <p>Tanggal Mulai: {{ $kp->tanggal_mulai }}</p>
-                <p>Tanggal Selesai: {{ $kp->tanggal_selesai }}</p>
-                <p>Status: {{ $kp->status }}</p>
-                @if($kp->status == 'Ditolak')
-                <p>Alasan Ditolak: {{ $kp->alasan_ditolak }}</p>
+                <p>Tujuan surat: {{ $magang->tujuan_surat }}</p>
+                <p>Alamat surat: {{ $magang->alamat_surat }}</p>
+                <p>Tanggal Mulai: {{ $magang->tanggal_mulai }}</p>
+                <p>Tanggal Selesai: {{ $magang->tanggal_selesai }}</p>
+                <p>Status: {{ $magang->status }}</p>
+                @if($magang->status == 'Ditolak')
+                <p>Alasan Ditolak: {{ $magang->alasan_ditolak }}</p>
                 @endif
             </div>
         </div>

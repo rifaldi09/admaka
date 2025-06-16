@@ -135,7 +135,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         // pengubahan status pengajuan surat
         Route::post('terima-aktif-kuliah', 'terimaAktifKuliah')->name('terima-aktif-kuliah'); // proses mengubah status disetujui
         Route::post('tolak-aktif-kuliah', 'tolakAktifKuliah')->name('tolak-aktif-kuliah'); // proses mengubah status ditolak
-        Route::post('penerbitan-aktif-kuliah/{id}', 'penerbitanAktifKuliah')->name('penerbitan-aktif-kuliah'); // proses mengubah status penerbitan
+        Route::get('penerbitan-aktif-kuliah/{id}', 'penerbitanAktifKuliah')->name('penerbitan-aktif-kuliah'); // proses mengubah status penerbitan
         Route::post('edit-penolakan-surat', 'editPenolakanSurat')->name('edit-penolakan-surat');
         Route::post('unduh-pdf-surat-aktif-kuliah', 'unduhPDF')->name('unduh-pdf-surat-aktif-kuliah');
     });
@@ -187,8 +187,8 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::get('Administrator/permohonan-magang', 'PermohonanMagangAdmin')->name('permohonan-magang-admin');
         Route::get('Koordinator Kerja Praktik/permohonan-magang', 'PermohonanMagangKKP')->name('permohonan-magang-kkp');
 
-        // mengunduh word oleh admin agar bisa di TTD oleh dekan
-        Route::put('word-permohonan-magang/{id}', 'wordPermohonan')->name('word-permohonan-magang');
+        // mengunduh pdf oleh admin agar bisa di TTD oleh dekan
+        Route::get('generate-permohonan-magang/{id}', 'pdfPermohonan')->name('generate-permohonan-magang');
 
         // membuat surat pengajuan
         Route::post('create-permohonan-magang', 'createPermohonan')->name('create-permohonan-magang');
@@ -210,7 +210,8 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::post('edit-penolakan-rekomendasi', 'editRekomendasiMahasiswa')->name('edit-penolakan-rekomendasi');
         Route::post('terima-surat-rekomendasi', 'terimaSuratRekomendasi')->name('terima-surat-rekomendasi');
         Route::post('tolak-surat-rekomendasi', 'tolakSuratRekomendasi')->name('tolak-surat-rekomendasi');
-        Route::post('penerbitan-surat-rekomendasi/{id}', 'penerbitanSuratRekomendasi')->name('penerbitan-surat-rekomendasi');
+        Route::get('penerbitan-surat-rekomendasi/{id}', 'penerbitanSuratRekomendasi')->name('penerbitan-surat-rekomendasi');
+        Route::post('konversi-sks-rekomendasi/{id}', 'konversiSksRekomendasi')->name('konversi-sks');
         Route::post('upload-surat-rekomendasi', 'uploadSuratRekomendasi')->name('upload-surat-rekomendasi');
         Route::post('unduh-pdf-surat-rekomendasi', 'unduhSuratRekomendasi')->name('unduh-pdf-surat-rekomendasi');
     });

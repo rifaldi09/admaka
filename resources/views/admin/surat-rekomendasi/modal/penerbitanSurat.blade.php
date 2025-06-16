@@ -8,15 +8,10 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('penerbitan-surat-rekomendasi', encrypt($id)) }}" method="post"
+            <form action="{{ route('konversi-sks', encrypt($id)) }}" method="post"
                 enctype="multipart/form-data">
                 <div class="modal-body">
                     @csrf
-                    {{-- <input type="hidden" name="status" value="{{ $data->status }}"> --}}
-                    <div class="form-group">
-                        <label for="nomor_surat">Masukkan Nomor Surat</label>
-                        <input type="text" name="nomor_surat" required class="form-control">
-                    </div>
                     <div class="form-group">
                         <label for="konversi_sks">Jumlah SKS yang di Konversi</label>
                         <input type="number" name="konversi_sks" required class="form-control">

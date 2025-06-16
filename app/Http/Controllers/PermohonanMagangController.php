@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 // set format tanggal ke bahasa indonesia
@@ -66,13 +67,23 @@ class PermohonanMagangController extends Controller
             'alamat_surat' => 'required'
         ]);
 
+        $cek_nomor_terakhir = PermohonanMagang::orderByDesc('created_at')->value('no_surat');
+
+        if ($cek_nomor_terakhir) {
+            $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
+            $no_surat = 'PM' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+        } else {
+            $no_surat = 'PM0001';
+        }
+
         $data = [
             'tujuan_surat' => $request->tujuan_surat,
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
             'alamat_surat' => $request->alamat_surat,
             'user_id' => Auth::user()->id,
-            'id_prodi' => Auth::user()->data->id_prodi
+            'id_prodi' => Auth::user()->data->id_prodi,
+            'no_surat' => $no_surat
         ];
 
         PermohonanMagang::create($data);
@@ -140,51 +151,43 @@ class PermohonanMagangController extends Controller
         return back()->with('success', 'Status diperbaharui');
     }
 
-    // unduh + lihat pengajuan
-    public function wordPermohonan(Request $request, $id)
+    public function pdfPermohonan($id)
     {
-        $request->validate([
-            'no_surat' => 'required|string'
-        ]);
-
-        PermohonanMagang::where('id_permohonan_magang', $id)->update([
-            'no_surat' => $request->no_surat
-        ]);
-
         $data = User::whereHas('permohonanMagang', function ($query) use ($id) {
             $query->where('status', 'Penerbitan')
                 ->where('id_permohonan_magang', $id);
-        })->with(['permohonanMagang' => function ($query) use ($id) {
-            $query->where('status', 'Penerbitan')
-                ->where('id_permohonan_magang', $id);
-        }, 'dataMahasiswa.prodi'])->first();
+        })
+        ->with([
+            'permohonanMagang' => function ($query) use ($id) {
+                $query->where('status', 'Penerbitan')
+                    ->where('id_permohonan_magang', $id);
+            },
+            'dataMahasiswa.prodi'
+        ])
+        ->firstOrFail();
 
-        // dd($data->toArray());
-        $template = new TemplateProcessor(public_path('template_permohonan_magang.docx'));
+        $kp = $data->permohonanMagang->first();
 
-        foreach ($data->permohonanMagang as $kp) {
-            $tanggal = Carbon::parse($kp->created_at)->translatedFormat('j F Y');
-            $tanggal_mulai = Carbon::parse($kp->tanggal_mulai)->translatedFormat('j F Y');
-            $tanggal_selesai = Carbon::parse($kp->tanggal_selesai)->translatedFormat('j F Y');
-            $template->setValue('created_at', $tanggal);
-            $template->setValue('no_surat', $kp->no_surat);
-            $template->setValue('tujuan_surat', $kp->tujuan_surat);
-            $template->setValue('alamat_surat', $kp->alamat_surat);
-            $template->setValue('tanggal_mulai', $tanggal_mulai);
-            $template->setValue('tanggal_selesai', $tanggal_selesai);
-        }
+        $tanggal = Carbon::parse($kp->created_at)->translatedFormat('j F Y');
+        $tanggal_mulai = Carbon::parse($kp->tanggal_mulai)->translatedFormat('j F Y');
+        $tanggal_selesai = Carbon::parse($kp->tanggal_selesai)->translatedFormat('j F Y');
 
-        $template->setValue('no', 1);
-        $template->setValue('nama', $data->dataMahasiswa->nama);
-        $template->setValue('id_user', $data->dataMahasiswa->nim);
-        $template->setValue('prodi', $data->dataMahasiswa->prodi->nama);
-        $template->setValue('no_hp', $data->dataMahasiswa->no_hp);
+        $pdf = Pdf::loadView('pdf.permohonan-magang.pdf-magang', [
+            'no_surat'        => $kp->no_surat.'/UN53.01/DT.01.01/'.$kp->created_at->format('Y'),
+            'created_at'      => $tanggal,
+            'tujuan_surat'    => $kp->tujuan_surat,
+            'alamat_surat'    => $kp->alamat_surat,
+            'tanggal_mulai'   => $tanggal_mulai,
+            'tanggal_selesai' => $tanggal_selesai,
+            'no'              => 1,
+            'nama'            => $data->dataMahasiswa->nama,
+            'id_user'         => $data->dataMahasiswa->nim,
+            'prodi'           => $data->dataMahasiswa->prodi->nama ?? '-',
+            'no_hp'           => $data->dataMahasiswa->no_hp,
+        ]);
 
-        $filename = 'Permohonan_Magang_' . $data->dataMahasiswa->nama . '.docx';
-        $temp_file = tempnam(sys_get_temp_dir(), 'word_');
-        $template->saveAs($temp_file);
-
-        return response()->download($temp_file, $filename)->deleteFileAfterSend(true);
+        $filename = 'Permohonan_Magang_' . str_replace(' ', '_', $data->dataMahasiswa->nama) . '.pdf';
+        return $pdf->download($filename);
     }
 
     // upload file pengajuan untuk mahasiswa

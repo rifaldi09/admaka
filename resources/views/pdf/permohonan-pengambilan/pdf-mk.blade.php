@@ -142,6 +142,8 @@
     <div class="signature">
       <p>Hormat kami,</p>
       <p style="margin-bottom: 40px;">Dekan,</p>
+      <p><strong>Martaleli Bettiza, S.Si., M.Sc</strong><br>
+      <span class="small">NIP. 197508282021212006</span></p>
     </div>
   </div>
 
