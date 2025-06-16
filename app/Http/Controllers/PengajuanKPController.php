@@ -182,7 +182,7 @@ class PengajuanKPController extends Controller
             'prodi' => $user->dataMahasiswa->prodi->nama,
             'no_hp' => $user->dataMahasiswa->no_hp,
             'created_at' => Carbon::parse($kp->created_at)->translatedFormat('j F Y'),
-            'no_surat' => 'UNV/'. $kp->no_surat.'/FTTK',
+            'no_surat' => $kp->no_surat.'/UN53.01/DT.01.01/2025',
             'tujuan_surat' => $kp->tujuan_surat,
             'alamat_surat' => $kp->alamat_surat,
             'tanggal_mulai' => Carbon::parse($kp->tanggal_mulai)->translatedFormat('j F Y'),

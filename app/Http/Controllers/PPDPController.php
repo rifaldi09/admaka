@@ -215,7 +215,7 @@ class PPDPController extends Controller
             $pp = $data->permohonanPengambilan->first();
 
             $viewData = [
-                'no_surat' => 'UNV/'. $pp->no_surat.'/FTTK',
+                'no_surat' => $pp->no_surat.'/UN53.01/DT.01.01/2025',
                 'tujuan_surat' => $pp->tujuan_surat,
                 'alamat_surat' => $pp->alamat_surat,
                 'created_at' => Carbon::parse($pp->created_at)->translatedFormat('j F Y'),
