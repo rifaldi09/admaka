@@ -7,13 +7,12 @@ use Illuminate\Database\Seeder;
 
 class MenuSeeder extends Seeder
 {
-
     public function run(): void
     {
-         // Hak Akses
-         \App\Models\Menu::insert([
+        // Hak Akses
+        \App\Models\Menu::insert([
             [
-                'kelompok_menu'=>'Dashboard',
+                'kelompok_menu' => 'Dashboard',
                 'header' => 'Dashboard',
                 'menu' => 'Dashboard',
                 'url' => 'dashboard',
@@ -24,7 +23,7 @@ class MenuSeeder extends Seeder
             //! Menu surat menggunakan {role} yang dimana untuk membedakan role
             //! yang ada di dalam menu, misal {role} = mahasiswa, maka urlnya menjadi mahasiswa/aktif-kuliah
             [
-                'kelompok_menu'=>'Surat',
+                'kelompok_menu' => 'Surat',
                 'header' => 'Surat',
                 'menu' => 'Surat Aktif Kuliah',
                 'url' => '{role}/aktif-kuliah',
@@ -33,7 +32,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'kelompok_menu'=>'Setting',
+                'kelompok_menu' => 'Setting',
                 'header' => 'Profil',
                 'menu' => 'Lihat Profil',
                 'url' => 'lihat-profil',
@@ -42,7 +41,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'kelompok_menu'=>'Administrator',
+                'kelompok_menu' => 'Administrator',
                 'header' => 'Data Master',
                 'menu' => 'Data Mahasiswa',
                 'url' => 'data-mahasiswa',
@@ -51,7 +50,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'kelompok_menu'=>'Administrator',
+                'kelompok_menu' => 'Administrator',
                 'header' => 'Data Master',
                 'menu' => 'Data Dosen',
                 'url' => 'data-dosen',
@@ -60,7 +59,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'kelompok_menu'=>'Setting',
+                'kelompok_menu' => 'Setting',
                 'header' => 'Admin',
                 'menu' => 'Hak Akses',
                 'url' => 'hak-akses',
@@ -71,7 +70,7 @@ class MenuSeeder extends Seeder
             //! Menu surat menggunakan {role} yang dimana untuk membedakan role
             //! yang ada di dalam menu, misal {role} = mahasiswa, maka urlnya menjadi mahasiswa/pengajuan-kp
             [
-                'kelompok_menu'=>'Surat',
+                'kelompok_menu' => 'Surat',
                 'header' => 'Surat',
                 'menu' => 'Surat Pengajuan Kerja Praktik',
                 'url' => '{role}/pengajuan-kp',
@@ -81,7 +80,7 @@ class MenuSeeder extends Seeder
             ],
 
             [
-                'kelompok_menu'=>'Setting',
+                'kelompok_menu' => 'Setting',
                 'header' => 'Menu',
                 'menu' => 'Menu',
                 'url' => 'manajemen-menu',
@@ -90,7 +89,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'kelompok_menu'=> 'Surat',
+                'kelompok_menu' => 'Surat',
                 'header' => 'Surat',
                 'menu' => 'Surat Permohonan Pengambilan Data Penelitian',
                 'url' => '{role}/permohonan-pengambilan',
@@ -99,7 +98,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'kelompok_menu'=> 'Surat',
+                'kelompok_menu' => 'Surat',
                 'header' => 'Surat',
                 'menu' => 'Surat Permohonan Magang',
                 'url' => '{role}/permohonan-magang',
@@ -108,7 +107,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'kelompok_menu'=> 'Surat',
+                'kelompok_menu' => 'Surat',
                 'header' => 'Surat',
                 'menu' => 'Surat Rekomendasi',
                 'url' => '{role}/surat-rekomendasi',
@@ -116,8 +115,8 @@ class MenuSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-                        [
-                'kelompok_menu'=> 'Surat',
+            [
+                'kelompok_menu' => 'Surat',
                 'header' => 'Surat',
                 'menu' => 'Transkrip Nilai Sementara',
                 'url' => '{role}/transkrip',
