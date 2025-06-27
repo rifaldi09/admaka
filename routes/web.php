@@ -83,6 +83,9 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::put('update_datadosen/{nim}', 'updatedataDosen')->name('update_datadosen');
         Route::post('dosen-preview',  'previewCSVDosen')->name('dosen-preview');
         Route::post('import-dosen', 'importDosen')->name('import-dosen');
+
+        // Profile
+        Route::put('lihat-profil', 'updateMhs')->name('profil-update');
     });
 
     // Sesi Mahasiswa
@@ -93,6 +96,9 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         // Surat Menu
         Route::get('permohonan-kerja-praktik-mahasiswa', 'kerjaPraktik')->name('permohonan-kerja-praktik-mahasiswa');
         Route::get('aktif-kuliah-mahasiswa', 'kerjaPraktik')->name('aktif-kuliah-mahasiswa');
+
+        // Profile
+        Route::put('lihat-profil', 'updateMhs')->name('profil-update');
     });
 
     // Pengajuan kp

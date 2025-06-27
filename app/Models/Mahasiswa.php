@@ -22,7 +22,12 @@ class Mahasiswa extends Model
         'id_prodi',
         'tempat_lahir',
         'tanggal_lahir',
-        'no_hp'
+        'no_hp',
+        'jenjang',
+        'semester',
+        'tahun_akademik',
+        'ipk',
+        'sks'
     ];
 
     // relasi ke tabel prodi (1 mahasiswa punya 1 prodi)

@@ -10,7 +10,8 @@
     </div>
     <div class="card-body">
         <div class="container">
-            <form action="#" method="post">
+            <form action="{{ route('profil-update') }}" method="post">
+                @csrf
                 @method('PUT')
                 <div class="row">
                     <div class="col-6">
@@ -27,8 +28,17 @@
                             <input type="text" class="form-control" placeholder="Email" name="email" id="email" value={{ old('email',$user->email) }} >
                         </div>
                         <div class="mb-3">
-                            <label for="id_prodi" class="form-label">Program Studi</label>
-                            <input type="text" class="form-control" placeholder="Program Studi" name="id_prodi" id="id_prodi" value={{ old('id_prodi',$user->prodi->nama) }} >
+                            <label for="prodiId" class="form-label">Program Studi</label>
+                            <select name="id_prodi" id="prodiId" class="form-select">
+                                <option>Pilih Program Studi</option>
+                                @foreach ($dataProdis as $prodi)
+                                @if (old('id_prodi',$user->id_prodi) == $prodi->id)
+                                <option value="{{ $prodi->id }}" selected>{{ $prodi->nama }}</option>
+                                @else
+                                <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
+                                @endif
+                                @endforeach
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="semester" class="form-label">Semester</label>
@@ -53,8 +63,12 @@
                             <input type="text" class="form-control" placeholder="No HP" name="no_hp" id="no_hp" value={{ old('no_hp',$user->no_hp) }} >
                         </div>
                         <div class="mb-3">
-                            <label for="jenjang" class="form-label">Jenjang Studi</label>
-                            <input type="text" class="form-control" placeholder="Jenjang Studi" name="jenjang" id="jenjang" value={{ old('jenjang',$user->jenjang) }} >
+                            <label for="jenjang_studi" class="form-label">Jenjang Studi</label>
+                            <select name="jenjang" id="jenjang_studi" class="form-select">
+                                <option>Pilih Jenjang Studi</option>
+                                <option value="Strata 1" {{ old('jenjang', $user->jenjang) == 'Strata 1' ? 'selected' : '' }}>Strata 1</option>
+                                <option value="Strata 2" {{ old('jenjang', $user->jenjang) == 'Strata 2' ? 'selected' : '' }}>Strata 2</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="tahun_akademik" class="form-label">Tahun Akademik</label>
