@@ -10,18 +10,18 @@
     </div>
     <div class="card-body">
         <div class="container">
-            <form action="{{ route('profil-update') }}" method="post">
+            <form action="{{ route('profil-mahasiswa-update') }}" method="post">
                 @csrf
                 @method('PUT')
                 <div class="row">
                     <div class="col-6">
                         <div class="mb-3">
                             <label for="nim" class="form-label">NIM</label>
-                            <input type="text" class="form-control" placeholder="NIM" name="nim" id="nim" value={{ old('nim',$user->nim) }} required>
+                            <input type="text" class="form-control" placeholder="NIM" name="nim" id="nim" value={{ old('nim',$user->nim) }} readonly disabled>
                         </div>
                         <div class="mb-3">
                             <label for="nama" class="form-label">Nama Lengkap</label>
-                            <input type="text" class="form-control" placeholder="Nama Lengkap" name="nama" id="nama" value={{ old('nama',$user->nama) }} >
+                            <input type="text" class="form-control" placeholder="Nama Lengkap" name="nama" id="nama" value={{ old('nama',$user->nama) }} required>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>

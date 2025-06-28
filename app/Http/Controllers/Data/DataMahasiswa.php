@@ -59,7 +59,6 @@ class DataMahasiswa extends Controller
     //tempat crud mahasiswa
     public function storeMhs(Request $request)
     {
-
         // validasi input
         $validasi = $request->validate([
             'nim'            => 'required|string|unique:mahasiswa,nim',
@@ -134,13 +133,13 @@ class DataMahasiswa extends Controller
             ->where('nim', decrypt($nim))
             ->first();
 
-
         if (!$mhs) {
             return response()->json(['error' => 'Data tidak ditemukan'], 404);
         }
         $mhs->key = $nim;
         return response()->json($mhs);
     }
+
     // fungsi update data
     public function updatedataMhs(Request $request, $nim)
     {

@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Data\DataDosen;
 use App\Http\Controllers\Data\DataMahasiswa;
+use App\Http\Controllers\Data\DataProdi;
+use App\Http\Controllers\DosenController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PengajuanKPController;
@@ -83,9 +85,21 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::put('update_datadosen/{nim}', 'updatedataDosen')->name('update_datadosen');
         Route::post('dosen-preview',  'previewCSVDosen')->name('dosen-preview');
         Route::post('import-dosen', 'importDosen')->name('import-dosen');
+    });
 
+    // Data Master - Prodi
+    Route::controller(DataProdi::class)->group(function () {
+        Route::get('data-prodi', 'index')->name('data-prodi');
+        Route::post('add_prodi', 'storeProdi')->name('add_prodi');
+        Route::get('update-prodi/{id}', 'updateProdi')->name('update-prodi');
+        Route::put('update_dataprodi/{id}', 'updatedataProdi')->name('update_dataprodi');
+        Route::delete('destroy-prodi/{id}', 'destroyProdi')->name('destroy-prodi');
+    });
+
+    // Sesi Dosen
+    Route::controller(DosenController::class)->group(function () {
         // Profile
-        Route::put('lihat-profil', 'updateMhs')->name('profil-update');
+        Route::put('lihat-profil-dosen', 'updateProfilDosen')->name('profil-dosen-update');
     });
 
     // Sesi Mahasiswa
@@ -98,7 +112,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::get('aktif-kuliah-mahasiswa', 'kerjaPraktik')->name('aktif-kuliah-mahasiswa');
 
         // Profile
-        Route::put('lihat-profil', 'updateMhs')->name('profil-update');
+        Route::put('lihat-profil', 'updateProfilMhs')->name('profil-mahasiswa-update');
     });
 
     // Pengajuan kp

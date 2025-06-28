@@ -16,16 +16,15 @@ class MahasiswaController extends Controller
         $user = auth()->user()->data;
         $dataProdis = Prodi::all();
 
-        return view('dashboard.profileMhs', compact('user', 'dataProdis'), ['titleHeader' => 'Profile Mahasiswa']);
+        return view('dashboard.profileMhs', compact('user', 'dataProdis'), ['titleHeader' => 'Profil Mahasiswa']);
     }
 
     // Mahasiswa profile update
-    public function updateMhs(Request $request)
+    public function updateProfilMhs(Request $request)
     {
         // dd($request->all());
 
         $validated = $request->validate([
-            'nim' => 'required|min:3',
             'nama' => 'required|string|min:3',
             'email' => 'required|email|min:5',
             'id_prodi' => 'required',
@@ -41,23 +40,9 @@ class MahasiswaController extends Controller
 
         // Get user login
         $user = auth()->user();
-
         $mahasiswa = Mahasiswa::where('nim', $user->id_user)->first();
 
         if ($mahasiswa) {
-            // $mahasiswa->update([
-            //     'nama' => $validated['nama'],
-            //     'email' => $validated['email'],
-            //     'id_prodi' => $validated['id_prodi'],
-            //     'tempat_lahir' => $validated['tempat_lahir'],
-            //     'tanggal_lahir' => $validated['tanggal_lahir'],
-            //     'no_hp' => $validated['no_hp'],
-            //     'jenjang' => $validated['jenjang'],
-            //     'semester' => $validated['semester'],
-            //     'tahun_akademik' => $validated['tahun_akademik'],
-            //     'ipk' => $validated['ipk'],
-            //     'sks' => $validated['sks'],
-            // ]);
             $mahasiswa->update($validated);
         } else {
             return redirect()->back()->with('failed', 'Data tidak ditemukan');
