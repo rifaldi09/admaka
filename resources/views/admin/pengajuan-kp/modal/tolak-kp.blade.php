@@ -1,11 +1,12 @@
 {{-- Modal ketika surat ditolak --}}
-<div class="modal fade" id="modalTolak-{{ $id }}" tabindex="-1" aria-labelledby="modalTolak-{{ $id }}"
+<div class="modal fade" id="modalTolakKp-{{ $id }}" tabindex="-1" aria-labelledby="modalTolakKp-{{ $id }}"
     aria-hidden="true">
     <div class="modal-dialog modal-lg">
 
-        <form action="{{ route('tolak-aktif-kuliah') }}" class="modal-content" method="post"
-            enctype="multipart/form-data" id="tolak-form">
+        <form action="{{ route($route, $id) }}" class="modal-content" method="post" enctype="multipart/form-data"
+            id="tolak-form">
             @csrf
+            @method('PUT')
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Penolakan Surat</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -17,9 +18,9 @@
                 {{-- Content Penolakan Surat Aktif Kuliah --}}
                 <input type="hidden" name="id" value="{{ $id }}">
                 <div class="form-group">
-                    <label for="keperluan">Alasan</label>
+                    <label for="alasan">Alasan</label>
                     {{-- alasan/deskripsi surat di tolak --}}
-                    <textarea class="form-control" name="deskripsi" rows="6" required></textarea>
+                    <textarea class="form-control" name="alasan_ditolak" rows="6" required></textarea>
                 </div>
 
             </div>

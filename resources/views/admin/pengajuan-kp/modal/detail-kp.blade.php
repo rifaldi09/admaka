@@ -1,4 +1,5 @@
-<div class="modal fade" id="detailModal-{{ $id }}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel-{{ $id }}" aria-hidden="true">
+<div class="modal fade" id="detailModal-{{ $id }}" tabindex="-1" role="dialog"
+    aria-labelledby="detailModalLabel-{{ $id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -35,15 +36,22 @@
                     <input type="text" class="form-control" value="{{ $kp->status }}" disabled>
                 </div>
 
+
                 @if($kp->status == 'Ditolak')
-                    <div class="form-group">
-                        <label>Alasan Ditolak</label>
-                        <textarea class="form-control" disabled>{{ $kp->alasan_ditolak }}</textarea>
-                    </div>
+                <div class="form-group">
+                    <label>Alasan Ditolak</label>
+                    <textarea class="form-control" disabled>{{ $kp->alasan_ditolak }}</textarea>
+                </div>
                 @endif
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <form action="{{ route('terima-pengajuan', $kp->id_pengajuan) }}" class="d-inline" method="post">
+                    @csrf
+                    <button class="btn btn-success btn-setujui " title="Setujui" type="submit">
+                        <i class="fa-solid fa-check"></i> Setujui Surat
+                    </button>
+                </form>
             </div>
         </div>
     </div>

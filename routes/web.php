@@ -124,6 +124,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::put('tolak-pengajuan/{pengajuan:id_pengajuan}', 'tolakPengajuan')->name('tolak-pengajuan');
         Route::post('edit-pengajuan/{pengajuan:id_pengajuan}', 'editPengajuan')->name('edit-pengajuan');
         Route::post('penerbitan-pengajuan/{pengajuan:id_pengajuan}', 'penerbitanPengajuan')->name('penerbitan-pengajuan');
+        Route::post('unduh-pdf-surat-kp', 'unduhPDF')->name('unduh-pdf-surat-kp');
     });
 
     // Surat Pengajuan Aktif Kuliah

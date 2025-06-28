@@ -8,7 +8,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('penerbitan-aktif-kuliah', encrypt($id)) }}" method="post"
+            <form action="{{ route('penerbitan-aktif-kuliah', encrypt($id)) }}" method="get"
                 enctype="multipart/form-data">
                 <div class="modal-body">
                     @csrf

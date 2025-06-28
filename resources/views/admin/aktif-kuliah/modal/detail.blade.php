@@ -62,8 +62,8 @@
                     <div class="form-group col-md-6">
                         <label for="semester">Semester</label>
                         @php
-                            $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
-                            $numberSemester = $formatter->format($data->user->dataMahasiswa->semester);
+                        $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
+                        $numberSemester = $formatter->format($data->user->dataMahasiswa->semester);
                         @endphp
                         <input type="text" class="form-control" name="semester"
                             value="{{ $data->user->dataMahasiswa->semester }} ({{ $numberSemester }})" disabled>
@@ -95,13 +95,12 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="status">Status</label>
-                            <input type="text" class="form-control" name="status" value="{{ $data->status }}"
-                                disabled>
+                            <input type="text" class="form-control" name="status" value="{{ $data->status }}" disabled>
                         </div>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-row col-md-6">
+                    <!-- <div class="form-row col-md-6">
                         <div class="form-group col-md-6">
                             <label for="semester_awal">Semester Awal</label>
                             <input type="number" class="form-control" name="semester_awal"
@@ -112,7 +111,7 @@
                             <input type="number" class="form-control" name="semester_akhir"
                                 value="{{ $data->semester_akhir }}" disabled>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="form-group col-md-6">
                         <label for="status_mahaisiswa">Status Mahasiswa</label>
                         <select name="status_mahasiswa" id="status_mahasiswa" class="form-control" required>

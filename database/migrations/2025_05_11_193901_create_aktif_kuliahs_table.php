@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained();
             $table->text('keperluan');
             $table->text('nomor_surat')->nullable();
-            $table->integer('semester_awal');
-            $table->integer('semester_akhir');
+            $table->integer('semester_awal')->nullable();
+            $table->integer('semester_akhir')->nullable();
             $table->enum('status_kuliah',['Aktif','Tidak Aktif'])->nullable();
             $table->enum('status',['Belum Diterima', 'Diterima', 'Ditolak','Penerbitan'])->default('Belum Diterima');
             $table->string('alasan')->nullable();

@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
-
+use Illuminate\Support\Facades\Storage;
 // set format tanggal ke bahasa indonesia
 Carbon::setLocale('id');
 
@@ -72,14 +72,36 @@ class PengajuanKPController extends Controller
             'alamat_surat' => 'required'
         ]);
 
-        $cek_nomor_terakhir = PengajuanKP::orderByDesc('created_at')->value('no_surat');
+        $cek_nomor_terakhir = PengajuanKP::where('status', '!=','Ditolak')
+        ->orderByDesc('created_at')
+        ->first();
+        
+        // if ($cek_nomor_terakhir) {
+        //     $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
+        //     $no_surat = 'KP' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+        // } else {
+        //     $no_surat = '0001';
+        // }
+
+        $tahunSekarang = Carbon::now()->year;
 
         if ($cek_nomor_terakhir) {
-            $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
-            $no_surat = 'KP' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+       
+            $tahunTerakhir = Carbon::parse( $cek_nomor_terakhir->created_at)->year;
+
+            // Ambil nomor surat terakhir
+            preg_match('/^\d+/', $cek_nomor_terakhir->no_surat, $matchNomor);
+            $nomorTerakhir = isset($matchNomor[0]) ? (int) $matchNomor[0] : 0;
+
+            if ($tahunTerakhir != $tahunSekarang) {
+                $no_surat = '0001'; // Tahun berganti, mulai dari awal
+            } else {
+                $no_surat = str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); // Lanjut nomor
+            }
         } else {
-            $no_surat = 'KP0001';
+            $no_surat = '0001'; // Tidak ada data, mulai dari awal
         }
+
 
         $data = [
             'tujuan_surat' => $request->tujuan_surat,
@@ -196,27 +218,66 @@ class PengajuanKPController extends Controller
     // upload file pengajuan untuk mahasiswa
     public function uploadPengajuan(Request $request, PengajuanKP $pengajuan)
     {
+
         $request->validate([
-            'file' => 'required|mimes:pdf|max:2048', // Maks 2MB
+            'file' => 'required|mimes:pdf|max:2048',
         ]);
 
         $file = $request->file('file');
-        
+        $idPengajuanKp= $pengajuan->id_pengajuan;
+
         if ($file) {
-            $fileName = 'pengajuan_kerja_praktik_' . time() . '.' . $file->getClientOriginalExtension();
-            
-            $path = $file->storeAs('public/pengajuan-kp', $fileName);
-            
+            $fileName = 'pengajuan_kerja_praktik_' . $idPengajuanKp . '.' . $file->getClientOriginalExtension();
+            $relativePath = 'pengajuan-kp/pdf/' . $fileName;
+
+            // Cek data lama
+            $existingFile = FilePengajuan::where('id_pengajuan', $idPengajuanKp)->first();
+
+            if ($existingFile) {
+                // Hapus file lama di storage
+                Storage::delete('public/' . $existingFile->path);
+
+                // Hapus data lama di database
+                $existingFile->delete();
+            }
+
+            // Upload file baru (akan overwrite file jika nama sama)
+            $path = $file->storeAs('public/pengajuan-kp/pdf', $fileName);
+
+            // Simpan data baru di database
             FilePengajuan::create([
-                'path' => $path,
-                'id_pengajuan' => $pengajuan->id_pengajuan
+                'path' => $relativePath,
+                'id_pengajuan' => $idPengajuanKp,
             ]);
-            
-            return back()->with('success', 'File telah diupload');
+
+            return back()->with('success', 'File berhasil diupload ');
         }
 
         return back()->with('error', 'File tidak ditemukan.');
     }
 
+    public function unduhPDF(Request $request)
+    {
+        $idPengajuanKp = decrypt($request->id);
+        $fileRecord = FilePengajuan::where('id_pengajuan', $idPengajuanKp)->first();
+
+        if (!$fileRecord) {
+            return back()->with('error', 'File tidak ditemukan di database.');
+        }
+
+        // Pastikan path sesuai lokasi file di storage
+        $storagePath = 'public/' . $fileRecord->path;
+
+        if (!Storage::exists($storagePath)) {
+            return back()->with('error', 'File fisik tidak ditemukan di penyimpanan.');
+        }
+
+        $filePath = storage_path('app/public/' . $fileRecord->path);
+        $fileName = basename($filePath);
+
+        return response()->download($filePath, $fileName, [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
 
 }
