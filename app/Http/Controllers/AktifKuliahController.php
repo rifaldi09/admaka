@@ -50,24 +50,35 @@ class AktifKuliahController extends Controller
         // Validasi inputan
         $request->validate([
             'keperluan' => 'required|string',
-            'semester_awal' => 'required',
-            'semester_akhir' => 'required',
+            // 'semester_awal' => 'required',
+            // 'semester_akhir' => 'required',
         ]);
 
-        $cek_nomor_terakhir = AktifKuliah::orderByDesc('created_at')->value('nomor_surat');
+        $cek_nomor_terakhir = AktifKuliah::orderByDesc('created_at')->first();
+        $tahunSekarang = Carbon::now()->year;
 
         if ($cek_nomor_terakhir) {
-            $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
-            $no_surat = 'AKT' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+       
+            $tahunTerakhir = Carbon::parse( $cek_nomor_terakhir->created_at)->year;
+
+            // Ambil nomor surat terakhir
+            preg_match('/^\d+/', $cek_nomor_terakhir->nomor_surat, $matchNomor);
+            $nomorTerakhir = isset($matchNomor[0]) ? (int) $matchNomor[0] : 0;
+
+            if ($tahunTerakhir != $tahunSekarang) {
+                $no_surat = '0001'; // Tahun berganti, mulai dari awal
+            } else {
+                $no_surat = str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); // Lanjut nomor
+            }
         } else {
-            $no_surat = 'AKT0001';
+            $no_surat = '0001'; // Tidak ada data, mulai dari awal
         }
 
         // Cek apakah surat aktif kuliah sudah ada
         $validasi = AktifKuliah::create([
             'keperluan' => $request->keperluan,
-            'semester_awal' => $request->semester_awal,
-            'semester_akhir' => $request->semester_akhir,
+            // 'semester_awal' => $request->semester_awal,
+            // 'semester_akhir' => $request->semester_akhir,
             'user_id' => Auth::user()->id,
             'nomor_surat' => $no_surat
         ]);
@@ -139,6 +150,7 @@ class AktifKuliahController extends Controller
             'status'          => $dataSurat->status_kuliah,
             'semester_awal'   => $dataSurat->semester_awal,
             'semester_akhir'  => $dataSurat->semester_akhir,
+            'keperluan'       => $dataSurat->keperluan,
             'nim'             => $mahasiswa->nim,
             'tempat_lahir'    => $mahasiswa->tempat_lahir,
             'tanggal_lahir'   => $mahasiswa->tanggal_lahir,

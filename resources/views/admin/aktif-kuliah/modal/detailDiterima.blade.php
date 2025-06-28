@@ -1,6 +1,6 @@
 {{-- Modal ketika surat disetujui --}}
-<div class="modal fade" id="modalDetailTerima-{{ $id }}" tabindex="-1"
-    aria-labelledby="modalDetailTerima-{{ $id }}" aria-hidden="true">
+<div class="modal fade" id="modalDetailTerima-{{ $id }}" tabindex="-1" aria-labelledby="modalDetailTerima-{{ $id }}"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg">
 
         <form action="{{ route('terima-aktif-kuliah') }}" class="modal-content" method="post"
@@ -20,7 +20,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="id_user">NIM</label>
-                        <input type="text" class="form-control"name="id_user"
+                        <input type="text" class="form-control" name="id_user"
                             value="{{ $data->user->dataMahasiswa->nim }}" disabled>
                     </div>
                     <div class="form-group col-md-6">
@@ -62,8 +62,8 @@
                     <div class="form-group col-md-6">
                         <label for="semester">Semester</label>
                         @php
-                            $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
-                            $numberSemester = $formatter->format($data->user->dataMahasiswa->semester);
+                        $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
+                        $numberSemester = $formatter->format($data->user->dataMahasiswa->semester);
                         @endphp
                         <input type="text" class="form-control" name="semester"
                             value="{{ $data->user->dataMahasiswa->semester }} ({{ $numberSemester }})" disabled>
@@ -95,13 +95,12 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="status">Status</label>
-                            <input type="text" class="form-control" name="status" value="{{ $data->status }}"
-                                disabled>
+                            <input type="text" class="form-control" name="status" value="{{ $data->status }}" disabled>
                         </div>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-row col-md-6">
+                    <!-- <div class="form-row col-md-6">
                         <div class="form-group col-md-6">
                             <label for="semester_awal">Semester Awal</label>
                             <input type="number" class="form-control" name="semester_awal"
@@ -112,11 +111,11 @@
                             <input type="number" class="form-control" name="semester_akhir"
                                 value="{{ $data->semester_akhir }}" disabled>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="form-group col-md-6">
                         <label for="status_mahaisiswa">Status Mahasiswa</label>
-                        <input type="text" class="form-control" name="status_kuliah"
-                                value="{{ $data->status_kuliah }}" disabled>
+                        <input type="text" class="form-control" name="status_kuliah" value="{{ $data->status_kuliah }}"
+                            disabled>
                     </div>
                 </div>
 
