@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use PhpOffice\PhpWord\Shared\Validate;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 Carbon::setLocale('id');
 
@@ -54,7 +55,9 @@ class AktifKuliahController extends Controller
             // 'semester_akhir' => 'required',
         ]);
 
-        $cek_nomor_terakhir = AktifKuliah::orderByDesc('created_at')->first();
+        $cek_nomor_terakhir = AktifKuliah::where('status', '!=','Ditolak')
+        ->orderByDesc('created_at')
+        ->first();
         $tahunSekarang = Carbon::now()->year;
 
         if ($cek_nomor_terakhir) {
@@ -174,29 +177,43 @@ class AktifKuliahController extends Controller
     // Fungsi untuk mengupload surat aktif kuliah
     public function uploadAktifKuliah(Request $request)
     {
-        // dd($request->all());
         $request->validate([
-            'file' => 'required|mimes:pdf', // Maks 2MB
+            'file' => 'required|mimes:pdf|max:2048',
         ]);
 
         $file = $request->file('file');
         $idAktifKuliah = decrypt($request->id);
 
         if ($file) {
-            $fileName = 'surat_aktif_kuliah_' . time() . '.' . $file->getClientOriginalExtension();
+            $fileName = 'surat_aktif_kuliah_' . $idAktifKuliah . '.' . $file->getClientOriginalExtension();
+            $relativePath = 'aktif-kuliah/pdf/' . $fileName;
 
+            // Cek data lama
+            $existingFile = FilePengajuan::where('id_pengajuan', $idAktifKuliah)->first();
+
+            if ($existingFile) {
+                // Hapus file lama di storage
+                Storage::delete('public/' . $existingFile->path);
+
+                // Hapus data lama di database
+                $existingFile->delete();
+            }
+
+            // Upload file baru (akan overwrite file jika nama sama)
             $path = $file->storeAs('public/aktif-kuliah/pdf', $fileName);
 
+            // Simpan data baru di database
             FilePengajuan::create([
-                'path' => 'app/' . $path,
+                'path' => $relativePath,
                 'id_pengajuan' => $idAktifKuliah,
             ]);
 
-            return back()->with('success', 'File telah diupload');
+            return back()->with('success', 'File berhasil diupload ');
         }
 
         return back()->with('error', 'File tidak ditemukan.');
     }
+
 
     // Fungsi untuk edit keperluan dan status surat aktif kuliah
     public function editPenolakanSurat(Request $request)
@@ -216,9 +233,26 @@ class AktifKuliahController extends Controller
 
     public function unduhPDF(Request $request)
     {
-        $idPengajuan = decrypt($request->id);
-        $pathSurat = FilePengajuan::where('id_pengajuan', $idPengajuan)->first();
-        $path = storage_path($pathSurat->path);
-        return response()->download($path)->deleteFileAfterSend(false);
+        $idAktifKuliah = decrypt($request->id);
+        $fileRecord = FilePengajuan::where('id_pengajuan', $idAktifKuliah)->first();
+
+        if (!$fileRecord) {
+            return back()->with('error', 'File tidak ditemukan di database.');
+        }
+
+        // Pastikan path sesuai lokasi file di storage
+        $storagePath = 'public/' . $fileRecord->path;
+
+        if (!Storage::exists($storagePath)) {
+            return back()->with('error', 'File fisik tidak ditemukan di penyimpanan.');
+        }
+
+        $filePath = storage_path('app/public/' . $fileRecord->path);
+        $fileName = basename($filePath);
+
+        return response()->download($filePath, $fileName, [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
+
 }
