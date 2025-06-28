@@ -1,8 +1,10 @@
 <!-- Modal Penambahan Surat Aktif Kuliah-->
-<div class="modal fade" id="modalTambahSuratAktif" tabindex="-1" aria-labelledby="modalTambahSuratAktif" aria-hidden="true">
+<div class="modal fade" id="modalTambahSuratAktif" tabindex="-1" aria-labelledby="modalTambahSuratAktif"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg">
 
-        <form action="{{ route('create-surat-aktif') }}" class="modal-content" method="post" enctype="multipart/form-data">
+        <form action="{{ route('create-surat-aktif') }}" class="modal-content" method="post"
+            enctype="multipart/form-data">
             @csrf
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTambahSuratAktif">Pengajuan Surat Aktif Kuliah</h5>
@@ -18,25 +20,25 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="id_user">NIM</label>
-                        <input type="text" class="form-control" id="id_user" name="id_user"
-                            value="{{ $dataUser->nim }}" disabled>
+                        <input type="text" class="form-control" id="id_user" name="id_user" value="{{ $dataUser->nim }}"
+                            disabled>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="nama">Nama</label>
-                        <input type="text" class="form-control" id="nama" name="nama"
-                            value="{{ $dataUser->nama }}" disabled>
+                        <input type="text" class="form-control" id="nama" name="nama" value="{{ $dataUser->nama }}"
+                            disabled>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" name="email"
-                            value="{{ $dataUser->email }}" disabled>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ $dataUser->email }}"
+                            disabled>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="prodi">Program Studi</label>
-                        <input type="text" class="form-control" id="prodi" name="prodi"
-                            value="{{ $prodi->nama }}" disabled>
+                        <input type="text" class="form-control" id="prodi" name="prodi" value="{{ $prodi->nama }}"
+                            disabled>
                     </div>
                 </div>
                 <div class="form-row">
@@ -60,8 +62,8 @@
                     <div class="form-group col-md-6">
                         <label for="semester">Semester</label>
                         @php
-                            $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
-                            $numberSemester = $formatter->format($dataUser->semester);
+                        $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
+                        $numberSemester = $formatter->format($dataUser->semester);
                         @endphp
                         <input type="text" class="form-control" id="semester" name="semester"
                             value="{{ $dataUser->semester }} ({{ $numberSemester }})" disabled>
@@ -76,23 +78,23 @@
                     <div class="form-row col-md-6">
                         <div class="form-group col-md-6">
                             <label for="ipk">IPK</label>
-                            <input type="number" class="form-control" id="ipk" name="ipk"
-                                value="{{ $dataUser->ipk }}" disabled>
+                            <input type="number" class="form-control" id="ipk" name="ipk" value="{{ $dataUser->ipk }}"
+                                disabled>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="sks">SKS</label>
-                            <input type="text" class="form-control" id="sks" name="sks"
-                                value="{{ $dataUser->sks }}" disabled>
+                            <input type="text" class="form-control" id="sks" name="sks" value="{{ $dataUser->sks }}"
+                                disabled>
                         </div>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="no_hp">No Handphone</label>
-                        <input type="text" class="form-control" id="no_hp" name="no_hp"
-                        value="{{ $dataUser->no_hp }}" disabled>
+                        <input type="text" class="form-control" id="no_hp" name="no_hp" value="{{ $dataUser->no_hp }}"
+                            disabled>
                     </div>
-                    <div class="form-row col-md-6">
+                    <!-- <div class="form-row col-md-6">
                         <div class="form-group col-md-6">
                             <label for="semester_awal">Semester Awal</label>
                             <input type="number" class="form-control" id="semester_awal" name="semester_awal" required>
@@ -101,7 +103,7 @@
                             <label for="semester_akhir">Semester Akhir</label>
                             <input type="number" class="form-control" id="semester_akhir" name="semester_akhir" required>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="form-group">
