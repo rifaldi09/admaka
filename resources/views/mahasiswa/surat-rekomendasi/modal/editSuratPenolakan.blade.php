@@ -18,12 +18,12 @@
 
                 {{-- id_role & nama_role --}}
                 <input type="hidden" class="form-control" value="{{ $data->id_rekomendasi }}" name="id_edit">
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="status">Status</label>
-                        <input type="text" class="form-control" value="{{ $data->status }}" name="status" disabled>
-                    </div>
+
+                <div class="form-group ">
+                    <label for="status">Status</label>
+                    <input type="text" class="form-control" value="{{ $data->status }}" name="status" disabled>
                 </div>
+
 
                 <div class="form-group">
                     <label for="alasan">Alasan DItolak</label>

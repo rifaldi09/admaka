@@ -40,14 +40,14 @@ class RekomendasiController extends Controller
         $cek_nomor_terakhir = SuratRekomendasi::where('status', '!=','Ditolak')
         ->orderByDesc('created_at')
         ->first();
-        
+        // dd($cek_nomor_terakhir);
         $tahunSekarang = Carbon::now()->year;
 
         if ($cek_nomor_terakhir) {
            $tahunTerakhir = Carbon::parse( $cek_nomor_terakhir->created_at)->year;
 
             // Ambil nomor surat terakhir
-            preg_match('/^\d+/', $cek_nomor_terakhir->no_surat, $matchNomor);
+            preg_match('/^\d+/', $cek_nomor_terakhir->nomor_surat, $matchNomor);
             $nomorTerakhir = isset($matchNomor[0]) ? (int) $matchNomor[0] : 0;
 
             if ($tahunTerakhir != $tahunSekarang) {

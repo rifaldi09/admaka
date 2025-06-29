@@ -10,6 +10,9 @@ class AuthController extends Controller
 {
     public function login()
     {
+        if (auth()->check()) {
+            return redirect()->route('dashboard'); // Ganti dengan route tujuan kamu
+        }
         return view('auth.login', ['title' => 'ADMAKA Login']);
     }
 
