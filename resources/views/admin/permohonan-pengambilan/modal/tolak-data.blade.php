@@ -1,12 +1,11 @@
 {{-- Modal ketika surat ditolak --}}
-<div class="modal fade" id="modalTolakKp-{{ $id }}" tabindex="-1" aria-labelledby="modalTolakKp-{{ $id }}"
+<div class="modal fade" id="modalTolakData-{{ $id }}" tabindex="-1" aria-labelledby="modalTolakData-{{ $id }}"
     aria-hidden="true">
     <div class="modal-dialog modal-lg">
 
         <form action="{{ route($route, $id) }}" class="modal-content" method="post" enctype="multipart/form-data"
             id="tolak-form">
             @csrf
-            @method('PUT')
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Penolakan Surat</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -15,10 +14,10 @@
             </div>
             <div class="modal-body">
 
-                {{-- Content Penolakan Surat Pengajuan KP --}}
+                {{-- Content Penolakan Surat Pengambilan Data --}}
                 <input type="hidden" name="id" value="{{ $id }}">
                 <div class="form-group">
-                    <label for="alasan">Alasan</label>
+                    <label for="keperluan">Alasan</label>
                     {{-- alasan/deskripsi surat di tolak --}}
                     <textarea class="form-control" name="alasan_ditolak" rows="6" required></textarea>
                 </div>

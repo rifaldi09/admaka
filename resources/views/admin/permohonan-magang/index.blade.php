@@ -3,202 +3,205 @@
 @section('title', 'Permohonan Surat Magang')
 
 @section('content')
-    <div class="card mt-3">
-        <div class="card-header">
-            <h1 class="card-title font-weight-bold">Permohonan Surat Magang</h1>
-        </div>
-        <div class="card-body">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="home-tab" data-toggle="tab" data-target="#home" type="button"
-                        role="tab" aria-controls="home" aria-selected="true">Surat Masuk</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="profile-tab" data-toggle="tab" data-target="#profile" type="button"
-                        role="tab" aria-controls="profile" aria-selected="false">Surat Disetujui</button>
-                </li>
-            </ul>
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    <div class="mt-3">
-                        @php
-                            $heads = [
-                                ['label' => 'NIM', 'no-export' => true, 'width' => 10],
-                                'Nama',
-                                'Prodi',
-                                ['label' => 'Status', 'no-export' => true, 'width' => 5],
-                                'Tanggal Pengajuan',
-                                ['label' => 'Actions', 'no-export' => true, 'width' => 7],
-                            ];
-                        @endphp
+<div class="card mt-3">
+    <div class="card-header">
+        <h1 class="card-title font-weight-bold">Permohonan Surat Magang</h1>
+    </div>
+    <div class="card-body">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="home-tab" data-toggle="tab" data-target="#home" type="button"
+                    role="tab" aria-controls="home" aria-selected="true">Surat Masuk</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="profile-tab" data-toggle="tab" data-target="#profile" type="button"
+                    role="tab" aria-controls="profile" aria-selected="false">Surat Disetujui</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <div class="mt-3">
+                    @php
+                    $heads = [
+                    ['label' => 'NIM', 'no-export' => true, 'width' => 10],
+                    'Nama',
+                    'Prodi',
+                    ['label' => 'Status', 'no-export' => true, 'width' => 5],
+                    'Tanggal Pengajuan',
+                    ['label' => 'Actions', 'no-export' => true, 'width' => 7],
+                    ];
+                    @endphp
 
-                        <x-adminlte-datatable id="table1" :heads="$heads">
-                            @foreach ($draft as $data)
-                                @foreach ($data->permohonanMagang as $magang)
-                                    @if ($magang->status == 'Belum Diterima')
-                                        <tr>
-                                            <td>{{ $data->dataMahasiswa->nim }}</td>
-                                            <td>{{ $data->dataMahasiswa->nama }}</td>
-                                            <td>{{ $data->dataMahasiswa->prodi->nama }}</td>
-                                            <td>
-                                                <div class="border border-warning btn-sm text-warning text-center">
-                                                    {{ $magang->status }}</div>
-                                            </td>
-                                            <td>{{ $magang->created_at }}</td>
-                                            <td>
-                                                <nobr>
-                                                    <button class="btn btn-primary btn-edit btn-sm mr-3" title="Detail"
-                                                        data-toggle="modal"
-                                                        data-target="#detailModal-{{ $magang->id_permohonan_magang }}">
-                                                        <i class="fa-solid fa-eye"></i> Lihat
-                                                    </button>
-                                                    @include('admin.permohonan-magang.modal.detail-pm', [
-                                                        'id' => $magang->id_permohonan_magang,
-                                                    ])
-                                                    <form action="{{ route('terima-permohonan-magang', $magang->id_permohonan_magang) }}" class="d-inline" method="post">
-                                                        @csrf
-                                                        <button class="btn btn-success btn-setujui btn-sm" title="Setujui" type="submit">
-                                                            <i class="fa-solid fa-check"></i> Setujui
-                                                        </button>
-                                                    </form>
-                                                </nobr>
-                                            </td>
-                                        </tr>
+                    <x-adminlte-datatable id="table1" :heads="$heads">
+                        @foreach ($draft as $data)
+                        @foreach ($data->permohonanMagang as $magang)
+                        @if ($magang->status == 'Belum Diterima')
+                        <tr>
+                            <td>{{ $data->dataMahasiswa->nim }}</td>
+                            <td>{{ $data->dataMahasiswa->nama }}</td>
+                            <td>{{ $data->dataMahasiswa->prodi->nama }}</td>
+                            <td>
+                                <div class="border border-warning btn-sm text-warning text-center">
+                                    {{ $magang->status }}</div>
+                            </td>
+                            <td>{{ $magang->created_at }}</td>
+                            <td>
+                                <nobr>
+                                    <button class="btn btn-primary btn-edit btn-sm mr-3" title="Detail"
+                                        data-toggle="modal"
+                                        data-target="#detailPermohonanMagangModal-{{ $magang->id_permohonan_magang }}">
+                                        <i class="fa-solid fa-eye"></i> Lihat
+                                    </button>
+                                    @include('admin.permohonan-magang.modal.detail-pm', [
+                                    'id' => $magang->id_permohonan_magang,
+                                    ])
+                                    <!-- <form
+                                        action="{{ route('terima-permohonan-magang', $magang->id_permohonan_magang) }}"
+                                        class="d-inline" method="post">
+                                        @csrf
+                                        <button class="btn btn-success btn-setujui btn-sm" title="Setujui"
+                                            type="submit">
+                                            <i class="fa-solid fa-check"></i> Setujui
+                                        </button>
+                                    </form> -->
+                                </nobr>
+                            </td>
+                        </tr>
+                        @endif
+                        @endforeach
+                        @endforeach
+                    </x-adminlte-datatable>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="mt-3">
+
+                    {{-- table untuk surat yang sudah disetujui/ditolak --}}
+                    @php
+                    $heads = [
+                    ['label' => 'NIM', 'no-export' => true, 'width' => 10],
+                    'Nama',
+                    'Prodi',
+                    ['label' => 'Status', 'no-export' => true, 'width' => 3],
+                    'Tanggal Pengajuan',
+                    ['label' => 'Actions', 'no-export' => true, 'width' => 7],
+                    'Upload Surat',
+                    ];
+                    @endphp
+
+                    <x-adminlte-datatable id="table2" :heads="$heads">
+                        @foreach ($diterima as $data)
+                        @foreach ($data->permohonanMagang as $magang)
+                        @if ($magang->status != 'Belum Diterima')
+                        <tr>
+                            <td>{{ $data->dataMahasiswa->nim }}</td>
+                            <td>{{ $data->dataMahasiswa->nama }}</td>
+                            <td>{{ $data->dataMahasiswa->prodi->nama }}</td>
+                            <td>
+                                @if ($magang->status == 'Diterima')
+                                <div class="border border-success btn-sm text-success text-center">
+                                    {{ $magang->status }}</div>
+                                @elseif ($magang->status == 'Penerbitan')
+                                <div class="border border-primary btn-sm text-primary text-center">
+                                    {{ $magang->status }}</div>
+                                @endif
+                            </td>
+                            <td>{{ $magang->created_at }}</td>
+                            <td>
+                                <nobr>
+                                    <button class="btn btn-primary btn-detail-terima btn-sm mr-3" data-toggle="modal"
+                                        data-target="#detailPermohonanMagangModal-{{ $magang->id_permohonan_magang }}"
+                                        title="Detail">
+                                        <i class="fa-solid fa-eye"></i> Detail
+                                    </button>
+                                    @include('admin.permohonan-magang.modal.detail-pm', [
+                                    'id' => $magang->id_permohonan_magang,
+                                    ])
+                                    @if ($magang->status != 'Ditolak')
+                                    @if ($magang->status == 'Penerbitan')
+                                    <a href="{{ route('generate-permohonan-magang', $magang->id_permohonan_magang) }}"
+                                        class="btn btn-primary btn-sm">
+                                        <i class="fa-solid fa-download"></i>
+                                        Generate
+                                    </a>
                                     @endif
-                                @endforeach
-                            @endforeach
-                        </x-adminlte-datatable>
-                    </div>
+                                    @endif
+                                </nobr>
+                            </td>
+                            <td>
+                                <nobr>
+                                    @if ($magang->status == 'Penerbitan')
+                                    <button class="btn btn-success btn-sm btn-upload" data-toggle="modal"
+                                        data-target="#uploadModal-{{ $magang->id_permohonan_magang }}" title="Upload">
+                                        <i class="fa-solid fa-upload"></i> Upload
+                                    </button>
+                                    @include('admin.permohonan-magang.modal.upload', [
+                                    'id' => $magang->id_permohonan_magang,
+                                    ])
+                                    @endif
+                                </nobr>
+                            </td>
+                        </tr>
+                        @endif
+                        @endforeach
+                        @endforeach
+                    </x-adminlte-datatable>
                 </div>
 
-                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="mt-3">
-
-                        {{-- table untuk surat yang sudah disetujui/ditolak --}}
-                        @php
-                            $heads = [
-                                ['label' => 'NIM', 'no-export' => true, 'width' => 10],
-                                'Nama',
-                                'Prodi',
-                                ['label' => 'Status', 'no-export' => true, 'width' => 3],
-                                'Tanggal Pengajuan',
-                                ['label' => 'Actions', 'no-export' => true, 'width' => 7],
-                                'Upload Surat',
-                            ];
-                        @endphp
-
-                        <x-adminlte-datatable id="table2" :heads="$heads">
-                            @foreach ($diterima as $data)
-                                @foreach ($data->permohonanMagang as $magang)
-                                    @if ($magang->status != 'Belum Diterima')
-                                        <tr>
-                                            <td>{{ $data->dataMahasiswa->nim }}</td>
-                                            <td>{{ $data->dataMahasiswa->nama }}</td>
-                                            <td>{{ $data->dataMahasiswa->prodi->nama }}</td>
-                                            <td>
-                                                @if ($magang->status == 'Diterima')
-                                                    <div class="border border-success btn-sm text-success text-center">
-                                                        {{ $magang->status }}</div>
-                                                @elseif ($magang->status == 'Penerbitan')
-                                                    <div class="border border-primary btn-sm text-primary text-center">
-                                                        {{ $magang->status }}</div>
-                                                @endif
-                                            </td>
-                                            <td>{{ $magang->created_at }}</td>
-                                            <td>
-                                                <nobr>
-                                                    <button class="btn btn-primary btn-detail-terima btn-sm mr-3"
-                                                        data-toggle="modal"
-                                                        data-target="#detailModal-{{ $magang->id_permohonan_magang }}"
-                                                        title="Detail">
-                                                        <i class="fa-solid fa-eye"></i> Detail
-                                                    </button>
-                                                    @include('admin.permohonan-magang.modal.detail-pm', [
-                                                        'id' => $magang->id_permohonan_magang,
-                                                    ])
-                                                    @if ($magang->status != 'Ditolak')
-                                                        @if ($magang->status == 'Penerbitan')
-                                                            <a href="{{ route('generate-permohonan-magang', $magang->id_permohonan_magang) }}" class="btn btn-primary btn-sm">
-                                                                <i class="fa-solid fa-download"></i>
-                                                                Generate
-                                                            </a>
-                                                        @endif
-                                                    @endif
-                                                </nobr>
-                                            </td>
-                                            <td>
-                                                <nobr>
-                                                    @if ($magang->status == 'Penerbitan')
-                                                        <button class="btn btn-success btn-sm btn-upload" data-toggle="modal"
-                                                            data-target="#uploadModal-{{ $magang->id_permohonan_magang }}"title="Upload">
-                                                            <i class="fa-solid fa-upload"></i> Upload
-                                                        </button>
-                                                        @include('admin.permohonan-magang.modal.upload', [
-                                                            'id' => $magang->id_permohonan_magang,
-                                                        ])
-                                                    @endif
-                                                </nobr>
-                                            </td>
-                                        </tr>
-                                    @endif
-                                @endforeach
-                            @endforeach
-                        </x-adminlte-datatable>
-                    </div>
-
-                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
-            // Sweet Alert
-            $(document).on('click', '.btn-setujui, .tolak', function(e) {
-                e.preventDefault();
-                const form = $(this).closest('form')[0];
-                const isApprove = $(this).hasClass('btn-setujui');
+    // Sweet Alert
+    $(document).on('click', '.btn-setujui, .tolak', function(e) {
+        e.preventDefault();
+        const form = $(this).closest('form')[0];
+        const isApprove = $(this).hasClass('btn-setujui');
 
-                // Validation for reject form
-                if (!isApprove && !form.checkValidity()) {
-                    form.reportValidity();
-                    return;
-                }
+        // Validation for reject form
+        if (!isApprove && !form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
 
-                Swal.fire({
-                    title: 'Apakah Kamu Yakin?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: isApprove ? '#14A44D' : '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: isApprove ? 'Ya, setujui suratnya' : 'Ya, tolak suratnya',
-                    cancelButtonText: 'Batal'
-                }).then((result) => result.isConfirmed && form.submit());
-            });
+        Swal.fire({
+            title: 'Apakah Kamu Yakin?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: isApprove ? '#14A44D' : '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: isApprove ? 'Ya, setujui suratnya' : 'Ya, tolak suratnya',
+            cancelButtonText: 'Batal'
+        }).then((result) => result.isConfirmed && form.submit());
+    });
 
-            $(document).on('click', '.penerbitan', function(e) {
-                e.preventDefault();
-                const form = $(this).closest('form')[0];
-                const isApprove = $(this).hasClass('.penerbitan');
+    $(document).on('click', '.penerbitan', function(e) {
+        e.preventDefault();
+        const form = $(this).closest('form')[0];
+        const isApprove = $(this).hasClass('.penerbitan');
 
-                // Validation for reject form
-                if (!isApprove && !form.checkValidity()) {
-                    form.reportValidity();
-                    return;
-                }
+        // Validation for reject form
+        if (!isApprove && !form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
 
-                Swal.fire({
-                    title: 'Mau di Terbitkan?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#14A44D',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'Batal'
-                }).then((result) => result.isConfirmed && form.submit());
-            });
-        });
-    </script>
+        Swal.fire({
+            title: 'Mau di Terbitkan?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#14A44D',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Batal'
+        }).then((result) => result.isConfirmed && form.submit());
+    });
+});
+</script>
 
 @endsection

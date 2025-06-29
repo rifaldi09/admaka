@@ -1,17 +1,18 @@
-<div class="modal fade" id="editPermohonanModal-{{ $detail->id_permohonan }}" tabindex="-1" role="dialog" aria-labelledby="editPermohonanModalLabel-{{ $detail->id_permohonan }}" aria-hidden="true">
+<div class="modal fade" id="editPermohonanModal-{{ $detail->id_permohonan }}" tabindex="-1" role="dialog"
+    aria-labelledby="editPermohonanModalLabel-{{ $detail->id_permohonan }}" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="editPermohonanModalLabel-{{ $detail->id_permohonan }}">Ubah Pengajuan</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <form action="{{ route('edit-permohonan', $detail->id_permohonan) }}" method="post">
-            <div class="modal-body">
-                @csrf
-                @method('PUT')
-                <label for="tujuan_surat">Kepada Yth</label>
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPermohonanModalLabel-{{ $detail->id_permohonan }}">Ubah Pengajuan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('edit-permohonan', $detail->id_permohonan) }}" method="post">
+                <div class="modal-body">
+                    @csrf
+                    @method('PUT')
+                    <!-- <label for="tujuan_surat">Kepada Yth</label>
                 <input type="text" name="tujuan surat" id="tujuan_surat" class="form-control mb-3" value="{{ $detail->tujuan_surat }}">
                 <label for="alamat_surat">Alamat Surat</label>
                 <textarea name="alamat_surat" id="alamat_surat" cols="30" rows="2" class="form-control mb-3">{{ $detail->alamat_surat }}</textarea>
@@ -39,35 +40,49 @@
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-success">Kirim</button>
-            </div>
-        </form>
+            </div> -->
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <input type="text" class="form-control" value="{{ $detail->status }}" name="status" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="alasan">Alasan DItolak</label>
+                        <textarea class="form-control" name="alasan" disabled>{{ $detail->alasan_ditolak }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!-- <button type="submit" class="btn btn-success">Kirim</button> -->
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+
+            </form>
         </div>
     </div>
 </div>
 @push('js')
 <script>
-    $(document).ready(function() {
-        $('[id^="editPermohonanModal-"]').on('shown.bs.modal', function () {
-            const modal = $(this);
-            const id = modal.attr('id').replace('editPermohonanModal-', '');
+$(document).ready(function() {
+    $('[id^="editPermohonanModal-"]').on('shown.bs.modal', function() {
+        const modal = $(this);
+        const id = modal.attr('id').replace('editPermohonanModal-', '');
 
-            const keperluanSelect = modal.find('#keperluan-' + id);
-            const judulSkripsiDiv = modal.find('#judul_skripsi-' + id);
-            const matkulDiv = modal.find('#matkul-' + id);
+        const keperluanSelect = modal.find('#keperluan-' + id);
+        const judulSkripsiDiv = modal.find('#judul_skripsi-' + id);
+        const matkulDiv = modal.find('#matkul-' + id);
 
-             keperluanSelect.off('change').on('change', function () {
-                const keperluan = $(this).val();
-                if (keperluan === 'skripsi') {
-                    judulSkripsiDiv.removeClass('d-none');
-                    matkulDiv.addClass('d-none');
-                } else {
-                    judulSkripsiDiv.addClass('d-none');
-                    matkulDiv.removeClass('d-none');
-                }
-            });
-
-            keperluanSelect.trigger('change');
+        keperluanSelect.off('change').on('change', function() {
+            const keperluan = $(this).val();
+            if (keperluan === 'skripsi') {
+                judulSkripsiDiv.removeClass('d-none');
+                matkulDiv.addClass('d-none');
+            } else {
+                judulSkripsiDiv.addClass('d-none');
+                matkulDiv.removeClass('d-none');
+            }
         });
+
+        keperluanSelect.trigger('change');
     });
+});
 </script>
 @endpush

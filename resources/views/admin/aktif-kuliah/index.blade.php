@@ -121,7 +121,7 @@
                                     <a href="{{ route('penerbitan-aktif-kuliah', encrypt($data->id_aktif_kuliah)) }}"
                                         class="btn btn-primary btn-sm">
                                         <i class="fa-solid fa-download"></i>
-                                        Download
+                                        Generate
                                     </a>
                                     @else
                                     <!-- <button class="btn btn-primary btn-sm" data-toggle="modal"

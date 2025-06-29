@@ -46,12 +46,14 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                @if($kp->status == 'Belum Diterima')
                 <form action="{{ route('terima-pengajuan', $kp->id_pengajuan) }}" class="d-inline" method="post">
                     @csrf
                     <button class="btn btn-success btn-setujui " title="Setujui" type="submit">
                         <i class="fa-solid fa-check"></i> Setujui Surat
                     </button>
                 </form>
+                @endif
             </div>
         </div>
     </div>

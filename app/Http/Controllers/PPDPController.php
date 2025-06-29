@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Storage;
 
 // set format tanggal ke bahasa indonesia
 Carbon::setLocale('id');
@@ -102,13 +102,28 @@ class PPDPController extends Controller
         ]);
 
         // buat ngakalin no_surat biar ga pakai id
-        $cek_nomor_terakhir = PPDP::orderByDesc('created_at')->value('no_surat');
+        //$cek_nomor_terakhir = PPDP::orderByDesc('created_at')->value('no_surat');
+        $cek_nomor_terakhir = PPDP::where('status', '!=','Ditolak')
+        ->orderByDesc('created_at')
+        ->first();
+        
+        $tahunSekarang = Carbon::now()->year;
 
         if ($cek_nomor_terakhir) {
-            $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
-            $no_surat = 'PPDP' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+           $tahunTerakhir = Carbon::parse( $cek_nomor_terakhir->created_at)->year;
+
+            // Ambil nomor surat terakhir
+            preg_match('/^\d+/', $cek_nomor_terakhir->no_surat, $matchNomor);
+            $nomorTerakhir = isset($matchNomor[0]) ? (int) $matchNomor[0] : 0;
+
+            if ($tahunTerakhir != $tahunSekarang) {
+                $no_surat = '0001'; // Tahun berganti, mulai dari awal
+            } else {
+                $no_surat = str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); // Lanjut nomor
+            }
+            
         } else {
-            $no_surat = 'PPDP0001';
+            $no_surat = '0001';
         }
 
         $data = $request->only([
@@ -155,6 +170,7 @@ class PPDPController extends Controller
     // tolak permohonan mahasiswa
     public function tolakPermohonan(Request $request, PPDP $permohonan)
     {
+ 
         $request->validate([
             'alasan_ditolak' => 'required'
         ]);
@@ -273,21 +289,77 @@ class PPDPController extends Controller
             'file' => 'required|mimes:pdf|max:2048', // Maks 2MB
         ]);
 
-        $file = $request->file('file');
+        // $file = $request->file('file');
         
-        if ($file) {
-            $fileName = 'surat_permohonan_pengambilan_data_penelitian_' . time() . '.' . $file->getClientOriginalExtension();
+        // if ($file) {
+        //     $fileName = 'surat_permohonan_pengambilan_data_penelitian_' . time() . '.' . $file->getClientOriginalExtension();
             
-            $path = $file->storeAs('public/permohonan-pengambilan', $fileName);
+        //     $path = $file->storeAs('public/permohonan-pengambilan', $fileName);
 
-            FilePermohonan::create([
-                'path' => $path,
-                'id_permohonan' => $permohonan->id_permohonan
-            ]);
+        //     FilePermohonan::create([
+        //         'path' => $path,
+        //         'id_permohonan' => $permohonan->id_permohonan
+        //     ]);
             
-            return back()->with('success', 'File telah diupload');
+        //     return back()->with('success', 'File telah diupload');
+        // }
+
+        // return back()->with('error', 'File tidak ditemukan.');
+
+        $file = $request->file('file');
+        $idPengajuanData=  $permohonan->id_permohonan;
+
+        if ($file) {
+            $fileName = 'surat_permohonan_pengambilan_data_penelitian_' . $idPengajuanData . '.' . $file->getClientOriginalExtension();
+            $relativePath = 'permohonan-pengambilan/pdf/' . $fileName;
+
+            // Cek data lama
+            $existingFile = FilePermohonan::where('id_permohonan', $idPengajuanData)->first();
+
+            if ($existingFile) {
+                // Hapus file lama di storage
+                Storage::delete('public/' . $existingFile->path);
+
+                // Hapus data lama di database
+                $existingFile->delete();
+            }
+
+            // Upload file baru (akan overwrite file jika nama sama)
+            $path = $file->storeAs('public/permohonan-pengambilan/pdf', $fileName);
+
+            // Simpan data baru di database
+            FilePermohonan::create([
+                'path' => $relativePath,
+                'id_permohonan' => $idPengajuanData,
+            ]);
+
+            return back()->with('success', 'File berhasil diupload ');
         }
 
         return back()->with('error', 'File tidak ditemukan.');
+    }
+    
+    public function unduhPDF(Request $request)
+    {
+        $idPengajuanData = decrypt($request->id);
+        $fileRecord = FilePermohonan::where('id_permohonan', $idPengajuanData)->first();
+
+        if (!$fileRecord) {
+            return back()->with('error', 'File tidak ditemukan di database.');
+        }
+
+        // Pastikan path sesuai lokasi file di storage
+        $storagePath = 'public/' . $fileRecord->path;
+
+        if (!Storage::exists($storagePath)) {
+            return back()->with('error', 'File fisik tidak ditemukan di penyimpanan.');
+        }
+
+        $filePath = storage_path('app/public/' . $fileRecord->path);
+        $fileName = basename($filePath);
+
+        return response()->download($filePath, $fileName, [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 }

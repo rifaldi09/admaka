@@ -1,4 +1,5 @@
-<div class="modal fade" id="detailModal-{{ $pp->id_permohonan }}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel-{{ $pp->id_permohonan }}" aria-hidden="true">
+<div class="modal fade" id="detailModal-{{ $pp->id_permohonan }}" tabindex="-1" role="dialog"
+    aria-labelledby="detailModalLabel-{{ $pp->id_permohonan }}" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -21,19 +22,20 @@
 
                 <div class="form-group">
                     <label>Keperluan</label>
-                    <input type="text" class="form-control" value="{{ $pp->keperluan == 'mata_kuliah' ? 'Mata Kuliah' : 'Skripsi' }}" disabled>
+                    <input type="text" class="form-control"
+                        value="{{ $pp->keperluan == 'mata_kuliah' ? 'Mata Kuliah' : 'Skripsi' }}" disabled>
                 </div>
 
                 @if($pp->keperluan == 'skripsi')
-                    <div class="form-group">
-                        <label>Judul Skripsi</label>
-                        <textarea class="form-control" disabled>{{ $pp->judul_skripsi }}</textarea>
-                    </div>
+                <div class="form-group">
+                    <label>Judul Skripsi</label>
+                    <textarea class="form-control" disabled>{{ $pp->judul_skripsi }}</textarea>
+                </div>
                 @else
-                    <div class="form-group">
-                        <label>Dosen Pengampu</label>
-                        <input type="text" class="form-control" value="{{ $pp->dosen->nama }}" disabled>
-                    </div>
+                <div class="form-group">
+                    <label>Dosen Pengampu</label>
+                    <input type="text" class="form-control" value="{{ $pp->dosen->nama }}" disabled>
+                </div>
                 @endif
 
                 <div class="form-row">
@@ -53,14 +55,24 @@
                 </div>
 
                 @if($pp->status == 'Ditolak')
-                    <div class="form-group">
-                        <label>Alasan Ditolak</label>
-                        <textarea class="form-control" disabled>{{ $pp->alasan_ditolak }}</textarea>
-                    </div>
+                <div class="form-group">
+                    <label>Alasan Ditolak</label>
+                    <textarea class="form-control" disabled>{{ $pp->alasan_ditolak }}</textarea>
+                </div>
                 @endif
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                @if($pp->status == 'Belum Diterima')
+                <form action="{{ route('terima-permohonan-mahasiswa', $pp->id_permohonan) }}" class="d-inline"
+                    method="post">
+                    @csrf
+                    @method('PUT')
+                    <button class="btn btn-success btn-setujui " title="Setujui" type="submit">
+                        <i class="fa-solid fa-check"></i> Setujui Surat
+                    </button>
+                </form>
+                @endif
             </div>
         </div>
     </div>

@@ -181,8 +181,9 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         // route buat ubah status surat permohonan
         Route::put('terima-permohonan-mahasiswa/{permohonan:id_permohonan}', 'terimaPermohonan')->name('terima-permohonan-mahasiswa');
         Route::put('penerbitan-permohonan/{permohonan:id_permohonan}', 'penerbitanPermohonan')->name('penerbitan-permohonan');
-        Route::put('tolak-permohonan/{permohonan:id_permohonan}', 'tolakPermohonan')->name('tolak-permohonan');
+        Route::post('tolak-permohonan/{permohonan:id_permohonan}', 'tolakPermohonan')->name('tolak-permohonan');
         Route::put('edit-permohonan/{permohonan:id_permohonan}', 'editPermohonan')->name('edit-permohonan');
+        Route::post('unduh-pdf-surat-permohonan', 'unduhPDF')->name('unduh-pdf-surat-permohonan');
     });
 
     // Transkrip Nilai
