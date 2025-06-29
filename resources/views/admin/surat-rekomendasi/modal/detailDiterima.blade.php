@@ -1,6 +1,6 @@
 {{-- Modal ketika surat disetujui --}}
-<div class="modal fade" id="modalDetailTerima-{{ $id }}" tabindex="-1"
-    aria-labelledby="modalDetailTerima-{{ $id }}" aria-hidden="true">
+<div class="modal fade" id="modalDetailTerima-{{ $id }}" tabindex="-1" aria-labelledby="modalDetailTerima-{{ $id }}"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg">
 
         <div class="modal-content">
@@ -19,7 +19,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="id_user">NIM</label>
-                        <input type="text" class="form-control"name="id_user"
+                        <input type="text" class="form-control" name="id_user"
                             value="{{ $data->user->dataMahasiswa->nim }}" disabled>
                     </div>
                     <div class="form-group col-md-6">
@@ -61,8 +61,8 @@
                     <div class="form-group col-md-6">
                         <label for="semester">Semester</label>
                         @php
-                            $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
-                            $numberSemester = $formatter->format($data->user->dataMahasiswa->semester);
+                        $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
+                        $numberSemester = $formatter->format($data->user->dataMahasiswa->semester);
                         @endphp
                         <input type="text" class="form-control" name="semester"
                             value="{{ $data->user->dataMahasiswa->semester }} ({{ $numberSemester }})" disabled>
@@ -94,17 +94,16 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="status">Status</label>
-                            <input type="text" class="form-control" name="status" value="{{ $data->status }}"
-                                disabled>
+                            <input type="text" class="form-control" name="status" value="{{ $data->status }}" disabled>
                         </div>
                     </div>
                 </div>
 
                 @if ($data->status=='Ditolak')
-                    <div class="form-group">
-                        <label for="alasan_ditolak">Alasan Ditolak</label>
-                        <textarea class="form-control" name="alasan_ditolak" disabled>{{ $data->alasan_ditolak }}</textarea>
-                    </div>
+                <div class="form-group">
+                    <label for="alasan_ditolak">Alasan Ditolak</label>
+                    <textarea class="form-control" name="alasan_ditolak" disabled>{{ $data->alasan_ditolak }}</textarea>
+                </div>
                 @endif
                 <div class="form-group">
                     <label for="perihal">Perihal</label>
@@ -113,6 +112,10 @@
                 <div class="form-group">
                     <label for="tempat_perihal">Tempat Perihal</label>
                     <textarea class="form-control" name="tempat_perihal" disabled>{{ $data->tempat_perihal }}</textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+
                 </div>
 
             </div>

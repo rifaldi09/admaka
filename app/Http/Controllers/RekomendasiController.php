@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 Carbon::setLocale('id');
 
@@ -36,15 +37,37 @@ class RekomendasiController extends Controller
         $validasi = $req->validate([
             'perihal' => 'required',
         ]);
-
-        $cek_nomor_terakhir = SuratRekomendasi::orderByDesc('created_at')->value('nomor_surat');
+        $cek_nomor_terakhir = SuratRekomendasi::where('status', '!=','Ditolak')
+        ->orderByDesc('created_at')
+        ->first();
+        
+        $tahunSekarang = Carbon::now()->year;
 
         if ($cek_nomor_terakhir) {
-            $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
-            $no_surat = 'AKT' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+           $tahunTerakhir = Carbon::parse( $cek_nomor_terakhir->created_at)->year;
+
+            // Ambil nomor surat terakhir
+            preg_match('/^\d+/', $cek_nomor_terakhir->no_surat, $matchNomor);
+            $nomorTerakhir = isset($matchNomor[0]) ? (int) $matchNomor[0] : 0;
+
+            if ($tahunTerakhir != $tahunSekarang) {
+                $no_surat = '0001'; // Tahun berganti, mulai dari awal
+            } else {
+                $no_surat = str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); // Lanjut nomor
+            }
+            
         } else {
-            $no_surat = 'AKT0001';
+            $no_surat = '0001';
         }
+
+        // $cek_nomor_terakhir = SuratRekomendasi::orderByDesc('created_at')->value('nomor_surat');
+
+        // if ($cek_nomor_terakhir) {
+        //     $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
+        //     $no_surat = 'AKT' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+        // } else {
+        //     $no_surat = 'AKT0001';
+        // }
 
         if ($validasi) {
             if (!empty($req->tempat_perihal)) {
@@ -95,7 +118,7 @@ class RekomendasiController extends Controller
     public function terimaSuratRekomendasi(Request $req)
     {
         $validasi = SuratRekomendasi::where('id_rekomendasi', $req->id)->update([
-            'status' => 'Diterima',
+            'status' => 'Penerbitan',
         ]);
         if ($validasi) {
             return redirect()->back()->with('success', 'Berhasil mengubah status');
@@ -164,29 +187,62 @@ class RekomendasiController extends Controller
         $req->validate([
             'file' => 'required|mimes:pdf', // Maks 2MB
         ]);
-
         $file = $req->file('file');
         $idRekomendasi = decrypt($req->id);
 
         if ($file) {
-            $fileName = 'surat_rekomendasi_' . time() . '.' . $file->getClientOriginalExtension();
+            $fileName = 'surat_rekomendasi_' . $idRekomendasi . '.' . $file->getClientOriginalExtension();
+            $relativePath = 'surat-rekomendasi/pdf/' . $fileName;
 
+            // Cek data lama
+            $existingFile = FilePengajuan::where('id_pengajuan', $idRekomendasi)->first();
+
+            if ($existingFile) {
+                // Hapus file lama di storage
+                Storage::delete('public/' . $existingFile->path);
+
+                // Hapus data lama di database
+                $existingFile->delete();
+            }
+
+            // Upload file baru (akan overwrite file jika nama sama)
             $path = $file->storeAs('public/surat-rekomendasi/pdf', $fileName);
 
+            // Simpan data baru di database
             FilePengajuan::create([
-                'path' => 'app/' . $path,
+                'path' => $relativePath,
                 'id_pengajuan' => $idRekomendasi,
             ]);
 
-            return back()->with('success', 'File telah diupload');
+            return back()->with('success', 'File berhasil diupload ');
         }
 
         return back()->with('error', 'File tidak ditemukan.');
     }
     public function unduhSuratRekomendasi(Request $req){
-        $idPengajuan = decrypt($req->id);
-        $pathSurat = FilePengajuan::where('id_pengajuan', $idPengajuan)->first();
-        $path = storage_path($pathSurat->path);
-        return response()->download($path)->deleteFileAfterSend(false);
+         $idPengajuan = decrypt($req->id);
+        $fileRecord = FilePengajuan::where('id_pengajuan', $idPengajuan)->first();
+
+        if (!$fileRecord) {
+            return back()->with('error', 'File tidak ditemukan di database.');
+        }
+
+        // Pastikan path sesuai lokasi file di storage
+        $storagePath = 'public/' . $fileRecord->path;
+
+        if (!Storage::exists($storagePath)) {
+            return back()->with('error', 'File fisik tidak ditemukan di penyimpanan.');
+        }
+
+        $filePath = storage_path('app/public/' . $fileRecord->path);
+        $fileName = basename($filePath);
+
+        return response()->download($filePath, $fileName, [
+            'Content-Type' => 'application/pdf',
+        ]);
+        // $idPengajuan = decrypt($req->id);
+        // $pathSurat = FilePengajuan::where('id_pengajuan', $idPengajuan)->first();
+        // $path = storage_path($pathSurat->path);
+        // return response()->download($path)->deleteFileAfterSend(false);
     }
 }
