@@ -26,9 +26,9 @@ class TranskripController extends Controller
         }, 'dataMahasiswa'])->get();
 
         $diterima = User::select('id', 'id_user')->whereHas('transkrip', function ($query) {
-            $query->whereIn('status', ['Diterima', 'Penerbitan']);
+            $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
         })->with(['transkrip' => function ($query) {
-            $query->whereIn('status', ['Diterima', 'Penerbitan']);
+            $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
         }, 'dataMahasiswa'])->get();
 
         return view('admin.transkrip-nilai.index', compact('draft', 'diterima'));
