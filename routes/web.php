@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Data\DataDosen;
 use App\Http\Controllers\Data\DataMahasiswa;
 use App\Http\Controllers\Data\DataProdi;
+use App\Http\Controllers\Data\DataUser;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\MahasiswaController;
@@ -94,6 +95,14 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::get('update-prodi/{id}', 'updateProdi')->name('update-prodi');
         Route::put('update_dataprodi/{id}', 'updatedataProdi')->name('update_dataprodi');
         Route::delete('destroy-prodi/{id}', 'destroyProdi')->name('destroy-prodi');
+    });
+
+    // Data Master - User
+    Route::controller(DataUser::class)->group(function () {
+        Route::get('data-user', 'index')->name('data-user');
+        Route::get('update-user/{id}', 'updateUser')->name('update-user');
+        Route::put('update_datauser/{id}', 'updatedataUser')->name('update_datauser');
+        Route::delete('destroy-user/{id}', 'destroyUser')->name('destroy-user');
     });
 
     // Sesi Dosen

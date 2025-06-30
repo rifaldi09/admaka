@@ -46,6 +46,7 @@
         </x-adminlte-datatable>
     </div>
 </div>
+
 {{-- INSERT DATA DOSEN --}}
 <x-adminlte-modal id="modalDosen" title="Tambah Dosen" v-centered static-backdrop scrollable>
     <form action="{{ route('add_dosen') }}" method="post" id="form-dosen" enctype="multipart/form-data">
@@ -85,6 +86,7 @@
     </x-slot>
 
 </x-adminlte-modal>
+
 {{-- UPDATE DATA DOSEN --}}
 <x-adminlte-modal id="modalUpdateDosen" title="Ubah Data Dosen" v-centered static-backdrop scrollable>
     <form id='editFormDosen' method="post" enctype="multipart/form-data">
@@ -120,7 +122,6 @@
         <x-adminlte-button form="editFormDosen" type="submit" class="mr-auto" theme="success" label="Save" />
         <x-adminlte-button theme="danger" label="Close" data-dismiss="modal" />
     </x-slot>
-
 </x-adminlte-modal>
 
 {{-- IMPORT --}}
@@ -135,8 +136,8 @@
         <x-adminlte-button form="import-dosen" type="submit" class="mr-auto" theme="success" label="Save" />
         <x-adminlte-button theme="danger" label="Close" data-dismiss="modal" />
     </x-slot>
-
 </x-adminlte-modal>
+
 <script>
 // Menambahkan sweetalert2 untuk konfirmasi hapus role
 document.addEventListener('DOMContentLoaded', function() {

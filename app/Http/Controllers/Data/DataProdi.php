@@ -48,7 +48,7 @@ class DataProdi extends Controller
     {
         // validasi input
         $validasi = $request->validate([
-            'nama'           => 'required|string|min:3|max:255',
+            'nama' => 'required|string|min:3|max:255',
         ]);
 
         try {
@@ -83,7 +83,7 @@ class DataProdi extends Controller
             $prodi = Prodi::where('id', decrypt($id))->firstOrFail();
             // Validasi input
             $validasi = $request->validate([
-                'nama'           => 'required|string|min:3|max:255',
+                'nama' => 'required|string|min:3|max:255',
             ]);
 
             // Lakukan update

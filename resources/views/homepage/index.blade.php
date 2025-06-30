@@ -9,7 +9,7 @@
         <div class="container text-center">
             <div class="d-flex flex-column justify-content-center align-items-center">
                 <h1 data-aos="fade-up">Welcome to <span>ADMAKA</span></h1>
-                <p data-aos="fade-up" data-aos-delay="100">Pelayanan Akademik Fakultas Teknik dan Teknologi Kemaritiman (FTTK)<br></p>
+                <p data-aos="fade-up" data-aos-delay="100">Pelayanan Administrasi Akademik Fakultas Teknik dan Teknologi Kemaritiman (FTTK)<br></p>
             </div>
         </div>
     </section><!-- /Hero Section -->
@@ -22,8 +22,8 @@
                     <div class="service-item d-flex">
                         <div class="icon flex-shrink-0"><i class="bi bi-briefcase"></i></div>
                         <div>
-                            <h4 class="title">Status Surat Pengajuan</h4>
-                            <p class="description">Total Surat Yang Berstatus Pengajuan 3.000.000 Surat</p>
+                            <h4 class="title">Pengajuan Surat</h4>
+                            <p class="description">Total Pengajuan Surat <b>{{ $belumDiterima }} Surat</b></p>
                         </div>
                     </div>
                 </div>
@@ -33,8 +33,8 @@
                     <div class="service-item d-flex">
                         <div class="icon flex-shrink-0"><i class="bi bi-card-checklist"></i></div>
                         <div>
-                            <h4 class="title">Status Surat diProses</h4>
-                            <p class="description">Total Surat Yang Berstatus Peroses 3.000.000 Surat</p>
+                            <h4 class="title">Surat Diproses</h4>
+                            <p class="description">Total Surat Yang Diproses <b>{{ $dataDiterima }} Surat</b></p>
                         </div>
                     </div>
                 </div><!-- End Service Item -->
@@ -43,8 +43,8 @@
                     <div class="service-item d-flex">
                         <div class="icon flex-shrink-0"><i class="bi bi-bar-chart"></i></div>
                         <div>
-                            <h4 class="title">Status Surat Selesai</h4>
-                            <p class="description">Total Surat Yang Berstatus Selesai 3.000.000 Surat</p>
+                            <h4 class="title">Penerbitan Surat</h4>
+                            <p class="description">Total Penerbitan Surat <b>{{ $dataPenerbitan }} Surat</b></p>
                         </div>
                     </div>
                 </div><!-- End Service Item -->

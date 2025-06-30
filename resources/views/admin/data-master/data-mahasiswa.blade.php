@@ -115,8 +115,8 @@
         <x-adminlte-button form="editForm" type="submit" class="mr-auto" theme="success" label="Save" />
         <x-adminlte-button theme="danger" label="Close" data-dismiss="modal" />
     </x-slot>
-
 </x-adminlte-modal>
+
 {{-- IMPORT --}}
 <x-adminlte-modal id="import-Mhs" title="Import Data Mahasiswa" v-centered static-backdrop scrollable>
     <form action="{{ route('mhs-preview') }}" method="post" id="import-mhs" enctype="multipart/form-data">
@@ -131,6 +131,7 @@
     </x-slot>
 
 </x-adminlte-modal>
+
 <script>
 // Menambahkan sweetalert2 untuk konfirmasi hapus role
 document.addEventListener('DOMContentLoaded', function() {

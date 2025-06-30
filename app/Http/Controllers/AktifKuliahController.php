@@ -13,6 +13,7 @@ use PhpOffice\PhpWord\Shared\Validate;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat\NumberFormatter;
 
 Carbon::setLocale('id');
 
@@ -55,14 +56,14 @@ class AktifKuliahController extends Controller
             // 'semester_akhir' => 'required',
         ]);
 
-        $cek_nomor_terakhir = AktifKuliah::where('status', '!=','Ditolak')
-        ->orderByDesc('created_at')
-        ->first();
+        $cek_nomor_terakhir = AktifKuliah::where('status', '!=', 'Ditolak')
+            ->orderByDesc('created_at')
+            ->first();
         $tahunSekarang = Carbon::now()->year;
 
         if ($cek_nomor_terakhir) {
-       
-            $tahunTerakhir = Carbon::parse( $cek_nomor_terakhir->created_at)->year;
+
+            $tahunTerakhir = Carbon::parse($cek_nomor_terakhir->created_at)->year;
 
             // Ambil nomor surat terakhir
             preg_match('/^\d+/', $cek_nomor_terakhir->nomor_surat, $matchNomor);
@@ -144,11 +145,11 @@ class AktifKuliahController extends Controller
         $dataSurat->update([
             'status' => 'Penerbitan',
         ]);
-       
+
         $nomorSurat = $dataSurat->nomor_surat;
-            
+
         $data = [
-            'nomor_surat'     => $nomorSurat.'/UN53.01/DT.01.01/'.$dataSurat->created_at->format('Y'),
+            'nomor_surat'     => $nomorSurat . '/UN53.01/DT.01.01/' . $dataSurat->created_at->format('Y'),
             'nama'            => $mahasiswa->nama,
             'status'          => $dataSurat->status_kuliah,
             'semester_awal'   => $dataSurat->semester_awal,
@@ -254,5 +255,4 @@ class AktifKuliahController extends Controller
             'Content-Type' => 'application/pdf',
         ]);
     }
-
 }

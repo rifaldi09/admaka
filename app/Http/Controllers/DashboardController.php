@@ -17,11 +17,12 @@ class DashboardController extends Controller
     // Dashboard Page
     public function dashboard()
     {
-        $userLog = auth()->user();
+        $user = auth()->user();
 
-        if ($userLog->id === 1) {
+        // User check roles
+        if ($user->roles->contains('name_role', 'Mahasiswa')) {
             return $this->dashboardMahasiswa();
-        } else if ($userLog->id === 2) {
+        } else if ($user->roles->contains('name_role', 'Dosen') || $user->roles->contains('name_role', 'Ketua Prodi') || $user->roles->contains('name_role', 'Koordinator Kerja Praktik') || $user->roles->contains('name_role', 'Koordinator Pengambilan Data') || $user->roles->contains('name_role', 'Wakil-Dekan-1')) {
             return $this->dashboardDosen();
         } else {
             return $this->dashboardAdmin();
@@ -83,11 +84,12 @@ class DashboardController extends Controller
     // Profile Page
     public function lihatProfil(MahasiswaController $mahasiswaController, DosenController $dosenController)
     {
-        $userLog = auth()->user();
+        $user = auth()->user();
 
-        if ($userLog->id === 1) {
+        // User check roles
+        if ($user->roles->contains('name_role', 'Mahasiswa')) {
             return $mahasiswaController->lihatProfilMhs();
-        } else if ($userLog->id === 2) {
+        } else if ($user->roles->contains('name_role', 'Dosen') || $user->roles->contains('name_role', 'Ketua Prodi') || $user->roles->contains('name_role', 'Koordinator Kerja Praktik') || $user->roles->contains('name_role', 'Koordinator Pengambilan Data') || $user->roles->contains('name_role', 'Wakil-Dekan-1')) {
             return $dosenController->lihatProfilDosen();
         } else {
             return "Sesi Admin";

@@ -1,33 +1,33 @@
 @extends('dashboard.home')
 
-@section('title', 'Data Master - Program Studi')
+@section('title', 'Data Master - Akun User')
 
 @section('content')
 <div class="card mt-3">
     <div class="card-header">
-        <h3 class="card-title">Data Prodi</h3>
+        <h3 class="card-title">Data User</h3>
     </div>
     <div class="card-body">
-        <button class="btn btn-primary btn-sm mb-3" id="tambahProdi" data-toggle="modal" data-target="#modalProdi"><i
-                class="fa-solid fa-plus"></i> Tambah Data</button>
+        {{-- <button class="btn btn-primary btn-sm mb-3" id="tambahUser" data-toggle="modal" data-target="#modalUser"><i
+                class="fa-solid fa-plus"></i> Tambah Data</button> --}}
 
         {{-- Setup data for datatables --}}
         @php
         $heads = [
-        'No',
-        'Nama Prodi',
+        'Id User',
+        'Roles',
         ['label' => 'Actions', 'no-export' => true, 'width' => 5],
         ];
 
         $config = [
-        'data' => $dataProdiFormatted,
+        'data' => $dataUserFormatted,
         'order' => [[1, 'asc']],
         'columns' => [null, null, null, null, ['orderable' => true]],
         ];
         @endphp
 
         {{-- Minimal example / fill data using the component slot --}}
-        <x-adminlte-datatable id="tableProdi" :heads="$heads">
+        <x-adminlte-datatable id="tableUser" :heads="$heads">
             @foreach($config['data'] as $row)
             <tr>
                 @foreach($row as $cell)
@@ -39,9 +39,9 @@
     </div>
 </div>
 
-{{-- INSERT DATA PRODI --}}
-<x-adminlte-modal id="modalProdi" title="Tambah Prodi" v-centered static-backdrop scrollable>
-    <form action="{{ route('add_prodi') }}" method="post" id="form-prodi" enctype="multipart/form-data">
+{{-- INSERT DATA USER --}}
+{{-- <x-adminlte-modal id="modalUser" title="Tambah User" v-centered static-backdrop scrollable>
+    <form action="{{ route('add_user') }}" method="post" id="form-prodi" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
             <x-adminlte-input type="text" label="Nama" name="nama" placeholder="Nama Prodi" required />
@@ -51,19 +51,19 @@
         <x-adminlte-button form="form-prodi" type="submit" class="mr-auto" theme="success" label="Save" />
         <x-adminlte-button theme="danger" label="Close" data-dismiss="modal" />
     </x-slot>
-</x-adminlte-modal>
+</x-adminlte-modal> --}}
 
-{{-- UPDATE DATA PRODI --}}
-<x-adminlte-modal id="modalUpdateProdi" title="Ubah Data Prodi" v-centered static-backdrop scrollable>
-    <form id='editFormProdi' method="post" enctype="multipart/form-data">
+{{-- UPDATE DATA USER --}}
+<x-adminlte-modal id="modalUpdateUser" title="Ubah Data User" v-centered static-backdrop scrollable>
+    <form id='editFormUser' method="post" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="form-group">
-            <x-adminlte-input type="text" label="Nama" name="nama" id="nama" placeholder="Nama Prodi" required />
+            <x-adminlte-input type="text" label="Nama" name="nama" id="nama" placeholder="Nama User" required />
         </div>
     </form>
     <x-slot name="footerSlot">
-        <x-adminlte-button form="editFormProdi" type="submit" class="mr-auto" theme="success" label="Save" />
+        <x-adminlte-button form="editFormUser" type="submit" class="mr-auto" theme="success" label="Save" />
         <x-adminlte-button theme="danger" label="Close" data-dismiss="modal" />
     </x-slot>
 </x-adminlte-modal>
@@ -71,7 +71,7 @@
 <script>
 // Menambahkan sweetalert2 untuk konfirmasi hapus role
 document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.delete-prodi');
+    const deleteButtons = document.querySelectorAll('.delete-user');
 
     deleteButtons.forEach(button => {
         button.addEventListener('click', function(event) {
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
             Swal.fire({
                 title: 'Yakin ingin menghapus?',
                 icon: 'warning',
-                text: "Data prodi yang dihapus tidak dapat lagi digunakan!",
+                text: "Data user yang dihapus tidak dapat lagi digunakan!",
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
@@ -101,13 +101,13 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const editButtons = document.querySelectorAll('.update-prodi');
+    const editButtons = document.querySelectorAll('.update-user');
 
     editButtons.forEach(button => {
         button.addEventListener('click', function() {
             const id = this.dataset.key;
             // Ambil data via AJAX
-            fetch(`update-prodi/${id}`)
+            fetch(`update-user/${id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -118,11 +118,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('nama').value = data.nama;
 
                     // Set form action
-                    const form = document.getElementById('editFormProdi');
-                    form.action = `update_dataprodi/${id}`;
+                    const form = document.getElementById('editFormUser');
+                    form.action = `update_datauser/${id}`;
 
                     // Tampilkan modal
-                    $('#modalUpdateProdi').modal('show');
+                    $('#modalUpdateUser').modal('show');
                 })
                 .catch(error => {
                     toastr.error("Terjadi kesalahan ketika mengambil data");
