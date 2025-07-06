@@ -19,8 +19,8 @@
         {{-- Setup data for datatables --}}
         @php
         $heads = [
-        'NIDN/NUPTK',
         'NIP',
+        'NUPTK',
         'Nama',
         'Email',
         'No HP',
@@ -52,10 +52,10 @@
     <form action="{{ route('add_dosen') }}" method="post" id="form-dosen" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
-            <x-adminlte-input type="text" label="NIDN/NUPTK" name="nidn" placeholder="NIDN/NUPTK" required />
+            <x-adminlte-input type="text" label="NIP" name="nidn" placeholder="NIP" required />
         </div>
         <div class="form-group">
-            <x-adminlte-input type="text" label="NIP" name="nip" placeholder="NIP" required />
+            <x-adminlte-input type="text" label="NUPTK" name="nip" placeholder="NUPTK" required />
         </div>
         <div class="form-group">
             <x-adminlte-input type="text" label="Nama" name="nama" placeholder="Nama" required />
@@ -93,7 +93,7 @@
         @csrf
         @method('PUT')
         <div class="form-group">
-            <x-adminlte-input type="text" label="NIP" name="nip1" id="nip1" placeholder="NIP" required />
+            <x-adminlte-input type="text" label="NUPTK" name="nip1" id="nip1" placeholder="NUPTK" required />
         </div>
         <div class="form-group">
             <x-adminlte-input type="text" label="Nama" name="nama1" id="nama1" placeholder="Nama" required />

@@ -10,10 +10,13 @@ class AuthController extends Controller
 {
     public function login()
     {
-        if (auth()->check()) {
-            return redirect()->route('dashboard'); // Ganti dengan route tujuan kamu
+        if (FacadesAuth::check()) {
+            return redirect()->to('dashboard');
         }
-        return view('auth.login', ['title' => 'ADMAKA Login']);
+        return response()
+            ->view('auth.login', ['title' => 'ADMAKA Login'])
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache');
     }
 
     // fungsi proses login

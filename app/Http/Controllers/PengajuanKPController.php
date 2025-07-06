@@ -19,6 +19,10 @@ class PengajuanKPController extends Controller
     // halaman pengajuan kp mahasiswa
     public function pengajuanKp() 
     {
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Mahasiswa')) {
+            abort(403, 'Akses ditolak.');
+        }
         $pengajuan = PengajuanKP::with('filePengajuan')->where('user_id', Auth::id())->get();
 
         return view('mahasiswa.pengajuan-kp.index', compact('pengajuan'));
@@ -30,6 +34,10 @@ class PengajuanKPController extends Controller
         // ambil data pengajuanKp by status
         // with gunanya buat bawa relasi ke datanya, jadi harus where 2 kali
         // whereHas buat di cek aja biar user yang di ambil itu yang ada pengajuanKp + status nya belum diterima
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Administrator')) {
+            abort(403, 'Akses ditolak.');
+        }
         $draft = User::whereHas('pengajuanKp', function($query) {
             $query->where('status', 'Belum Diterima');
         })->with(['pengajuanKp' => function($query) {
@@ -51,6 +59,10 @@ class PengajuanKPController extends Controller
     // halaman pengajuan kp koordinator
     public function pengajuanKpKoordinator()
     {
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Koordinator Kerja Praktik')) {
+            abort(403, 'Akses ditolak.');
+        }
         $diterima = User::whereHas('pengajuanKp', function($query) {
             $query->where('status', 'Diterima')
             ->where('id_prodi', Auth::user()->data->id_prodi);

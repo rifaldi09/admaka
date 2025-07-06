@@ -42,7 +42,7 @@ $errorCount = 0;
         $config = [
         'data' => $dataDosenFormatted,
         'order' => [[1, 'asc']],
-        'columns' => [null, null, null, null,null,null, ['orderable' => false]],
+        'columns' => [null, null, null, null,null,null,null, ['orderable' => false]],
         ];
         @endphp
 

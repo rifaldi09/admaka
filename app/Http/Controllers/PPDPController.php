@@ -22,6 +22,10 @@ class PPDPController extends Controller
     // halaman index mahasiswa
     public function ppdpMahasiswa()
     {
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Mahasiswa')) {
+            abort(403, 'Akses ditolak.');
+        }
         $permohonan = PPDP::where('user_id', Auth::id())->get();
         $dosen = User::whereHas('roles', function($query) {
             $query->where('role.id', 2);
@@ -33,6 +37,10 @@ class PPDPController extends Controller
     // halaman index admin
     public function ppdpAdmin()
     {
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Administrator')) {
+            abort(403, 'Akses ditolak.');
+        }
         $draft = User::select('id', 'id_user')->whereHas('permohonanPengambilan', function($query) {
             $query->where('status', 'Belum Diterima');
         })->with(['permohonanPengambilan' => function($query) {
@@ -54,6 +62,10 @@ class PPDPController extends Controller
     // halaman index koordinator
     public function ppdpKoordinator()
     {
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Koordinator Pengambilan Data')) {
+            abort(403, 'Akses ditolak.');
+        }
         $diterima = User::whereHas('permohonanPengambilan', function($query) {
             $query->where('status', 'Diterima')
             ->where('id_prodi', Auth::user()->data->id_prodi)
@@ -71,6 +83,10 @@ class PPDPController extends Controller
     // halaman index dosen
     public function ppdpDosen()
     {
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Dosen')) {
+            abort(403, 'Akses ditolak.');
+        }
         $diterima = User::whereHas('permohonanPengambilan', function($query) {
             $query->where('status', 'Diterima')
             ->where('id_prodi', Auth::user()->data->id_prodi)

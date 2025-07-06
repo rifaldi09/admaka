@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Mahasiswa;
 use App\Models\Prodi;
 use App\Models\User;
+use App\Models\Role;
+use App\Models\RoleUser;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class DataMahasiswa extends Controller
 {
@@ -73,8 +76,14 @@ class DataMahasiswa extends Controller
             'tanggal_lahir'  => 'required|date',
             'no_hp'          => 'required|string|max:20',
         ]);
+        $roleMahasiswaId = Role::where('name_role', 'Mahasiswa')
+                            ->value('id');
+                            
+        DB::beginTransaction();
         try {
             // Simpan ke database
+
+            
             Mahasiswa::create([
                 'nim'            => $validasi['nim'],
                 'nama'           => $validasi['nama'],
@@ -85,16 +94,29 @@ class DataMahasiswa extends Controller
                 'no_hp'          => $validasi['no_hp'],
             ]);
 
-            User::create([
-                'id_user'        => $validasi['nim'],
-                'password'       => Hash::make($validasi['nim']),
-                'id_role'        => 1,
-            ]);
 
+            $user = User::create([
+                    'id_user' => $validasi['nim'],
+                    'password' => Hash::make($validasi['nim']),
+                    // 'id_role' => $roleMahasiswaId,
+                ]);
+            $userId = $user->id;
+                
+            RoleUser::create([
+                    'user_id' => $userId,
+                    'role_id' => $roleMahasiswaId,
+                    // 'id_role' => $roleMahasiswaId,
+                ]);
+                
+             
+
+            DB::commit(); // semua sukses
+           
             // Jika berhasil
             return redirect()->route('data-mahasiswa')->with('success', 'Data Mahasiswa berhasil ditambahkan');
         } catch (QueryException $e) {
             // Log error untuk debugging
+            DB::rollback();
             Log::error('Gagal menambahkan data mahasiswa: ' . $e->getMessage());
 
             // Redirect balik dengan error message
@@ -233,10 +255,20 @@ class DataMahasiswa extends Controller
             $nama = $row[1] ?? '';
             $tempat = $row[2] ?? '';
             $tgl = $row[3] ?? '';
-            $id_prodi = $row[4] ?? '';
+            $prodi = $row[4] ?? '';
             $email = $row[5] ?? '';
             $no_hp = $row[6] ?? '';
 
+            // $id_prodi='';
+            //Validasi prodi
+            $prodiList = Prodi::pluck('id', 'nama')->toArray();
+            if (array_key_exists($prodi, $prodiList)) {
+                //  $id_prodi = $prodiList[$prodi];
+                 $prodi = $prodi;
+            }else{
+                 $prodi = '';
+            }
+            
             // Validasi tanggal
             $validDate = true;
             if (!empty($tgl)) {
@@ -247,13 +279,12 @@ class DataMahasiswa extends Controller
                     $validDate = false;
                 }
             }
-
-            $rowData[] = ['value' => $nim, 'error' => empty($nim) || Mahasiswa::where('nim', $nim)->exists()];
+            $rowData[] = ['value' => $nim, 'error' => empty($nim) || Mahasiswa::withTrashed()->where('nim', $nim)->exists()];
             $rowData[] = ['value' => $nama, 'error' => empty($nama)];
             $rowData[] = ['value' => $tempat, 'error' => empty($tempat)];
             $rowData[] = ['value' => $tgl, 'error' => empty($tgl) || !$validDate];
-            $rowData[] = ['value' => $id_prodi, 'error' => !Prodi::where('nama', $id_prodi)->exists()];
-            $rowData[] = ['value' => $email, 'error' => empty($email) || Mahasiswa::where('email', $email)->exists()];
+            $rowData[] = ['value' => $prodi, 'error' => empty($prodi)];
+            $rowData[] = ['value' => $email, 'error' => empty($email) || Mahasiswa::withTrashed()->where('email', $email)->exists()];
             $rowData[] = ['value' => $no_hp, 'error' => empty($no_hp)];
 
             $processedData[] = $rowData;
@@ -310,11 +341,19 @@ class DataMahasiswa extends Controller
             }
 
             //cek prodi
-            $prodiMap = Prodi::pluck('id', 'nama')->mapWithKeys(function ($id, $nama) {
-                return [strtolower(trim($nama)) => $id]; // pakai lowercase untuk pencocokan aman
-            })->toArray();
+            // $prodiMap = Prodi::pluck('id', 'nama')->mapWithKeys(function ($id, $nama) {
+            //     return [strtolower(trim($nama)) => $id]; // pakai lowercase untuk pencocokan aman
+            // })->toArray();
 
-            $id_prodi = $prodiMap[strtolower(trim($prodi))] ?? null;
+            // $id_prodi = $prodiMap[strtolower(trim($prodi))] ?? null;
+
+            $id_prodi='';
+            //Validasi prodi
+            $prodiList = Prodi::pluck('id', 'nama')->toArray();
+            if (array_key_exists($prodi, $prodiList)) {
+                 $id_prodi = $prodiList[$prodi];
+                //  $prodi = $prodi;
+            }
 
             if (!$id_prodi) {
                 continue; // skip baris jika prodi tidak dikenali
@@ -331,28 +370,58 @@ class DataMahasiswa extends Controller
             } catch (\Exception $e) {
                 continue; // skip jika tanggal salah format
             }
+            $roleMahasiswaId = Role::where('name_role', 'Mahasiswa')
+                                ->value('id');
+                        
 
-            // Insert ke database
-            Mahasiswa::create([
-                'nim'           => $nim,
-                'nama'          => $nama,
-                'email'         => $email,
-                'id_prodi'      => $id_prodi,
-                'tempat_lahir'  => $tempat,
-                'tanggal_lahir' => $tgl_lahir,
-                'no_hp'         => $no_hp,
-            ]);
+            DB::beginTransaction();
 
-            User::create([
-                'id_user' => $nim,
-                'password' => Hash::make($nim),
-                'id_role' => 1,
-            ]);
+            try {
+                // Insert ke database
+                Mahasiswa::create([
+                    'nim'           => $nim,
+                    'nama'          => $nama,
+                    'email'         => $email,
+                    'id_prodi'      => $id_prodi,
+                    'tempat_lahir'  => $tempat,
+                    'tanggal_lahir' => $tgl_lahir,
+                    'no_hp'         => $no_hp,
+                ]);
+
+      
+                       
+                $user = User::create([
+                    'id_user' => $nim,
+                    'password' => Hash::make($nim),
+                    // 'id_role' => $roleMahasiswaId,
+                ]);
+                $userId = $user->id;
+                
+                RoleUser::create([
+                    'user_id' => $userId,
+                    'role_id' => $roleMahasiswaId,
+                    // 'id_role' => $roleMahasiswaId,
+                ]);
+                
+             
+
+                DB::commit(); // semua sukses
+           
+
+               
+                // return response()->json(['message' => 'Data berhasil disimpan']);
+            } catch (\Exception $e) {
+                DB::rollback(); // batalkan semua jika ada error
+                // Hapus file sementara
+               
+            }
+ 
+            
+       
         }
-
         // Hapus file sementara
         Storage::delete('temp/' . $file);
-
-        return redirect()->route('data-mhs')->with('success', 'Data Mahasiswa berhasil ditambahkan');
+        return redirect()->route('data-mahasiswa')->with('success', 'Data Mahasiswa berhasil ditambahkan');
+       
     }
 }

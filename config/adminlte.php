@@ -64,7 +64,8 @@ return [
     */
 
     //! Config Title Sidebar
-    'logo' => '<b>ADMAKA</b> ADMIN',
+    // 'logo' => '<b>ADMAKA</b> ADMIN',
+    'logo' => '<b>ADMAKA</b>',
     //! Config Logo Sidebar
     'logo_img' => 'assets/img/logoumrah.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',

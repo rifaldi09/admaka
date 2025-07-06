@@ -23,6 +23,10 @@ class AktifKuliahController extends Controller
     // Fungsi untuk menampilkan halaman aktif kuliah role mahasiswa
     public function aktifKuliah()
     {
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Mahasiswa')) {
+            abort(403, 'Akses ditolak.');
+        }
         // data untuk modal Ajukan Surat Baru
         $dataUser = Auth::user()->data;
         $prodi = Prodi::find($dataUser->id_prodi);
@@ -38,8 +42,11 @@ class AktifKuliahController extends Controller
 
     // Fungsi untuk menampilkan halaman aktif kuliah role admin
     public function aktifKuliahAdmin()
-    {
-
+    { 
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Administrator')) {
+            abort(403, 'Akses ditolak.');
+        }
         $dataSurat = AktifKuliah::with('user.dataMahasiswa.prodi')->get();
         // dd($dataSurat);
 

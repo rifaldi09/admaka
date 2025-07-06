@@ -6,13 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Dosen;
 use App\Models\Prodi;
 use App\Models\User;
+use App\Models\Role;
+use App\Models\RoleUser;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-
+use Illuminate\Support\Facades\DB;
 
 class DataDosen extends Controller
 {
@@ -72,7 +74,10 @@ class DataDosen extends Controller
             'tanggal_lahir'  => 'required|date',
             'no_hp'          => 'required|string|max:20',
         ]);
-
+          $roleDosenId = Role::where('name_role', 'Dosen')
+                                ->value('id');
+                            
+        DB::beginTransaction();
         try {
             // Simpan ke database
             Dosen::create([
@@ -86,16 +91,27 @@ class DataDosen extends Controller
                 'no_hp'          => $validasi['no_hp'],
             ]);
 
-            User::create([
-                'id_user'        => $validasi['nidn'],
-                'password'       => Hash::make($validasi['nidn']),
-                'id_role'        => 2,
-            ]);
+                $user = User::create([
+                    'id_user' => $validasi['nidn'],
+                    'password' => Hash::make($validasi['nidn']),
+                    // 'id_role' => $roleMahasiswaId,
+                ]);
+                $userId = $user->id;
+                
+                RoleUser::create([
+                    'user_id' => $userId,
+                    'role_id' => $roleDosenId,
+                    // 'id_role' => $roleMahasiswaId,
+                ]);
+                
+            DB::commit(); // semua sukses
+        
 
             // Jika berhasil
             return redirect()->route('data-dosen')->with('success', 'Data Dosen berhasil ditambahkan');
         } catch (QueryException $e) {
             // Log error untuk debugging
+              DB::rollback(); 
             Log::error('Gagal menambahkan data dosen: ' . $e->getMessage());
 
             // Redirect balik dengan error message
@@ -238,10 +254,18 @@ class DataDosen extends Controller
             $nama = $row[2] ?? '';
             $tempat = $row[3] ?? '';
             $tgl = $row[4] ?? '';
-            $id_prodi = $row[5] ?? '';
+            $prodi = $row[5] ?? '';
             $email = $row[6] ?? '';
             $no_hp = $row[7] ?? '';
-
+            
+            $prodiList = Prodi::pluck('id', 'nama')->toArray();
+            if (array_key_exists($prodi, $prodiList)) {
+                //  $id_prodi = $prodiList[$prodi];
+                 $prodi = $prodi;
+            }else{
+                 $prodi = '';
+            }
+            
             // Validasi tanggal
             $validDate = true;
             if (!empty($tgl)) {
@@ -258,14 +282,14 @@ class DataDosen extends Controller
             $rowData[] = ['value' => $nama, 'error' => empty($nama)];
             $rowData[] = ['value' => $tempat, 'error' => empty($tempat)];
             $rowData[] = ['value' => $tgl, 'error' => empty($tgl) || !$validDate];
-            $rowData[] = ['value' => $id_prodi, 'error' => !Prodi::where('nama', $id_prodi)->exists()];
+            $rowData[] = ['value' => $prodi, 'error' => empty($prodi)];
             $rowData[] = ['value' => $email, 'error' => empty($email) || Dosen::where('email', $email)->exists()];
             $rowData[] = ['value' => $no_hp, 'error' => empty($no_hp)];
 
             $processedData[] = $rowData;
         }
-
-        return view('admin.data-master.priviewImportDosen', [
+     
+     return view('admin.data-master.priviewImportDosen', [
             'header' => $header,
             'data' => $processedData,
             'file' => $request->file('file')->hashName(),
@@ -318,11 +342,18 @@ class DataDosen extends Controller
             }
 
             //cek prodi
-            $prodiMap = Prodi::pluck('id', 'nama')->mapWithKeys(function ($id, $nama) {
-                return [strtolower(trim($nama)) => $id]; // pakai lowercase untuk pencocokan aman
-            })->toArray();
+            // $prodiMap = Prodi::pluck('id', 'nama')->mapWithKeys(function ($id, $nama) {
+            //     return [strtolower(trim($nama)) => $id]; // pakai lowercase untuk pencocokan aman
+            // })->toArray();
 
-            $id_prodi = $prodiMap[strtolower(trim($prodi))] ?? null;
+            // $id_prodi = $prodiMap[strtolower(trim($prodi))] ?? null;
+            $id_prodi='';
+            //Validasi prodi
+            $prodiList = Prodi::pluck('id', 'nama')->toArray();
+            if (array_key_exists($prodi, $prodiList)) {
+                 $id_prodi = $prodiList[$prodi];
+                //  $prodi = $prodi;
+            }
 
             if (!$id_prodi) {
                 continue; // skip baris jika prodi tidak dikenali
@@ -339,7 +370,13 @@ class DataDosen extends Controller
             } catch (\Exception $e) {
                 continue; // skip jika tanggal salah format
             }
+            $roleDosenId = Role::where('name_role', 'Dosen')
+                                ->value('id');
+                        
 
+            DB::beginTransaction();
+
+            try {
             // Insert ke database
             Dosen::create([
                 'nidn'          => $nidn,
@@ -352,11 +389,27 @@ class DataDosen extends Controller
                 'no_hp'         => $no_hp,
             ]);
 
-            User::create([
-                'id_user' => $nidn,
-                'password' => Hash::make($nidn),
-                'id_role' => 2,
-            ]);
+                $user = User::create([
+                    'id_user' => $nidn,
+                    'password' => Hash::make($nidn),
+                    // 'id_role' => $roleMahasiswaId,
+                ]);
+                $userId = $user->id;
+                
+                RoleUser::create([
+                    'user_id' => $userId,
+                    'role_id' => $roleDosenId,
+                    // 'id_role' => $roleMahasiswaId,
+                ]);
+                
+            DB::commit(); // semua sukses
+        
+                // return response()->json(['message' => 'Data berhasil disimpan']);
+            } catch (\Exception $e) {
+                DB::rollback(); // batalkan semua jika ada error
+                // Hapus file sementara
+               
+            }
         }
 
         // Hapus file sementara

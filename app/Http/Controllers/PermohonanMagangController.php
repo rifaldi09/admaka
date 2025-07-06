@@ -17,12 +17,20 @@ Carbon::setLocale('id');
 class PermohonanMagangController extends Controller
 {
     public function PermohonanMagangMahasiswa(){
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Mahasiswa')) {
+            abort(403, 'Akses ditolak.');
+        }
         $pengajuan = PermohonanMagang::with('filePengajuan')->where('user_id', Auth::id())->get();
 
         return view('mahasiswa.permohonan-magang.index', compact('pengajuan'));
     }
 
     public function PermohonanMagangAdmin(){
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Administrator')) {
+            abort(403, 'Akses ditolak.');
+        }
         // ambil data permohonanMagang by status
         // with gunanya buat bawa relasi ke datanya, jadi harus where 2 kali
         // whereHas buat di cek aja biar user yang di ambil itu yang ada permohonanMagang + status nya belum diterima

@@ -18,6 +18,10 @@ class RekomendasiController extends Controller
 {
     public function rekomendasiMahasiswa()
     {
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Mahasiswa')) {
+            abort(403, 'Akses ditolak.');
+        }
         $dataUser = Auth::user()->data;
         $prodiUser = Prodi::find($dataUser->id_prodi);
         $dataSurat = SuratRekomendasi::with('filePengajuan')->where('user_id', Auth::user()->id)->get();
@@ -26,6 +30,10 @@ class RekomendasiController extends Controller
     }
     public function rekomendasiAdmin()
     {
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Administrator')) {
+            abort(403, 'Akses ditolak.');
+        }
         $dataSurat = SuratRekomendasi::with('user.dataMahasiswa.prodi')->get();
         // dd($dataSurat);
 

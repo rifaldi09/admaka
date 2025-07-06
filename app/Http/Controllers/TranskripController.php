@@ -11,7 +11,11 @@ use Illuminate\Support\Facades\Auth;
 class TranskripController extends Controller
 {
     public function transkripMahasiswa()
-    {
+    {       
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Mahasiswa')) {
+            abort(403, 'Akses ditolak.');
+        }
         $transkrip = Transkrip::where('user_id', Auth::user()->id)->get();
 
         return view('mahasiswa.transkrip-nilai.index', compact('transkrip'));
@@ -19,6 +23,10 @@ class TranskripController extends Controller
 
     public function transkripAdmin()
     {
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Administrator')) {
+            abort(403, 'Akses ditolak.');
+        }
         $draft = User::select('id', 'id_user')->whereHas('transkrip', function ($query) {
             $query->where('status', 'Belum Diterima');
         })->with(['transkrip' => function ($query) {
@@ -36,6 +44,10 @@ class TranskripController extends Controller
 
     public function transkripWD()
     {
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Wakil-Dekan-1')) {
+            abort(403, 'Akses ditolak.');
+        }
         $diterima = User::select('id', 'id_user')->whereHas('transkrip', function ($query) {
             $query->where('status', 'Diterima');
         })->with(['transkrip' => function ($query) {
