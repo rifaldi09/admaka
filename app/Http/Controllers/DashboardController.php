@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\AktifKuliah;
-use App\Models\FilePermohonan;
 use App\Models\PengajuanKP;
 use App\Models\PermohonanMagang;
 use App\Models\PPDP;
@@ -39,10 +38,10 @@ class DashboardController extends Controller
         $models = [AktifKuliah::class, PengajuanKP::class, PPDP::class, PermohonanMagang::class, SuratRekomendasi::class, Transkrip::class];
 
         // Count data surat
-        $belumDiterima = collect($models)->sum(fn($models) => $models::where('status', 'Belum Diterima')->count());
-        $dataDiterima = collect($models)->sum(fn($models) => $models::where('status', 'Diterima')->count());
-        $dataDitolak = collect($models)->sum(fn($models) => $models::where('status', 'Ditolak')->count());
-        $dataPenerbitan = collect($models)->sum(fn($models) => $models::where('status', 'Penerbitan')->count());
+        $belumDiterima = collect($models)->sum(fn($models) => $models::where('status', 'Belum Diterima')->where('user_id', auth()->user()->id)->count());
+        $dataDiterima = collect($models)->sum(fn($models) => $models::where('status', 'Diterima')->where('user_id', auth()->user()->id)->count());
+        $dataDitolak = collect($models)->sum(fn($models) => $models::where('status', 'Ditolak')->where('user_id', auth()->user()->id)->count());
+        $dataPenerbitan = collect($models)->sum(fn($models) => $models::where('status', 'Penerbitan')->where('user_id', auth()->user()->id)->count());
 
         // Get surat penerbitan terbaru
         $suratTerbaru = $this->getSuratPenerbitanTerbaru(2);
@@ -57,7 +56,7 @@ class DashboardController extends Controller
         $user = auth()->user()->data;
 
         // Get all surat data
-        $dataPenelitian = FilePermohonan::count();
+        $dataPenelitian = PPDP::count();
         $dataKP = PengajuanKP::count();
         $dataTranskrip = Transkrip::count();
 
@@ -99,27 +98,27 @@ class DashboardController extends Controller
     // All Data Surat - Mahasiswa
     private function getSuratPenerbitanTerbaru(int $limit = 2): Collection
     {
-        $suratAktif = AktifKuliah::where('status', 'Penerbitan')->get()->map(function ($item) {
+        $suratAktif = AktifKuliah::where('status', 'Penerbitan')->where('user_id', auth()->user()->id)->get()->map(function ($item) {
             $item->jenis_surat = 'Aktif Kuliah';
             return $item;
         });
-        $suratPengajuanKP = PengajuanKP::where('status', 'Penerbitan')->get()->map(function ($item) {
+        $suratPengajuanKP = PengajuanKP::where('status', 'Penerbitan')->where('user_id', auth()->user()->id)->get()->map(function ($item) {
             $item->jenis_surat = 'Pengajuan Kerja Praktik';
             return $item;
         });
-        $suratPenelitian = PPDP::where('status', 'Penerbitan')->get()->map(function ($item) {
+        $suratPenelitian = PPDP::where('status', 'Penerbitan')->where('user_id', auth()->user()->id)->get()->map(function ($item) {
             $item->jenis_surat = 'Permohonan Penelitian';
             return $item;
         });
-        $suratMagang = PermohonanMagang::where('status', 'Penerbitan')->get()->map(function ($item) {
+        $suratMagang = PermohonanMagang::where('status', 'Penerbitan')->where('user_id', auth()->user()->id)->get()->map(function ($item) {
             $item->jenis_surat = 'Permohonan Magang';
             return $item;
         });
-        $suratRekomendasi = SuratRekomendasi::where('status', 'Penerbitan')->get()->map(function ($item) {
+        $suratRekomendasi = SuratRekomendasi::where('status', 'Penerbitan')->where('user_id', auth()->user()->id)->get()->map(function ($item) {
             $item->jenis_surat = 'Rekomendasi';
             return $item;
         });
-        $suratTranskrip = Transkrip::where('status', 'Penerbitan')->get()->map(function ($item) {
+        $suratTranskrip = Transkrip::where('status', 'Penerbitan')->where('user_id', auth()->user()->id)->get()->map(function ($item) {
             $item->jenis_surat = 'Transkrip';
             return $item;
         });
@@ -135,17 +134,17 @@ class DashboardController extends Controller
     }
 
     // All Data Pengajuan Surat - Dosen
-    private function getPengajuanSuratTerbaru(int $limit = 2): Collection
+    private function getPengajuanSuratTerbaru(int $limit = 5): Collection
     {
-        $suratPenelitian = PPDP::where('status', 'Belum Diterima')->get()->map(function ($item) {
+        $suratPenelitian = PPDP::get()->map(function ($item) {
             $item->jenis_surat = 'Permohonan Penelitian';
             return $item;
         });
-        $suratPengajuanKP = PengajuanKP::where('status', 'Belum Diterima')->get()->map(function ($item) {
+        $suratPengajuanKP = PengajuanKP::get()->map(function ($item) {
             $item->jenis_surat = 'Pengajuan Kerja Praktik';
             return $item;
         });
-        $suratTranskrip = Transkrip::where('status', 'Belum Diterima')->get()->map(function ($item) {
+        $suratTranskrip = Transkrip::get()->map(function ($item) {
             $item->jenis_surat = 'Transkrip';
             return $item;
         });

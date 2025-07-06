@@ -48,7 +48,7 @@
                 @forelse ($suratPengajuanTerbaru as $surat)
                 <tr>
                     <td>{{ $surat->jenis_surat }}</td>
-                    <td>{{ $surat->user_id }}</td>
+                    <td>{{ $surat->user->dataMahasiswa->nama }}</td>
                     <td>{{ $surat->created_at->format('d M Y H:i') }}</td>
                     <td>{{ $surat->status }}</td>
                 </tr>
