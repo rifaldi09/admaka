@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Data;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\ViewRoleUserDetail;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -13,17 +14,43 @@ class DataUser extends Controller
 {
     public function index()
     {
-        $dataUser = User::all();
+        $dataUser = ViewRoleUserDetail::all();
 
         if (empty($dataUser)) {
             $dataUserFormatted = [];
         } else {
-            // Buat array dengan format yang diinginkan
-            $dataUserFormatted = $dataUser->map(function ($user) {
+//             // Buat array dengan format yang diinginkan
+//             $dataUserFormatted = $dataUser->map(function ($user) {
 
-                // $btnEdit = '<button data-key="' . encrypt($user->id) . '" class="btn btn-sm btn-default text-primary update-user" id="updateUser" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i></button>';
+//                 // $btnEdit = '<button data-key="' . encrypt($user->id) . '" class="btn btn-sm btn-default text-primary update-user" id="updateUser" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i></button>';
                 $token = csrf_token();
-                $deleteUrl = route('destroy-user', encrypt($user->id));
+//                 $deleteUrl = route('destroy-user', encrypt($user->user_id));
+//                 $btnDelete = '
+//                     <form class="m-0 p-0" action="' . $deleteUrl . '" method="POST" enctype="multipart/form-data">
+//                         <input type="hidden" name="_token" value="' . $token . '">
+//                         <input type="hidden" name="_method" value="DELETE">
+//                         <button class="btn btn-sm btn-default text-danger delete-user" title="Delete">
+//                             <i class="fa fa-lg fa-fw fa-trash"></i>
+//                         </button>
+//                     </form>
+//                 ';
+// // dd($user->roles);
+//                 // Mengembalikan data dalam bentuk array yang diinginkan
+//                 return [
+//                     'id_user' => $user->id_user,
+//                     'nama_user' => $user->nama_user,
+//                     'roles' => $user->roles->pluck('name_role')->implode(', '),
+//                     // '<div class="d-flex gap-1">' . $btnDelete . '</div>', // gabungkan tombol
+//                     // '<div class="d-flex gap-1">' . $btnEdit . $btnDelete . '</div>', // gabungkan tombol
+//                 ];
+//             })->toArray();
+//         }
+     // Gabungkan berdasarkan id_user
+                $dataUserFormatted = $dataUser->groupBy('id_user')->map(function ($items, $id_user) use ($token) {
+                $first = $items->first();
+
+                // Tombol hapus
+                $deleteUrl = route('destroy-user', encrypt($first->user_id));
                 $btnDelete = '
                     <form class="m-0 p-0" action="' . $deleteUrl . '" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="_token" value="' . $token . '">
@@ -34,14 +61,13 @@ class DataUser extends Controller
                     </form>
                 ';
 
-                // Mengembalikan data dalam bentuk array yang diinginkan
                 return [
-                    'id_user' => $user->id_user,
-                    'roles' => $user->roles->pluck('name_role')->implode(', '),
-                    '<div class="d-flex gap-1">' . $btnDelete . '</div>', // gabungkan tombol
-                    // '<div class="d-flex gap-1">' . $btnEdit . $btnDelete . '</div>', // gabungkan tombol
+                    'id_user'    => $id_user,
+                    'nama_user'  => $first->nama_user,
+                    'roles'      => $items->pluck('name_role')->unique()->implode(', '),
+                    // 'aksi'       => '<div class="d-flex gap-1">' . $btnDelete . '</div>',
                 ];
-            })->toArray();
+            })->values()->toArray();
         }
         return view('admin.data-master.data-user', compact('dataUser', 'dataUserFormatted'));
     }

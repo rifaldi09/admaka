@@ -15,8 +15,9 @@
         @php
         $heads = [
         'Id User',
+        'Nama User',
         'Roles',
-        ['label' => 'Actions', 'no-export' => true, 'width' => 5],
+
         ];
 
         $config = [
@@ -42,15 +43,15 @@
 {{-- INSERT DATA USER --}}
 {{-- <x-adminlte-modal id="modalUser" title="Tambah User" v-centered static-backdrop scrollable>
     <form action="{{ route('add_user') }}" method="post" id="form-prodi" enctype="multipart/form-data">
-        @csrf
-        <div class="form-group">
-            <x-adminlte-input type="text" label="Nama" name="nama" placeholder="Nama Prodi" required />
-        </div>
-    </form>
-    <x-slot name="footerSlot">
-        <x-adminlte-button form="form-prodi" type="submit" class="mr-auto" theme="success" label="Save" />
-        <x-adminlte-button theme="danger" label="Close" data-dismiss="modal" />
-    </x-slot>
+@csrf
+<div class="form-group">
+    <x-adminlte-input type="text" label="Nama" name="nama" placeholder="Nama Prodi" required />
+</div>
+</form>
+<x-slot name="footerSlot">
+    <x-adminlte-button form="form-prodi" type="submit" class="mr-auto" theme="success" label="Save" />
+    <x-adminlte-button theme="danger" label="Close" data-dismiss="modal" />
+</x-slot>
 </x-adminlte-modal> --}}
 
 {{-- UPDATE DATA USER --}}
