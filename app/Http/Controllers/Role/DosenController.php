@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Role;
 
+use App\Http\Controllers\Controller;
 use App\Models\Dosen;
 use App\Models\Prodi;
 use Illuminate\Http\Request;

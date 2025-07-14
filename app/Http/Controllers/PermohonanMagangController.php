@@ -16,7 +16,8 @@ Carbon::setLocale('id');
 
 class PermohonanMagangController extends Controller
 {
-    public function PermohonanMagangMahasiswa(){
+    public function PermohonanMagangMahasiswa()
+    {
         $user = auth()->user();
         if (Auth::check() && !$user->roles->contains('name_role', 'Mahasiswa')) {
             abort(403, 'Akses ditolak.');
@@ -26,11 +27,14 @@ class PermohonanMagangController extends Controller
         return view('mahasiswa.permohonan-magang.index', compact('pengajuan'));
     }
 
-    public function PermohonanMagangAdmin(){
+    public function PermohonanMagangAdmin()
+    {
         $user = auth()->user();
+
         if (Auth::check() && !$user->roles->contains('name_role', 'Administrator')) {
             abort(403, 'Akses ditolak.');
         }
+
         // ambil data permohonanMagang by status
         // with gunanya buat bawa relasi ke datanya, jadi harus where 2 kali
         // whereHas buat di cek aja biar user yang di ambil itu yang ada permohonanMagang + status nya belum diterima
@@ -52,7 +56,34 @@ class PermohonanMagangController extends Controller
         return view('admin.permohonan-magang.index', compact('draft', 'diterima'));
     }
 
-    public function PermohonanMagangKKP(){
+    public function PermohonanMagangSuperAdmin()
+    {
+        $user = auth()->user();
+
+        if (Auth::check() && !$user->roles->contains('name_role', 'Super-Administrator')) {
+            abort(403, 'Akses ditolak.');
+        }
+
+        $draft = User::whereHas('permohonanMagang', function ($query) {
+            $query->where('status', 'Belum Diterima');
+        })->with(['permohonanMagang' => function ($query) {
+            $query->where('status', 'Belum Diterima');
+        }, 'dataMahasiswa.prodi'])->get();
+
+        $diterima = User::whereHas('permohonanMagang', function ($query) {
+            $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
+        })->with([
+            'permohonanMagang' => function ($query) {
+                $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
+            },
+            'dataMahasiswa'
+        ])->get();
+
+        return view('admin.permohonan-magang.index', compact('draft', 'diterima'));
+    }
+
+    public function PermohonanMagangKKP()
+    {
         $diterima = User::whereHas('permohonanMagang', function ($query) {
             $query->where('status', 'Diterima')
                 ->where('id_prodi', Auth::user()->data->id_prodi);
@@ -79,7 +110,7 @@ class PermohonanMagangController extends Controller
 
         if ($cek_nomor_terakhir) {
             $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
-            $no_surat = 'PM' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+            $no_surat = 'PM' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT);
         } else {
             $no_surat = 'PM0001';
         }
@@ -165,14 +196,14 @@ class PermohonanMagangController extends Controller
             $query->where('status', 'Penerbitan')
                 ->where('id_permohonan_magang', $id);
         })
-        ->with([
-            'permohonanMagang' => function ($query) use ($id) {
-                $query->where('status', 'Penerbitan')
-                    ->where('id_permohonan_magang', $id);
-            },
-            'dataMahasiswa.prodi'
-        ])
-        ->firstOrFail();
+            ->with([
+                'permohonanMagang' => function ($query) use ($id) {
+                    $query->where('status', 'Penerbitan')
+                        ->where('id_permohonan_magang', $id);
+                },
+                'dataMahasiswa.prodi'
+            ])
+            ->firstOrFail();
 
         $kp = $data->permohonanMagang->first();
 
@@ -181,7 +212,7 @@ class PermohonanMagangController extends Controller
         $tanggal_selesai = Carbon::parse($kp->tanggal_selesai)->translatedFormat('j F Y');
 
         $pdf = Pdf::loadView('pdf.permohonan-magang.pdf-magang', [
-            'no_surat'        => $kp->no_surat.'/UN53.01/DT.01.01/'.$kp->created_at->format('Y'),
+            'no_surat'        => $kp->no_surat . '/UN53.01/DT.01.01/' . $kp->created_at->format('Y'),
             'created_at'      => $tanggal,
             'tujuan_surat'    => $kp->tujuan_surat,
             'alamat_surat'    => $kp->alamat_surat,

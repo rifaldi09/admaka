@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Role;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\RoleAkses;
 use App\Models\Role;
@@ -21,7 +22,6 @@ class AdminController extends Controller
     // untuk kehalaman Hak Akses admin
     public function hakAkses()
     {
-
         // ambil data dari mahasiswa dan dosen
         // untuk ditampilkan di form table
         $dataRole = Role::all();
@@ -33,23 +33,23 @@ class AdminController extends Controller
                 $token = csrf_token();
                 $editUrl = route('edit-hak-akses', encrypt($role->id));
                 $deleteUrl = route('destroy-role', encrypt($role->id));
-            
-                $btnEdit ='
-                    <form class="m-0 p-0" action="'.$editUrl.'" method="get" enctype="multipart/form-data">
+
+                $btnEdit = '
+                    <form class="m-0 p-0" action="' . $editUrl . '" method="get" enctype="multipart/form-data">
                         <input type="hidden" name="_token" value="' . $token . '">
                         <button class="btn btn-sm btn-default text-primary update-mhs" id="updateMhs" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i>
                             </button>
                     </form>
                 ';
                 $btnDelete = '
-                    <form class="m-0 p-0" action="'.$deleteUrl.'" method="post" enctype="multipart/form-data">
+                    <form class="m-0 p-0" action="' . $deleteUrl . '" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="_token" value="' . $token . '">
                             <button type="button" class="btn btn-sm btn-default text-danger delet-mhs" title="Delete">
                             <i class="fa fa-lg fa-fw fa-trash"></i></button>
                         </form>
                 ';
                 // $btnDetails = '<button class="btn btn-sm btn-default text-teal  " title="Details"><i class="fa fa-lg fa-fw fa-eye"></i></button>';
-        
+
                 // Mengembalikan data dalam bentuk array yang diinginkan
                 return [
                     $role->id,
@@ -154,24 +154,18 @@ class AdminController extends Controller
     }
 
 
-
-
-
-
     // Mengirim data ke halaman menu
     public function menuAll()
     {
-
         // Ambil semua data Dosen
         $dataMenu = Menu::all();
-        if(empty($dataMenu)){
+        if (empty($dataMenu)) {
             $dataMenuFormatted = [];
-            
-        }else{
-              // Buat array dengan format yang diinginkan
-            $dataMenuFormatted = $dataMenu->map(function($menu) {
-             
-                $btnEdit = '<button data-key="'.encrypt($menu->id_menu).'" class="btn btn-sm btn-default text-primary update-menu" id="updateMenu" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i></button>';
+        } else {
+            // Buat array dengan format yang diinginkan
+            $dataMenuFormatted = $dataMenu->map(function ($menu) {
+
+                $btnEdit = '<button data-key="' . encrypt($menu->id_menu) . '" class="btn btn-sm btn-default text-primary update-menu" id="updateMenu" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i></button>';
                 $token = csrf_token();
                 $deleteUrl = route('destroy-menu', encrypt($menu->id_menu));
                 $btnDelete = '
@@ -194,88 +188,86 @@ class AdminController extends Controller
             })->toArray();
         }
 
-        return view('admin.manajemen_menu',compact('dataMenuFormatted'));
+        return view('admin.manajemen_menu', compact('dataMenuFormatted'));
     }
-    
-     //tempat crud menu
-     public function storeMenu(Request $request)
-     {
-   
-         // validasi input
-         $validasi = $request->validate([
-             'kelompok_menu'    => 'required|string',
-             'header'           => 'required|string',
-             'menu'             => 'required|string',
-             'url'              => 'required|string',
-             'icon'             => 'required|string',
-         ]);
-       
-           try {
-             // Simpan ke database
-             Menu::create([
-                 'kelompok_menu'     => $validasi['kelompok_menu'],
-                 'header'            => $validasi['header'],
-                 'menu'              => $validasi['menu'],
-                 'url'               => $validasi['url'],
-                 'icon'              => $validasi['icon'],
-             ]);
-                      
-             // Jika berhasil
-             return redirect()->route('manajemen-menu')->with('success', 'Menu Baru berhasil ditambahkan');
-         } catch (QueryException $e) {
-             // Log error untuk debugging
-             Log::error('Gagal menambahkan data menu: ' . $e->getMessage());
-       
-             // Redirect balik dengan error message
-             return redirect()->back()->withInput()->with('error', 'Gagal menambahkan data Menu. Silakan coba lagi.');
-         }
-       
-     }
- 
-     // Fungsi Menghapus menu
-     public function destroyMenu($id)
-     {
-         // ambil id menu dari request
-         $id_menu = decrypt($id);
- 
-         try {
+
+    //tempat crud menu
+    public function storeMenu(Request $request)
+    {
+        // validasi input
+        $validasi = $request->validate([
+            'kelompok_menu'    => 'required|string',
+            'header'           => 'required|string',
+            'menu'             => 'required|string',
+            'url'              => 'required|string',
+            'icon'             => 'required|string',
+        ]);
+
+        try {
+            // Simpan ke database
+            Menu::create([
+                'kelompok_menu'     => $validasi['kelompok_menu'],
+                'header'            => $validasi['header'],
+                'menu'              => $validasi['menu'],
+                'url'               => $validasi['url'],
+                'icon'              => $validasi['icon'],
+            ]);
+
+            // Jika berhasil
+            return redirect()->route('manajemen-menu')->with('success', 'Menu Baru berhasil ditambahkan');
+        } catch (QueryException $e) {
+            // Log error untuk debugging
+            Log::error('Gagal menambahkan data menu: ' . $e->getMessage());
+
+            // Redirect balik dengan error message
+            return redirect()->back()->withInput()->with('error', 'Gagal menambahkan data Menu. Silakan coba lagi.');
+        }
+    }
+
+    // Fungsi Menghapus menu
+    public function destroyMenu($id)
+    {
+        // ambil id menu dari request
+        $id_menu = decrypt($id);
+
+        try {
             // hapus Role AKses
             RoleAkses::where('id_menu', $id_menu)->delete();
-            
-      
+
+
             Menu::where('id_menu', $id_menu)->delete();
- 
-             // Jika berhasil
-             return redirect()->route('manajemen-menu')->with('success', 'Data Menu berhasil dihapus');
-         } catch (QueryException $e) {
-             // Log error untuk debugging
-             Log::error('Gagal menghapus data menu: ' . $e->getMessage());
-       
-             // Redirect balik dengan error message
-             return redirect()->back()->withInput()->with('error', 'Gagal menghapus data Menu. Silakan coba lagi.');
-         }
-       }
-       
-     // fungsi get data menu berdasarkan id
-     public function updateMenu($id)
-     {
-         $menu = Menu::select('kelompok_menu','menu','header', 'url', 'icon')
-                 ->where('id_menu', decrypt($id))
-                 ->first();
-         
-         
-         if (!$menu) {
-             return response()->json(['error' => 'Data tidak ditemukan'], 404);
-         }
-         $menu->key = $id;
-         return response()->json($menu);
-     }
-     // fungsi update data
-     public function updatedataMenu(Request $request, $id)
-     {
-         try {
-             $menu = Menu::where('id_menu', decrypt($id))->firstOrFail();
-           
+
+            // Jika berhasil
+            return redirect()->route('manajemen-menu')->with('success', 'Data Menu berhasil dihapus');
+        } catch (QueryException $e) {
+            // Log error untuk debugging
+            Log::error('Gagal menghapus data menu: ' . $e->getMessage());
+
+            // Redirect balik dengan error message
+            return redirect()->back()->withInput()->with('error', 'Gagal menghapus data Menu. Silakan coba lagi.');
+        }
+    }
+
+    // fungsi get data menu berdasarkan id
+    public function updateMenu($id)
+    {
+        $menu = Menu::select('kelompok_menu', 'menu', 'header', 'url', 'icon')
+            ->where('id_menu', decrypt($id))
+            ->first();
+
+
+        if (!$menu) {
+            return response()->json(['error' => 'Data tidak ditemukan'], 404);
+        }
+        $menu->key = $id;
+        return response()->json($menu);
+    }
+    // fungsi update data
+    public function updatedataMenu(Request $request, $id)
+    {
+        try {
+            $menu = Menu::where('id_menu', decrypt($id))->firstOrFail();
+
             // validasi input
             $validasi = $request->validate([
                 'kelompok_menu1'    => 'required|string',
@@ -284,31 +276,29 @@ class AdminController extends Controller
                 'url1'              => 'required|string',
                 'icon1'             => 'required|string',
             ]);
-            
-             // Lakukan update
-             $updated= $menu->update([
-                 'kelompok_menu'    => $validasi['kelompok_menu1'],
-                 'header'           => $validasi['header1'],
-                 'menu'             => $validasi['menu1'],
-                 'url'              => $validasi['url1'],
-                 'icon'             => $validasi['icon1'],
 
-             ]);
-     
-             if (!$updated) {
-                 return redirect()->back()->with('error', 'Gagal memperbarui data menu.');
-             }
-             return redirect()->back()->with('success', 'Data menu berhasil diperbarui.');
- 
-         } catch (QueryException $e) {
-             Log::error('Gagal update menu: ' . $e->getMessage());
- 
-             return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data.');
-         } catch (\Exception $e) {
-             Log::error('Kesalahan umum saat update menu: ' . $e->getMessage());
- 
-             return redirect()->back()->withInput()->with('error', 'Data menu tidak ditemukan atau terjadi error.');
-         }
-     }
+            // Lakukan update
+            $updated = $menu->update([
+                'kelompok_menu'    => $validasi['kelompok_menu1'],
+                'header'           => $validasi['header1'],
+                'menu'             => $validasi['menu1'],
+                'url'              => $validasi['url1'],
+                'icon'             => $validasi['icon1'],
 
+            ]);
+
+            if (!$updated) {
+                return redirect()->back()->with('error', 'Gagal memperbarui data menu.');
+            }
+            return redirect()->back()->with('success', 'Data menu berhasil diperbarui.');
+        } catch (QueryException $e) {
+            Log::error('Gagal update menu: ' . $e->getMessage());
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data.');
+        } catch (\Exception $e) {
+            Log::error('Kesalahan umum saat update menu: ' . $e->getMessage());
+
+            return redirect()->back()->withInput()->with('error', 'Data menu tidak ditemukan atau terjadi error.');
+        }
+    }
 }

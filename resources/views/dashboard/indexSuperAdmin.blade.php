@@ -19,7 +19,7 @@
                                 <div class="d-flex justify-content-end align-items-center">
                                     <span style="font-size: 15px; font-weight:700">{{ $dataAktif }} Surat</span>
                                     <span class="mx-2" style="border-left:1px solid black; height:30px; display:inline-block;"></span>
-                                    <a href="{{ route('administrator-aktif-kuliah') }}" class="btn btn-primary btn-sm">Detail</a>
+                                    <a href="{{ route('super-administrator-aktif-kuliah') }}" class="btn btn-primary btn-sm">Detail</a>
                                 </div>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -27,7 +27,7 @@
                                 <div class="d-flex justify-content-end align-items-center">
                                     <span style="font-size: 15px; font-weight:700">{{ $dataKP }} Surat</span>
                                     <span class="mx-2" style="border-left:1px solid black; height:30px; display:inline-block;"></span>
-                                    <a href="{{ route('pengajuan-kp-admin') }}" class="btn btn-primary btn-sm">Detail</a>
+                                    <a href="{{ route('pengajuan-kp-super-admin') }}" class="btn btn-primary btn-sm">Detail</a>
                                 </div>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -35,7 +35,7 @@
                                 <div class="d-flex justify-content-end align-items-center">
                                     <span style="font-size: 15px; font-weight:700">{{ $dataPenelitian }} Surat</span>
                                     <span class="mx-2" style="border-left:1px solid black; height:30px; display:inline-block;"></span>
-                                    <a href="{{ route('ppdp-admin') }}" class="btn btn-primary btn-sm">Detail</a>
+                                    <a href="{{ route('ppdp-super-admin') }}" class="btn btn-primary btn-sm">Detail</a>
                                 </div>
                             </li>
                         </div>
@@ -45,7 +45,7 @@
                                 <div class="d-flex justify-content-end align-items-center">
                                     <span style="font-size: 15px; font-weight:700">{{ $dataMagang }} Surat</span>
                                     <span class="mx-2" style="border-left:1px solid black; height:30px; display:inline-block;"></span>
-                                    <a href="{{ route('permohonan-magang-admin') }}" class="btn btn-primary btn-sm">Detail</a>
+                                    <a href="{{ route('permohonan-magang-super-admin') }}" class="btn btn-primary btn-sm">Detail</a>
                                 </div>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -53,7 +53,7 @@
                                 <div class="d-flex justify-content-end align-items-center">
                                     <span style="font-size: 15px; font-weight:700">{{ $dataRekomendasi }} Surat</span>
                                     <span class="mx-2" style="border-left:1px solid black; height:30px; display:inline-block;"></span>
-                                    <a href="{{ route('surat-rekomendasi-admin') }}" class="btn btn-primary btn-sm">Detail</a>
+                                    <a href="{{ route('surat-rekomendasi-super-admin') }}" class="btn btn-primary btn-sm">Detail</a>
                                 </div>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -61,7 +61,7 @@
                                 <div class="d-flex justify-content-end align-items-center">
                                     <span style="font-size: 15px; font-weight:700">{{ $dataTranskrip }} Surat</span>
                                     <span class="mx-2" style="border-left:1px solid black; height:30px; display:inline-block;"></span>
-                                    <a href="{{ route('transkrip-admin') }}" class="btn btn-primary btn-sm">Detail</a>
+                                    <a href="{{ route('transkrip-super-admin') }}" class="btn btn-primary btn-sm">Detail</a>
                                 </div>
                             </li>
                         </div>

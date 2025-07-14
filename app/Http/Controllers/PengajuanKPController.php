@@ -17,7 +17,7 @@ Carbon::setLocale('id');
 class PengajuanKPController extends Controller
 {
     // halaman pengajuan kp mahasiswa
-    public function pengajuanKp() 
+    public function pengajuanKp()
     {
         $user = auth()->user();
         if (Auth::check() && !$user->roles->contains('name_role', 'Mahasiswa')) {
@@ -35,19 +35,47 @@ class PengajuanKPController extends Controller
         // with gunanya buat bawa relasi ke datanya, jadi harus where 2 kali
         // whereHas buat di cek aja biar user yang di ambil itu yang ada pengajuanKp + status nya belum diterima
         $user = auth()->user();
+
         if (Auth::check() && !$user->roles->contains('name_role', 'Administrator')) {
             abort(403, 'Akses ditolak.');
         }
-        $draft = User::whereHas('pengajuanKp', function($query) {
+
+        $draft = User::whereHas('pengajuanKp', function ($query) {
             $query->where('status', 'Belum Diterima');
-        })->with(['pengajuanKp' => function($query) {
+        })->with(['pengajuanKp' => function ($query) {
             $query->where('status', 'Belum Diterima');
         }, 'dataMahasiswa.prodi'])->get();
 
-        $diterima = User::whereHas('pengajuanKp', function($query) {
+        $diterima = User::whereHas('pengajuanKp', function ($query) {
             $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
         })->with([
-            'pengajuanKp' => function($query) {
+            'pengajuanKp' => function ($query) {
+                $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
+            },
+            'dataMahasiswa'
+        ])->get();
+
+        return view('admin.pengajuan-kp.index', compact('draft', 'diterima'));
+    }
+
+    public function pengajuanKpSuperAdmin()
+    {
+        $user = auth()->user();
+
+        if (Auth::check() && !$user->roles->contains('name_role', 'Super-Administrator')) {
+            abort(403, 'Akses ditolak.');
+        }
+
+        $draft = User::whereHas('pengajuanKp', function ($query) {
+            $query->where('status', 'Belum Diterima');
+        })->with(['pengajuanKp' => function ($query) {
+            $query->where('status', 'Belum Diterima');
+        }, 'dataMahasiswa.prodi'])->get();
+
+        $diterima = User::whereHas('pengajuanKp', function ($query) {
+            $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
+        })->with([
+            'pengajuanKp' => function ($query) {
                 $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
             },
             'dataMahasiswa'
@@ -63,12 +91,12 @@ class PengajuanKPController extends Controller
         if (Auth::check() && !$user->roles->contains('name_role', 'Koordinator Kerja Praktik')) {
             abort(403, 'Akses ditolak.');
         }
-        $diterima = User::whereHas('pengajuanKp', function($query) {
+        $diterima = User::whereHas('pengajuanKp', function ($query) {
             $query->where('status', 'Diterima')
-            ->where('id_prodi', Auth::user()->data->id_prodi);
-        })->with(['pengajuanKp' => function($query) {
+                ->where('id_prodi', Auth::user()->data->id_prodi);
+        })->with(['pengajuanKp' => function ($query) {
             $query->where('status', 'Diterima')
-            ->where('id_prodi', Auth::user()->data->id_prodi);
+                ->where('id_prodi', Auth::user()->data->id_prodi);
         }, 'dataMahasiswa'])->get();
 
         return view('dosen.pengajuan-kp.index', compact('diterima'));
@@ -84,13 +112,13 @@ class PengajuanKPController extends Controller
             'alamat_surat' => 'required'
         ]);
 
-        $cek_nomor_terakhir = PengajuanKP::where('status', '!=','Ditolak')
-        ->orderByDesc('created_at')
-        ->first();
-        
+        $cek_nomor_terakhir = PengajuanKP::where('status', '!=', 'Ditolak')
+            ->orderByDesc('created_at')
+            ->first();
+
         // if ($cek_nomor_terakhir) {
         //     $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
-        //     $no_surat = 'KP' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); 
+        //     $no_surat = 'KP' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT);
         // } else {
         //     $no_surat = '0001';
         // }
@@ -98,8 +126,8 @@ class PengajuanKPController extends Controller
         $tahunSekarang = Carbon::now()->year;
 
         if ($cek_nomor_terakhir) {
-       
-            $tahunTerakhir = Carbon::parse( $cek_nomor_terakhir->created_at)->year;
+
+            $tahunTerakhir = Carbon::parse($cek_nomor_terakhir->created_at)->year;
 
             // Ambil nomor surat terakhir
             preg_match('/^\d+/', $cek_nomor_terakhir->no_surat, $matchNomor);
@@ -192,13 +220,13 @@ class PengajuanKPController extends Controller
 
     public function generatePengajuan(PengajuanKP $pengajuan)
     {
-        $user = User::whereHas('pengajuanKp', function($query) use ($pengajuan) {
+        $user = User::whereHas('pengajuanKp', function ($query) use ($pengajuan) {
             $query->where('status', 'Penerbitan')
                 ->where('id_pengajuan', $pengajuan->id_pengajuan);
         })->with([
-            'pengajuanKp' => function($query) use ($pengajuan) {
+            'pengajuanKp' => function ($query) use ($pengajuan) {
                 $query->where('status', 'Penerbitan')
-                ->where('id_pengajuan', $pengajuan->id_pengajuan);
+                    ->where('id_pengajuan', $pengajuan->id_pengajuan);
             },
             'dataMahasiswa.prodi'
         ])->first();
@@ -216,7 +244,7 @@ class PengajuanKPController extends Controller
             'prodi' => $user->dataMahasiswa->prodi->nama,
             'no_hp' => $user->dataMahasiswa->no_hp,
             'created_at' => Carbon::parse($kp->created_at)->translatedFormat('j F Y'),
-            'no_surat' => $kp->no_surat.'/UN53.01/DT.01.01/'.$kp->created_at->format('Y'),
+            'no_surat' => $kp->no_surat . '/UN53.01/DT.01.01/' . $kp->created_at->format('Y'),
             'tujuan_surat' => $kp->tujuan_surat,
             'alamat_surat' => $kp->alamat_surat,
             'tanggal_mulai' => Carbon::parse($kp->tanggal_mulai)->translatedFormat('j F Y'),
@@ -224,7 +252,7 @@ class PengajuanKPController extends Controller
         ];
 
         $pdf = Pdf::loadView('pdf.pengajuan-kp.pdf-kp', $data);
-        return $pdf->download('pengajuan-kp-'.$user->dataMahasiswa->nama.'.pdf');
+        return $pdf->download('pengajuan-kp-' . $user->dataMahasiswa->nama . '.pdf');
     }
 
     // upload file pengajuan untuk mahasiswa
@@ -236,7 +264,7 @@ class PengajuanKPController extends Controller
         ]);
 
         $file = $request->file('file');
-        $idPengajuanKp= $pengajuan->id_pengajuan;
+        $idPengajuanKp = $pengajuan->id_pengajuan;
 
         if ($file) {
             $fileName = 'pengajuan_kerja_praktik_' . $idPengajuanKp . '.' . $file->getClientOriginalExtension();
@@ -291,5 +319,4 @@ class PengajuanKPController extends Controller
             'Content-Type' => 'application/pdf',
         ]);
     }
-
 }

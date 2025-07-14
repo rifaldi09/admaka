@@ -42,11 +42,27 @@ class AktifKuliahController extends Controller
 
     // Fungsi untuk menampilkan halaman aktif kuliah role admin
     public function aktifKuliahAdmin()
-    { 
+    {
         $user = auth()->user();
+
         if (Auth::check() && !$user->roles->contains('name_role', 'Administrator')) {
             abort(403, 'Akses ditolak.');
         }
+
+        $dataSurat = AktifKuliah::with('user.dataMahasiswa.prodi')->get();
+        // dd($dataSurat);
+
+        return view('admin.aktif-kuliah.index', compact('dataSurat'));
+    }
+
+    public function aktifKuliahSuperAdmin()
+    {
+        $user = auth()->user();
+
+        if (Auth::check() && !$user->roles->contains('name_role', 'Super-Administrator')) {
+            abort(403, 'Akses ditolak.');
+        }
+
         $dataSurat = AktifKuliah::with('user.dataMahasiswa.prodi')->get();
         // dd($dataSurat);
 
@@ -105,23 +121,28 @@ class AktifKuliahController extends Controller
     // Fungsi untuk terima surat aktif kuliah
     public function terimaAktifKuliah(Request $request)
     {
-        // dd($request->all());
+        $user = auth()->user();
+
         $validasi = $request->validate(['status_mahasiswa' => 'required']);
         $id = $request->id;
 
         // update status aktif kuliah
-
         AktifKuliah::where('id_aktif_kuliah', $id)->update([
             'status' => 'Diterima',
             'status_kuliah' => $validasi['status_mahasiswa'],
         ]);
 
-        return redirect()->route('Administrator/aktif-kuliah')->with('success', 'Status Aktif Kuliah Berhasil Diubah');
+        if ($user->roles->contains('name_role', 'Administrator')) {
+            return redirect()->route('administrator-aktif-kuliah')->with('success', 'Status Aktif Kuliah Berhasil Diubah');
+        } else if ($user->roles->contains('name_role', 'Super-Administrator')) {
+            return redirect()->route('super-administrator-aktif-kuliah')->with('success', 'Status Aktif Kuliah Berhasil Diubah');
+        }
     }
 
     // Fungsi untuk menolak surat aktif kuliah
     public function tolakAktifKuliah(Request $request)
     {
+        $user = auth()->user();
         // dd($request->all());
         $validasi = $request->validate([
             'deskripsi' => 'required|string',
@@ -133,7 +154,11 @@ class AktifKuliahController extends Controller
             'alasan' => $validasi['deskripsi'],
         ]);
 
-        return redirect()->route('Administrator/aktif-kuliah')->with('success', 'Status Aktif Kuliah Berhasil Diubah');
+        if ($user->roles->contains('name_role', 'Administrator')) {
+            return redirect()->route('administrator-aktif-kuliah')->with('success', 'Status Aktif Kuliah Berhasil Diubah');
+        } else if ($user->roles->contains('name_role', 'Super-Administrator')) {
+            return redirect()->route('super-administrator-aktif-kuliah')->with('success', 'Status Aktif Kuliah Berhasil Diubah');
+        }
     }
 
     // Fungsi untuk mengupload surat aktif kuliah

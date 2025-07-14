@@ -48,6 +48,11 @@ class RoleSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now()
             ],
+            [
+                'name_role' => 'Super-Administrator',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

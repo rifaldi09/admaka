@@ -16,5 +16,6 @@ class RoleUserSeeder extends Seeder
         User::find(1)?->roles()->sync([1]);
         User::find(2)?->roles()->sync([2, 5, 6, 7]);
         User::find(3)?->roles()->sync([3]);
+        User::find(5)?->roles()->sync([8]);
     }
 }

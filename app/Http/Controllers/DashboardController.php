@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Role\DosenController;
+use App\Http\Controllers\Role\MahasiswaController;
 use App\Models\AktifKuliah;
 use App\Models\PengajuanKP;
 use App\Models\PermohonanMagang;
@@ -69,6 +71,9 @@ class DashboardController extends Controller
     // Dashboard Admin
     public function dashboardAdmin()
     {
+        // Get user log
+        $user = auth()->user();
+
         // Get all surat data
         $dataAktif = AktifKuliah::count();
         $dataKP = PengajuanKP::count();
@@ -77,7 +82,11 @@ class DashboardController extends Controller
         $dataRekomendasi = SuratRekomendasi::count();
         $dataTranskrip = Transkrip::count();
 
-        return view('dashboard.indexAdmin', compact('dataAktif', 'dataKP', 'dataPenelitian', 'dataMagang', 'dataRekomendasi', 'dataTranskrip'), ['titleHeader' => 'Dashboard']);
+        if ($user->roles->contains('name_role', 'Administrator')) {
+            return view('dashboard.indexAdmin', compact('dataAktif', 'dataKP', 'dataPenelitian', 'dataMagang', 'dataRekomendasi', 'dataTranskrip'), ['titleHeader' => 'Dashboard', 'titleBody' => 'Administrator']);
+        } else {
+            return view('dashboard.indexSuperAdmin', compact('dataAktif', 'dataKP', 'dataPenelitian', 'dataMagang', 'dataRekomendasi', 'dataTranskrip'), ['titleHeader' => 'Dashboard', 'titleBody' => 'Super Administrator']);
+        }
     }
 
     // Profile Page

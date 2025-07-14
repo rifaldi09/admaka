@@ -27,7 +27,7 @@ class PPDPController extends Controller
             abort(403, 'Akses ditolak.');
         }
         $permohonan = PPDP::where('user_id', Auth::id())->get();
-        $dosen = User::whereHas('roles', function($query) {
+        $dosen = User::whereHas('roles', function ($query) {
             $query->where('role.id', 2);
         })->with(['dataDosen:nidn,nama'])->get();
 
@@ -38,27 +38,54 @@ class PPDPController extends Controller
     public function ppdpAdmin()
     {
         $user = auth()->user();
+
         if (Auth::check() && !$user->roles->contains('name_role', 'Administrator')) {
             abort(403, 'Akses ditolak.');
         }
-        $draft = User::select('id', 'id_user')->whereHas('permohonanPengambilan', function($query) {
+
+        $draft = User::select('id', 'id_user')->whereHas('permohonanPengambilan', function ($query) {
             $query->where('status', 'Belum Diterima');
-        })->with(['permohonanPengambilan' => function($query) {
+        })->with(['permohonanPengambilan' => function ($query) {
             $query->where('status', 'Belum Diterima')
-            ->with(['dosen:nidn,nama']);
+                ->with(['dosen:nidn,nama']);
         }, 'dataMahasiswa'])->get();
 
-        $diterima = User::select('id', 'id_user')->whereHas('permohonanPengambilan', function($query) {
+        $diterima = User::select('id', 'id_user')->whereHas('permohonanPengambilan', function ($query) {
             $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
-        })->with(['permohonanPengambilan' => function($query) {
-                $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan'])
+        })->with(['permohonanPengambilan' => function ($query) {
+            $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan'])
                 ->with(['dosen:nidn,nama']);
-        },'dataMahasiswa'])->get();
+        }, 'dataMahasiswa'])->get();
 
         return view('admin.permohonan-pengambilan.index', compact('draft', 'diterima'));
     }
 
-    
+    public function ppdpSuperAdmin()
+    {
+        $user = auth()->user();
+
+        if (Auth::check() && !$user->roles->contains('name_role', 'Super-Administrator')) {
+            abort(403, 'Akses ditolak.');
+        }
+
+        $draft = User::select('id', 'id_user')->whereHas('permohonanPengambilan', function ($query) {
+            $query->where('status', 'Belum Diterima');
+        })->with(['permohonanPengambilan' => function ($query) {
+            $query->where('status', 'Belum Diterima')
+                ->with(['dosen:nidn,nama']);
+        }, 'dataMahasiswa'])->get();
+
+        $diterima = User::select('id', 'id_user')->whereHas('permohonanPengambilan', function ($query) {
+            $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
+        })->with(['permohonanPengambilan' => function ($query) {
+            $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan'])
+                ->with(['dosen:nidn,nama']);
+        }, 'dataMahasiswa'])->get();
+
+        return view('admin.permohonan-pengambilan.index', compact('draft', 'diterima'));
+    }
+
+
     // halaman index koordinator
     public function ppdpKoordinator()
     {
@@ -66,14 +93,14 @@ class PPDPController extends Controller
         if (Auth::check() && !$user->roles->contains('name_role', 'Koordinator Pengambilan Data')) {
             abort(403, 'Akses ditolak.');
         }
-        $diterima = User::whereHas('permohonanPengambilan', function($query) {
+        $diterima = User::whereHas('permohonanPengambilan', function ($query) {
             $query->where('status', 'Diterima')
-            ->where('id_prodi', Auth::user()->data->id_prodi)
-            ->where('keperluan', 'skripsi');
-        })->with(['permohonanPengambilan' => function($query) {
+                ->where('id_prodi', Auth::user()->data->id_prodi)
+                ->where('keperluan', 'skripsi');
+        })->with(['permohonanPengambilan' => function ($query) {
             $query->where('status', 'Diterima')
-            ->where('id_prodi', Auth::user()->data->id_prodi)
-            ->where('keperluan', 'skripsi');
+                ->where('id_prodi', Auth::user()->data->id_prodi)
+                ->where('keperluan', 'skripsi');
         }, 'dataMahasiswa'])->get();
 
 
@@ -87,19 +114,19 @@ class PPDPController extends Controller
         if (Auth::check() && !$user->roles->contains('name_role', 'Dosen')) {
             abort(403, 'Akses ditolak.');
         }
-        $diterima = User::whereHas('permohonanPengambilan', function($query) {
+        $diterima = User::whereHas('permohonanPengambilan', function ($query) {
             $query->where('status', 'Diterima')
-            ->where('id_prodi', Auth::user()->data->id_prodi)
-            ->where('keperluan', 'mata_kuliah')
-            ->where('nidn', Auth::user()->id_user);
-        })->with(['permohonanPengambilan' => function($query) {
+                ->where('id_prodi', Auth::user()->data->id_prodi)
+                ->where('keperluan', 'mata_kuliah')
+                ->where('nidn', Auth::user()->id_user);
+        })->with(['permohonanPengambilan' => function ($query) {
             $query->where('status', 'Diterima')
-            ->where('id_prodi', Auth::user()->data->id_prodi)
-            ->where('keperluan', 'mata_kuliah')
-            ->where('nidn', Auth::user()->id_user)
-            ->with(['dosen:nidn,nama']);
+                ->where('id_prodi', Auth::user()->data->id_prodi)
+                ->where('keperluan', 'mata_kuliah')
+                ->where('nidn', Auth::user()->id_user)
+                ->with(['dosen:nidn,nama']);
         }, 'dataMahasiswa'])->get();
-        
+
 
         return view('dosen.permohonan-pengambilan.index', compact('diterima'));;
     }
@@ -119,14 +146,14 @@ class PPDPController extends Controller
 
         // buat ngakalin no_surat biar ga pakai id
         //$cek_nomor_terakhir = PPDP::orderByDesc('created_at')->value('no_surat');
-        $cek_nomor_terakhir = PPDP::where('status', '!=','Ditolak')
-        ->orderByDesc('created_at')
-        ->first();
-        
+        $cek_nomor_terakhir = PPDP::where('status', '!=', 'Ditolak')
+            ->orderByDesc('created_at')
+            ->first();
+
         $tahunSekarang = Carbon::now()->year;
 
         if ($cek_nomor_terakhir) {
-           $tahunTerakhir = Carbon::parse( $cek_nomor_terakhir->created_at)->year;
+            $tahunTerakhir = Carbon::parse($cek_nomor_terakhir->created_at)->year;
 
             // Ambil nomor surat terakhir
             preg_match('/^\d+/', $cek_nomor_terakhir->no_surat, $matchNomor);
@@ -137,7 +164,6 @@ class PPDPController extends Controller
             } else {
                 $no_surat = str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); // Lanjut nomor
             }
-            
         } else {
             $no_surat = '0001';
         }
@@ -186,14 +212,14 @@ class PPDPController extends Controller
     // tolak permohonan mahasiswa
     public function tolakPermohonan(Request $request, PPDP $permohonan)
     {
- 
+
         $request->validate([
             'alasan_ditolak' => 'required'
         ]);
 
         $permohonan->update([
             'alasan_ditolak' => $request->alasan_ditolak,
-            'status' => 'Ditolak'    
+            'status' => 'Ditolak'
         ]);
 
         return back()->with('success', 'Status permohonan sudah diperbarui');
@@ -247,7 +273,7 @@ class PPDPController extends Controller
             $pp = $data->permohonanPengambilan->first();
 
             $viewData = [
-                'no_surat' => $pp->no_surat.'/UN53.01/DT.01.01/'.$pp->created_at->format('Y'),
+                'no_surat' => $pp->no_surat . '/UN53.01/DT.01.01/' . $pp->created_at->format('Y'),
                 'tujuan_surat' => $pp->tujuan_surat,
                 'alamat_surat' => $pp->alamat_surat,
                 'created_at' => Carbon::parse($pp->created_at)->translatedFormat('j F Y'),
@@ -260,8 +286,7 @@ class PPDPController extends Controller
                 'tanggal_lahir' => Carbon::parse($data->dataMahasiswa->tanggal_lahir)->translatedFormat('j F Y'),
             ];
 
-            $view = 'pdf.permohonan-pengambilan.pdf-mk'; 
-
+            $view = 'pdf.permohonan-pengambilan.pdf-mk';
         } else {
             $data = User::whereHas('permohonanPengambilan', function ($query) use ($permohonan) {
                 $query->where('status', 'Penerbitan')
@@ -276,7 +301,7 @@ class PPDPController extends Controller
             $pp = $data->permohonanPengambilan->first();
 
             $viewData = [
-                'no_surat' => $pp->no_surat.'/UN53.01/DT.01.01/'.$pp->created_at->format('Y'),
+                'no_surat' => $pp->no_surat . '/UN53.01/DT.01.01/' . $pp->created_at->format('Y'),
                 'tujuan_surat' => $pp->tujuan_surat,
                 'alamat_surat' => $pp->alamat_surat,
                 'judul_skripsi' => $pp->judul_skripsi,
@@ -306,24 +331,24 @@ class PPDPController extends Controller
         ]);
 
         // $file = $request->file('file');
-        
+
         // if ($file) {
         //     $fileName = 'surat_permohonan_pengambilan_data_penelitian_' . time() . '.' . $file->getClientOriginalExtension();
-            
+
         //     $path = $file->storeAs('public/permohonan-pengambilan', $fileName);
 
         //     FilePermohonan::create([
         //         'path' => $path,
         //         'id_permohonan' => $permohonan->id_permohonan
         //     ]);
-            
+
         //     return back()->with('success', 'File telah diupload');
         // }
 
         // return back()->with('error', 'File tidak ditemukan.');
 
         $file = $request->file('file');
-        $idPengajuanData=  $permohonan->id_permohonan;
+        $idPengajuanData =  $permohonan->id_permohonan;
 
         if ($file) {
             $fileName = 'surat_permohonan_pengambilan_data_penelitian_' . $idPengajuanData . '.' . $file->getClientOriginalExtension();
@@ -354,7 +379,7 @@ class PPDPController extends Controller
 
         return back()->with('error', 'File tidak ditemukan.');
     }
-    
+
     public function unduhPDF(Request $request)
     {
         $idPengajuanData = decrypt($request->id);
