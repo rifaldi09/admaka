@@ -30,6 +30,12 @@
                     <label>Status</label>
                     <input type="text" class="form-control" value="{{ $magang->status }}" disabled>
                 </div>
+                @if($magang->status == 'Ditolak')
+                <div class="form-group">
+                    <label>Alasan Ditolak</label>
+                    <textarea class="form-control" disabled>{{ $magang->alasan_ditolak }}</textarea>
+                </div>
+                @endif
                 <!-- <p>Tujuan surat: {{ $magang->tujuan_surat }}</p> -->
                 <!-- <p>Alamat surat: {{ $magang->alamat_surat }}</p>
                 <p>Tanggal Mulai: {{ $magang->tanggal_mulai }}</p>

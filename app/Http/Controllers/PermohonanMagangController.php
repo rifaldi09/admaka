@@ -10,9 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use PhpOffice\PhpWord\TemplateProcessor;
-
+use Illuminate\Support\Facades\Storage;
 // set format tanggal ke bahasa indonesia
 Carbon::setLocale('id');
+
 
 class PermohonanMagangController extends Controller
 {
@@ -84,6 +85,10 @@ class PermohonanMagangController extends Controller
 
     public function PermohonanMagangKKP()
     {
+        $user = auth()->user();
+        if (Auth::check() && !$user->roles->contains('name_role', 'Koordinator Kerja Praktik')) {
+            abort(403, 'Akses ditolak.');
+        }
         $diterima = User::whereHas('permohonanMagang', function ($query) {
             $query->where('status', 'Diterima')
                 ->where('id_prodi', Auth::user()->data->id_prodi);
@@ -106,15 +111,37 @@ class PermohonanMagangController extends Controller
             'alamat_surat' => 'required'
         ]);
 
-        $cek_nomor_terakhir = PermohonanMagang::orderByDesc('created_at')->value('no_surat');
+        // $cek_nomor_terakhir = PermohonanMagang::orderByDesc('created_at')->value('no_surat');
+
+        // if ($cek_nomor_terakhir) {
+        //     $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
+        //     $no_surat = 'PM' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT);
+        // } else {
+        //     $no_surat = 'PM0001';
+        // }
+            $cek_nomor_terakhir = PermohonanMagang::where('status', '!=', 'Ditolak')
+            ->orderByDesc('created_at')
+            ->first();
+
+        $tahunSekarang = Carbon::now()->year;
 
         if ($cek_nomor_terakhir) {
-            $nomorTerakhir = (int) substr($cek_nomor_terakhir, 3);
-            $no_surat = 'PM' . str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT);
-        } else {
-            $no_surat = 'PM0001';
-        }
 
+            $tahunTerakhir = Carbon::parse($cek_nomor_terakhir->created_at)->year;
+
+            // Ambil nomor surat terakhir
+            preg_match('/^\d+/', $cek_nomor_terakhir->no_surat, $matchNomor);
+            $nomorTerakhir = isset($matchNomor[0]) ? (int) $matchNomor[0] : 0;
+
+            if ($tahunTerakhir != $tahunSekarang) {
+                $no_surat = '0001'; // Tahun berganti, mulai dari awal
+            } else {
+                $no_surat = str_pad($nomorTerakhir + 1, 4, '0', STR_PAD_LEFT); // Lanjut nomor
+            }
+        } else {
+            $no_surat = '0001'; // Tidak ada data, mulai dari awal
+        }
+        
         $data = [
             'tujuan_surat' => $request->tujuan_surat,
             'tanggal_mulai' => $request->tanggal_mulai,

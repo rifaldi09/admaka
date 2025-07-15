@@ -13,6 +13,17 @@
 
         {{-- Setup data for datatables --}}
         @php
+
+        $adaAction = false;
+
+        foreach ($dataUserFormatted as $item) {
+        if (isset($item['aksi'])) {
+        $adaAction = true;
+        break;
+        }
+        }
+
+        if($adaAction){
         $heads = [
         'Id User',
         'Nama User',
@@ -25,6 +36,21 @@
         'order' => [[1, 'asc']],
         'columns' => [null, null, null, null, ['orderable' => true]],
         ];
+        }else{
+        $heads = [
+        'Id User',
+        'Nama User',
+        'Roles',
+
+        ];
+
+        $config = [
+        'data' => $dataUserFormatted,
+        'order' => [[1, 'asc']],
+        'columns' => [null, null, null, ['orderable' => true]],
+        ];
+        }
+
         @endphp
 
         {{-- Minimal example / fill data using the component slot --}}

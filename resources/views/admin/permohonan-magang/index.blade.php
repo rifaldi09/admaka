@@ -47,13 +47,20 @@
                             <td>{{ $magang->created_at }}</td>
                             <td>
                                 <nobr>
-                                    <button class="btn btn-primary btn-edit btn-sm mr-3" title="Detail"
-                                        data-toggle="modal"
+                                    <button class="btn btn-primary btn-edit btn-sm" title="Detail" data-toggle="modal"
                                         data-target="#detailPermohonanMagangModal-{{ $magang->id_permohonan_magang }}">
                                         <i class="fa-solid fa-eye"></i> Lihat
                                     </button>
+                                    <button class="btn btn-danger btn-tolak btn-sm" data-toggle="modal"
+                                        data-target="#modalTolakPm-{{ $magang->id_permohonan_magang }}" title="Tolak">
+                                        <i class="fa-solid fa-circle-info"></i> Tolak
+                                    </button>
                                     @include('admin.permohonan-magang.modal.detail-pm', [
                                     'id' => $magang->id_permohonan_magang,
+                                    ])
+                                    @include('admin.permohonan-magang.modal.tolak-pm', [
+                                    'id' => $magang->id_permohonan_magang, 'route' =>
+                                    'tolak-permohonan-magang'
                                     ])
                                     <!-- <form
                                         action="{{ route('terima-permohonan-magang', $magang->id_permohonan_magang) }}"
@@ -104,6 +111,9 @@
                                     {{ $magang->status }}</div>
                                 @elseif ($magang->status == 'Penerbitan')
                                 <div class="border border-primary btn-sm text-primary text-center">
+                                    {{ $kp->status }}</div>
+                                @elseif ($magang->status == 'Ditolak')
+                                <div class="border border-danger btn-sm text-danger text-center">
                                     {{ $magang->status }}</div>
                                 @endif
                             </td>
