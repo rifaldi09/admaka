@@ -1,147 +1,185 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Surat Permohonan Magang</title>
     <style>
-        body {
-            font-family: "Times New Roman", serif;
-            font-size: 12pt;
-            margin: 50px;
-            line-height: 1.6;
-        }
+    @page {
+        margin-top: 0cm;
+        margin-bottom: 0 cm;
+        margin-left: 0, 2 cm;
+        margin-right: 0, 1 cm;
+    }
 
-        .kop-container {
-            display: table;
-            width: 100%;
-            margin-bottom: 10px;
-        }
+    body {
+        font-family: "Times New Roman", serif;
+        font-size: 12pt;
+        margin: 10px;
+        line-height: 1.4;
+    }
 
-        .kop-row {
-            display: table-row;
-        }
+    .header-table {
+        width: 100%;
+        border-bottom: 3px solid black;
+        padding-bottom: 10px;
+    }
 
-        .kop-logo, .kop-text {
-            display: table-cell;
-            vertical-align: middle;
-        }
+    .header-table td {
+        vertical-align: top;
+    }
 
-        .kop-logo {
-            width: 100px;
-            text-align: center;
-        }
+    .header-table img {
+        width: 100px;
+        height: 100px;
+    }
 
-        .kop-logo img {
-            width: 90px;
-            height: auto;
-        }
+    .header-text {
+        text-align: center;
+        line-height: 1.5;
+    }
 
-        .kop-text {
-            text-align: center;
-            padding: 0 10px;
-        }
+    .header-text .bold {
+        font-weight: bold;
+    }
 
-        .kop-text h1 {
-            margin: 0;
-            font-size: 14pt;
-            font-weight: bold;
-            line-height: 1.2;
-        }
+    .kop-table {
+        width: 100%;
+    }
 
-        .kop-text h2 {
-            margin: 5px 0;
-            font-size: 13pt;
-            font-weight: bold;
-        }
+    .kop-table td {
+        vertical-align: top;
+        text-align: center;
+    }
 
-        .kop-text p {
-            margin: 5px 0;
-            font-size: 11pt;
-            line-height: 1.3;
-        }
+    .kop-left {
+        width: 90px;
+        text-align: left;
+    }
 
-        .kop-line {
-            border-top: 3px double #000;
-            margin-top: 5px;
-            margin-bottom: 20px;
-        }
+    .kop-center {
+        width: 100%;
+    }
 
-        .info-surat, .tujuan, .tabel, .ttd {
-            margin-bottom: 20px;
-        }
+    .kop-center p {
+        margin: 0;
+        font-size: 14pt;
+        font-weight: bold;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    .subheader {
+        font-size: 10pt;
+        font-weight: normal;
+    }
 
-        .tabel th, .tabel td {
-            border: 1px solid #000;
-            padding: 5px;
-            text-align: left;
-        }
+    .info {
+        margin-top: 20px;
+        font-size: 11pt;
+    }
 
-        .ttd {
-            width: 100%;
-            text-align: right;
-        }
+    .info-left {
+        float: left;
+    }
 
-        .ttd p {
-            margin-bottom: 70px;
-        }
+    .info-right {
+        float: right;
+    }
 
-        .small {
-            font-size: 10pt;
-        }
+    .clearfix::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .table-info {
+        margin-top: 10px;
+        margin-bottom: 20px;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .table-info th,
+    .table-info td {
+        border: 1px solid #000;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .content {
+        text-align: justify;
+        margin-left: 40px;
+        line-height: 1.5;
+    }
+
+    .signature {
+        margin-top: 40px;
+        text-align: right;
+        page-break-inside: avoid;
+    }
+
+    .signature p {
+        margin: 2px 0;
+    }
+
+    .table-ku tr {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
     </style>
 </head>
+
 <body>
 
-    <div class="kop-container">
-        <div class="kop-row">
-            <div class="kop-logo">
-                <img src="{{ public_path('assets/img/logoumrah.png') }}" alt="Logo UMRAH">
-            </div>
-            <div class="kop-text">
-                <h1>KEMENTERIAN PENDIDIKAN TINGGI, SAINS,</h1>
-                <h1>DAN TEKNOLOGI UNIVERSITAS MARITIM RAJA ALI HAJI</h1>
-                <h2>FAKULTAS TEKNIK DAN TEKNOLOGI KEMARITIMAN</h2>
-                <p>
-                    Jalan Politeknik Senggarang, Tanjungpinang 29100<br>
-                    Telepon (0771) 4500097, Faksimile (0771) 4500097, Kotak Pos 155<br>
-                    Laman <u>http://ft.umrah.ac.id</u> Posel <u>ft@umrah.ac.id</u>
-                </p>
-            </div>
+    <table class="header-table">
+        <tr>
+            <td width="80">
+                <img src="{{ public_path('assets/img/logoumrah.png') }}" alt="Logo" width="80"
+                    style="margin-top: 20px;">
+            </td>
+            <td class=" header-text">
+                <div style="font-size: 14pt;">KEMENTERIAN PENDIDIKAN TINGGI, SAINS, DAN TEKNOLOGI</div>
+                <div style="font-size: 14pt;">UNIVERSITAS MARITIM RAJA ALI HAJI</div>
+                <div style="font-size: 13pt;" class="bold">FAKULTAS TEKNIK DAN TEKNOLOGI KEMARITIMAN</div>
+                <div style="font-size: 12pt;">Jalan Politeknik Senggarang, Tanjungpinang 29100</div>
+                <div style="font-size: 12pt;">Telepon (0771) 4500097, Faksimile (0771) 4500097, Kotak Pos 155</div>
+                <div style="font-size: 12pt;">
+                    Laman <a href="http://ft.umrah.ac.id">http://ft.umrah.ac.id</a> Posel <a
+                        href="mailto:ft@umrah.ac.id">ft@umrah.ac.id</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- <div class="kop-line"></div> -->
+    <div class="content">
+        <div class="info-surat">
+            <table class="table-ku" style="width:100%;">
+                <tr>
+                    <td style="width: 10%;">No</td>
+                    <td style="width: 40%;">: {{ $no_surat }}</td>
+                    <td style="text-align:right;">{{ $created_at }}</td>
+                </tr>
+                <tr>
+                    <td>Hal</td>
+                    <td colspan="2">: Permohonan Magang</td>
+                </tr>
+            </table>
         </div>
-    </div>
 
-    <div class="kop-line"></div>
+        <div class="tujuan">
+            <p>Yth. {{ $tujuan_surat }}<br>
+                {{ $alamat_surat }}</p>
+        </div>
 
-    <div class="info-surat">
-        <table style="width:100%;">
-            <tr>
-                <td style="width: 10%;">No</td>
-                <td style="width: 40%;">: {{ $no_surat }}</td>
-                <td style="text-align:right;">{{ $created_at }}</td>
-            </tr>
-            <tr>
-                <td>Hal</td>
-                <td colspan="2">: Permohonan Magang</td>
-            </tr>
-        </table>
-    </div>
+        <p>Dengan hormat,</p>
 
-    <div class="tujuan">
-        <p>Yth. {{ $tujuan_surat }}<br>
-        {{ $alamat_surat }}</p>
-    </div>
+        <p>Sehubungan dengan pelaksanaan mata kuliah kerja praktik mahasiswa sesuai dengan kurikulum Program Studi yang
+            berada di lingkungan Fakultas Teknik dan Teknologi Kemaritiman Universitas Maritim Raja Ali Haji, maka
+            dengan
+            ini kami sampaikan mahasiswa berikut ini:</p>
 
-    <p>Dengan hormat,</p>
 
-    <p>Sehubungan dengan pelaksanaan mata kuliah kerja praktik mahasiswa sesuai dengan kurikulum Program Studi yang berada di lingkungan Fakultas Teknik dan Teknologi Kemaritiman Universitas Maritim Raja Ali Haji, maka dengan ini kami sampaikan mahasiswa berikut ini:</p>
-
-    <div class="tabel">
-        <table>
+        <table class="table-info">
             <thead>
                 <tr>
                     <th>No</th>
@@ -161,17 +199,39 @@
                 </tr>
             </tbody>
         </table>
-    </div>
 
-    <p>Mengajukan magang di instansi Bapak/Ibu. Adapun pelaksanaan waktu magang akan dilaksanakan mulai dari tanggal <strong>{{ $tanggal_mulai }}</strong> s.d <strong>{{ $tanggal_selesai }}</strong>. Besar harapan kami pada Bapak/Ibu untuk dapat memberikan kesempatan serta membantu memfasilitasi mahasiswa sesuai dengan kondisi yang ada.</p>
 
-    <p>Demikian surat ini disampaikan, atas perhatian dan kerjasamanya kami ucapkan terima kasih.</p>
+        <p>Mengajukan magang di instansi Bapak/Ibu. Adapun pelaksanaan waktu magang akan dilaksanakan mulai dari tanggal
+            <strong>{{ $tanggal_mulai }}</strong> s.d <strong>{{ $tanggal_selesai }}</strong>. Besar harapan kami pada
+            Bapak/Ibu untuk dapat memberikan kesempatan serta membantu memfasilitasi mahasiswa sesuai dengan kondisi
+            yang
+            ada.
+        </p>
 
-    <div class="ttd">
-        <p>Dekan,</p>
-        <p><strong>Martaleli Bettiza, S.Si., M.Sc</strong><br>
-        <span class="small">NIP. 197508282021212006</span></p>
+        <p>Demikian surat ini disampaikan, atas perhatian dan kerjasamanya kami ucapkan terima kasih.</p>
+
+        <div class="signature">
+            <table style="float: right;">
+                <tr>
+                    <td style="padding: 2px 0; line-height: 1.2;">Hormat kami,</td>
+                </tr>
+                <tr>
+                    <td style="padding: 2px 0; line-height: 1.2;">Dekan,</td>
+                </tr>
+                <tr>
+                    <td style="height: 70px;"></td>
+                </tr>
+                <tr>
+                    <td style="padding: 2px 0; line-height: 1.2;"><strong>Martaleli Bettiza, S.Si., M.Sc.</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding: 2px 0; line-height: 1.2;">NIPPPK. 197508282012122006</td>
+                </tr>
+
+            </table>
+        </div>
     </div>
 
 </body>
+
 </html>

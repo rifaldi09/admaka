@@ -111,7 +111,7 @@
                                     {{ $magang->status }}</div>
                                 @elseif ($magang->status == 'Penerbitan')
                                 <div class="border border-primary btn-sm text-primary text-center">
-                                    {{ $kp->status }}</div>
+                                    {{ $magang->status }}</div>
                                 @elseif ($magang->status == 'Ditolak')
                                 <div class="border border-danger btn-sm text-danger text-center">
                                     {{ $magang->status }}</div>

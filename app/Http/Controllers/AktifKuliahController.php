@@ -197,7 +197,7 @@ class AktifKuliahController extends Controller
             'tahun_akademik'  => $mahasiswa->tahun_akademik,
             'no_hp'           => $mahasiswa->no_hp,
             'sks'             => $mahasiswa->sks,
-            'ipk'             => $mahasiswa->ipk,
+            'ipk'             => number_format($mahasiswa->ipk, 2),
             'tahun_now'       => now()->format('Y'),
             'tanggal_now'     => Carbon::now()->translatedFormat('d F Y'),
         ];

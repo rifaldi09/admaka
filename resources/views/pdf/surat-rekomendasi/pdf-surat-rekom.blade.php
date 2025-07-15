@@ -46,7 +46,7 @@
     .content {
         text-align: justify;
         margin-left: 40px;
-        line-height: 1.8;
+        line-height: 1.5;
     }
 
     .signature {
@@ -190,10 +190,10 @@
                     <td style="height: 70px;"></td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px 0; line-height: 1.2;"><strong>Martaleli Bettiza, S.Si., M.Sc</strong></td>
+                    <td style="padding: 2px 0; line-height: 1.2;"><strong>Martaleli Bettiza, S.Si., M.Sc.</strong></td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px 0; line-height: 1.2;">NIP. 197508282012122006</td>
+                    <td style="padding: 2px 0; line-height: 1.2;">NIPPPK. 197508282012122006</td>
                 </tr>
 
             </table>
