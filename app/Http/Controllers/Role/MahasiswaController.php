@@ -7,6 +7,8 @@ use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use App\Models\Menu;
 use App\Models\Prodi;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class MahasiswaController extends Controller
 {
@@ -50,6 +52,27 @@ class MahasiswaController extends Controller
         }
 
         return redirect()->back()->with('success', 'Update profile berhasil');
+    }
+
+    // Mahasiswa password update
+    public function updatePasswordMhs(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'min:8|confirmed',
+        ]);
+
+        if (!Hash::check($request->current_password, auth()->user()->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => 'Password saat ini salah.',
+            ]);
+        }
+
+        auth()->user()->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        return redirect()->back()->with('success', 'Update password berhasil');
     }
 
     // surat aktif kuliah

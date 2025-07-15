@@ -9,7 +9,6 @@
         <h1 class="card-title font-weight-bold">Surat Aktif Kuliah</h1>
     </div>
     <div class="card-body">
-
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="home-tab" data-toggle="tab" data-target="#home" type="button"

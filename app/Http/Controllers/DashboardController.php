@@ -100,7 +100,11 @@ class DashboardController extends Controller
         } else if ($user->roles->contains('name_role', 'Dosen') || $user->roles->contains('name_role', 'Ketua Prodi') || $user->roles->contains('name_role', 'Koordinator Kerja Praktik') || $user->roles->contains('name_role', 'Koordinator Pengambilan Data') || $user->roles->contains('name_role', 'Wakil-Dekan-1')) {
             return $dosenController->lihatProfilDosen();
         } else {
-            return "Sesi Admin";
+            if ($user->roles->contains('name_role', 'Administrator')) {
+                return view('dashboard.profileAdmin', ['titleHeader' => 'Admin']);
+            } else {
+                return view('dashboard.profileSuperAdmin', ['titleHeader' => 'Super Admin']);
+            }
         }
     }
 

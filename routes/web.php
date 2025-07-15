@@ -15,6 +15,7 @@ use App\Http\Controllers\PengajuanKPController;
 use App\Http\Controllers\PermohonanMagangController;
 use App\Http\Controllers\PPDPController;
 use App\Http\Controllers\RekomendasiController;
+use App\Http\Controllers\Role\SuperAdminController;
 use App\Http\Controllers\TranskripController;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Row;
@@ -48,7 +49,10 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
     });
 
     // Sesi Super Admin
-
+    Route::controller(SuperAdminController::class)->group(function () {
+        // Profile
+        Route::post('lihat-profil-super-admin', 'updatePasswordSuperAdmin')->name('password-super-admin-update');
+    });
 
     // Sesi Admin
     Route::controller(AdminController::class)->group(function () {
@@ -67,6 +71,9 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::get('edit-menu/{id}', 'updateMenu')->name('edit-menu');
         Route::put('update-menu/{id}', 'updatedataMenu')->name('update-menu');
         Route::delete('destroy-menu/{id}', 'destroyMenu')->name('destroy-menu');
+
+        // Profile
+        Route::post('lihat-profil-admin', 'updatePasswordAdmin')->name('password-admin-update');
     });
 
     // Data Master - Mahasiswa
@@ -112,6 +119,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
     Route::controller(DosenController::class)->group(function () {
         // Profile
         Route::put('lihat-profil-dosen', 'updateProfilDosen')->name('profil-dosen-update');
+        Route::post('lihat-profil-dosen', 'updatePasswordDosen')->name('password-dosen-update');
     });
 
     // Sesi Mahasiswa
@@ -125,6 +133,7 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
 
         // Profile
         Route::put('lihat-profil', 'updateProfilMhs')->name('profil-mahasiswa-update');
+        Route::post('lihat-profil', 'updatePasswordMhs')->name('password-mahasiswa-update');
     });
 
     // Pengajuan kp

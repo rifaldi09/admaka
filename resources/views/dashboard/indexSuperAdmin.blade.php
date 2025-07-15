@@ -1,6 +1,6 @@
 @extends('dashboard.home')
 
-@section('title','Dashboard Admin')
+@section('title','Dashboard Super Admin')
 
 @section('content')
 <div class="py-3">
