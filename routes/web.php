@@ -113,6 +113,8 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
         Route::get('update-user/{id}', 'updateUser')->name('update-user');
         Route::put('update_datauser/{id}', 'updatedataUser')->name('update_datauser');
         Route::delete('destroy-user/{id}', 'destroyUser')->name('destroy-user');
+        Route::get('/user/{id}/get-roles', 'getRoles')->name('getRoles');
+        Route::put('/user/{id}/update-roles', 'updateRoles')->name('updateRoles');
     });
 
     // Sesi Dosen

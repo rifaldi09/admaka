@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class RoleUser extends Model
 {
     use HasFactory;
+    
     // Nama tabel (jika tidak standar plural, misal 'role_users')
     protected $table = 'role_user';
 

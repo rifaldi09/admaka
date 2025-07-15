@@ -15,7 +15,8 @@ class DataUser extends Controller
     public function index()
     {
         $dataUser = ViewRoleUserDetail::all();
-
+        $user = auth()->user();
+        $allRoles = Role::all();
         if (empty($dataUser)) {
             $dataUserFormatted = [];
         } else {
@@ -48,7 +49,10 @@ class DataUser extends Controller
      // Gabungkan berdasarkan id_user
                 $dataUserFormatted = $dataUser->groupBy('id_user')->map(function ($items, $id_user) use ($token) {
                 $first = $items->first();
-
+                $user = auth()->user();
+                //  $btnEdit = '<button data-key="' . encrypt($first->role_user_id) . '" class="btn btn-sm btn-default text-primary update-role-user" id="updateRoleUser" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i></button>';
+                //$btnEdit = '<button data-key="' . encrypt($first->role_user_id) . '" class="btn btn-sm btn-default text-primary update-role-user" id="updateRoleUser" data-id="' . $first->user_id . '" title="Edit" data-bs-toggle="modal" data-bs-target="#editRoleModal"><i class="fa fa-lg fa-fw fa-pen"></i></button>';
+                $btnEdit ='<x-adminlte-button data-key="' . encrypt($first->role_user_id) . '" label="Open Modal" data-toggle="modal" data-target="#modalUpdateRoleUser" class="btn btn-sm btn-default text-primary update-role-user" data-id="' . $first->user_id . '" title="Edit"/> <i class="fa fa-lg fa-fw fa-pen"></i></x-adminlte-button>';
                 // Tombol hapus
                 $deleteUrl = route('destroy-user', encrypt($first->user_id));
                 $btnDelete = '
@@ -60,16 +64,25 @@ class DataUser extends Controller
                         </button>
                     </form>
                 ';
-
-                return [
-                    'id_user'    => $id_user,
-                    'nama_user'  => $first->nama_user,
-                    'roles'      => $items->pluck('name_role')->unique()->implode(', '),
-                    // 'aksi'       => '<div class="d-flex gap-1">' . $btnDelete . '</div>',
-                ];
+                if ($user->roles->contains('name_role', 'Super-Administrator')){
+                    return [
+                            'id_user'    => $id_user,
+                            'nama_user'  => $first->nama_user,
+                            'roles'      => $items->pluck('name_role')->unique()->implode(', '),
+                            'aksi'       => '<div class="d-flex gap-1">' .$btnEdit . $btnDelete . '</div>',
+                    ];    
+                }else if ($user->roles->contains('name_role', 'Administrator')){
+                    return [
+                            'id_user'    => $id_user,
+                            'nama_user'  => $first->nama_user,
+                            'roles'      => $items->pluck('name_role')->unique()->implode(', '),
+                            // 'aksi'       => '<div class="d-flex gap-1">' . $btnDelete . '</div>',
+                    ];
+                }
+               
             })->values()->toArray();
         }
-        return view('admin.data-master.data-user', compact('dataUser', 'dataUserFormatted'));
+        return view('admin.data-master.data-user', compact('dataUser', 'dataUserFormatted','allRoles'));
     }
 
     // public function storeProdi(Request $request)
@@ -150,5 +163,25 @@ class DataUser extends Controller
             // Redirect balik dengan error message
             return redirect()->back()->withInput()->with('error', 'Gagal menghapus data user. Silakan coba lagi.');
         }
+    }
+
+    public function getRoles($id)
+    {
+        $user = User::with('roles')->findOrFail($id);
+        return response()->json([
+            'roles' => $user->roles->pluck('id')->toArray()
+        ]);
+    }
+
+    public function updateRoles(Request $request, $id)
+    {
+        $request->validate([
+            'roles' => 'array|exists:role,id'
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->roles()->sync($request->roles);
+
+        return redirect()->back()->with('success', 'Roles diperbarui.');
     }
 }
