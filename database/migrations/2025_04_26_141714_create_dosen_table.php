@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('dosen', function (Blueprint $table) {
-            $table->id('nidn');
-            $table->string('nip')->unique();
+            $table->id('nip');
+            $table->string('nidn')->unique();
+            $table->string('status_pegawai');
             $table->string('nama');
             $table->string('email');
             $table->unsignedBigInteger('id_prodi');
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->date('tanggal_lahir')->nullable();
             $table->string('no_hp')->nullable();
             $table->timestamps();
-            $table->softDeletes(); 
+            $table->softDeletes();
 
             // Penghubungan ke tabel prodi
             $table->foreign('id_prodi')->references('id')->on('prodi')->onDelete('cascade');

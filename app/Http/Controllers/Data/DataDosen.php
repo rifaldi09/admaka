@@ -29,14 +29,14 @@ class DataDosen extends Controller
             // Buat array dengan format yang diinginkan
             $dataDosenFormatted = $dataDosen->map(function ($dosen) {
 
-                $btnEdit = '<button data-key="' . encrypt($dosen->nidn) . '" class="btn btn-sm btn-default text-primary update-dosen" id="updateDosen" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i></button>';
+                $btnEdit = '<button data-key="' . encrypt($dosen->nip) . '" class="btn btn-sm btn-default text-primary update-dosen" id="updateDosen" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i></button>';
                 $token = csrf_token();
-                $deleteUrl = route('destroy-dosen', encrypt($dosen->nidn));
+                $deleteUrl = route('destroy-dosen', encrypt($dosen->nip));
                 $btnDelete = '
                     <form class="m-0 p-0" action="' . $deleteUrl . '" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="_token" value="' . $token . '">
                         <input type="hidden" name="_method" value="DELETE">
-                        <button class="btn btn-sm btn-default text-danger delet-dosen" title="Delete">
+                        <button class="btn btn-sm btn-default text-danger delete-dosen" title="Delete">
                             <i class="fa fa-lg fa-fw fa-trash"></i>
                         </button>
                     </form>
@@ -44,8 +44,8 @@ class DataDosen extends Controller
 
                 // Mengembalikan data dalam bentuk array yang diinginkan
                 return [
-                    $dosen->nidn,
                     $dosen->nip,
+                    $dosen->nidn,
                     $dosen->nama,
                     $dosen->email,
                     $dosen->no_hp,
@@ -61,8 +61,9 @@ class DataDosen extends Controller
     {
         // validasi input
         $validasi = $request->validate([
-            'nidn'            => 'required|string|unique:dosen,nidn',
             'nip'            => 'required|string|unique:dosen,nip',
+            'nidn'            => 'required|string|unique:dosen,nidn',
+            'status_pegawai'  => 'required|string|max:20',
             'nama'           => 'required|string|max:255',
             'email'          => [
                 'required',
@@ -74,15 +75,16 @@ class DataDosen extends Controller
             'tanggal_lahir'  => 'required|date',
             'no_hp'          => 'required|string|max:20',
         ]);
-          $roleDosenId = Role::where('name_role', 'Dosen')
-                                ->value('id');
-                            
+        $roleDosenId = Role::where('name_role', 'Dosen')
+            ->value('id');
+
         DB::beginTransaction();
         try {
             // Simpan ke database
             Dosen::create([
-                'nidn'           => $validasi['nidn'],
                 'nip'            => $validasi['nip'],
+                'nidn'           => $validasi['nidn'],
+                'status_pegawai' => $validasi['status_pegawai'],
                 'nama'           => $validasi['nama'],
                 'email'          => $validasi['email'],
                 'id_prodi'       => $validasi['prodi'],
@@ -91,27 +93,27 @@ class DataDosen extends Controller
                 'no_hp'          => $validasi['no_hp'],
             ]);
 
-                $user = User::create([
-                    'id_user' => $validasi['nidn'],
-                    'password' => Hash::make($validasi['nidn']),
-                    // 'id_role' => $roleMahasiswaId,
-                ]);
-                $userId = $user->id;
-                
-                RoleUser::create([
-                    'user_id' => $userId,
-                    'role_id' => $roleDosenId,
-                    // 'id_role' => $roleMahasiswaId,
-                ]);
-                
+            $user = User::create([
+                'id_user' => $validasi['nip'],
+                'password' => Hash::make($validasi['nip']),
+                // 'id_role' => $roleMahasiswaId,
+            ]);
+            $userId = $user->id;
+
+            RoleUser::create([
+                'user_id' => $userId,
+                'role_id' => $roleDosenId,
+                // 'id_role' => $roleMahasiswaId,
+            ]);
+
             DB::commit(); // semua sukses
-        
+
 
             // Jika berhasil
             return redirect()->route('data-dosen')->with('success', 'Data Dosen berhasil ditambahkan');
         } catch (QueryException $e) {
             // Log error untuk debugging
-              DB::rollback(); 
+            DB::rollback();
             Log::error('Gagal menambahkan data dosen: ' . $e->getMessage());
 
             // Redirect balik dengan error message
@@ -120,17 +122,17 @@ class DataDosen extends Controller
     }
 
     // Fungsi Menghapus Dosen
-    public function destroyDosen($nidn)
+    public function destroyDosen($nip)
     {
         // ambil id dosen dari request
-        $id_dosen = decrypt($nidn);
+        $id_dosen = decrypt($nip);
 
         try {
             // hapus juga user yang berhubungan dengan data dosen tersebut
             User::where('id_user', $id_dosen)->delete();
 
             // hapus dosen
-            Dosen::where('nidn', $id_dosen)->delete();
+            Dosen::where('nip', $id_dosen)->delete();
 
             // Jika berhasil
             return redirect()->route('data-dosen')->with('success', 'Data Dosen berhasil dihapus');
@@ -144,34 +146,36 @@ class DataDosen extends Controller
     }
 
     // fungsi get data dosen berdasarkan nidn
-    public function updateDosen($nidn)
+    public function updateDosen($nip)
     {
-        $dosen = Dosen::select('nip', 'nama', 'email', 'no_hp', 'id_prodi', 'tanggal_lahir', 'tempat_lahir')
-            ->where('nidn', decrypt($nidn))
+        $dosen = Dosen::select('nidn', 'status_pegawai', 'nama', 'email', 'no_hp', 'id_prodi', 'tanggal_lahir', 'tempat_lahir')
+            ->where('nip', decrypt($nip))
             ->first();
 
 
         if (!$dosen) {
             return response()->json(['error' => 'Data tidak ditemukan'], 404);
         }
-        $dosen->key = $nidn;
+        $dosen->key = $nip;
         return response()->json($dosen);
     }
+
     // fungsi update data
-    public function updatedataDosen(Request $request, $nidn)
+    public function updatedataDosen(Request $request, $nip)
     {
         try {
-            $dosen = Dosen::where('nidn', decrypt($nidn))->firstOrFail();
+            $dosen = Dosen::where('nip', decrypt($nip))->firstOrFail();
 
             // Validasi input
             $validasi = $request->validate([
-                'nip1'            => 'required|string|unique:dosen,nip',
+                'nidn1'            => 'required|string|unique:dosen,nidn',
+                'status_pegawai1' => 'required|string|max:20',
                 'nama1'           => 'required|string|max:255',
                 'email1'          => [
                     'required',
                     'email',
                     Rule::unique('dosen', 'email')
-                        ->ignore($dosen->nidn, 'nidn') // abaikan data milik sendiri
+                        ->ignore($dosen->nip, 'nip') // abaikan data milik sendiri
                         ->whereNull('deleted_at') // validasi hanya jika deleted_at NULL
                 ],
                 'prodi1'          => 'required|exists:prodi,id',
@@ -182,7 +186,8 @@ class DataDosen extends Controller
 
             // Lakukan update
             $updated = $dosen->update([
-                'nip'           => $validasi['nip1'],
+                'nidn'           => $validasi['nidn1'],
+                'status_pegawai' => $validasi['status_pegawai1'],
                 'nama'           => $validasi['nama1'],
                 'email'          => $validasi['email1'],
                 'id_prodi'       => $validasi['prodi1'],
@@ -249,23 +254,24 @@ class DataDosen extends Controller
             $rowData = [];
             $hasError = false;
 
-            $nidn = $row[0] ?? '';
-            $nip = $row[1] ?? '';
-            $nama = $row[2] ?? '';
-            $tempat = $row[3] ?? '';
-            $tgl = $row[4] ?? '';
-            $prodi = $row[5] ?? '';
-            $email = $row[6] ?? '';
-            $no_hp = $row[7] ?? '';
-            
+            $nip = $row[0] ?? '';
+            $nidn = $row[1] ?? '';
+            $status_pegawai = $row[2] ?? '';
+            $nama = $row[3] ?? '';
+            $tempat = $row[4] ?? '';
+            $tgl = $row[5] ?? '';
+            $prodi = $row[6] ?? '';
+            $email = $row[7] ?? '';
+            $no_hp = $row[8] ?? '';
+
             $prodiList = Prodi::pluck('id', 'nama')->toArray();
             if (array_key_exists($prodi, $prodiList)) {
                 //  $id_prodi = $prodiList[$prodi];
-                 $prodi = $prodi;
-            }else{
-                 $prodi = '';
+                $prodi = $prodi;
+            } else {
+                $prodi = '';
             }
-            
+
             // Validasi tanggal
             $validDate = true;
             if (!empty($tgl)) {
@@ -277,8 +283,9 @@ class DataDosen extends Controller
                 }
             }
 
-            $rowData[] = ['value' => $nidn, 'error' => empty($nidn) || Dosen::where('nidn', $nidn)->exists()];
             $rowData[] = ['value' => $nip, 'error' => empty($nip) || Dosen::where('nip', $nip)->exists()];
+            $rowData[] = ['value' => $nidn, 'error' => empty($nidn) || Dosen::where('nidn', $nidn)->exists()];
+            $rowData[] = ['value' => $status_pegawai, 'error' => empty($status_pegawai)];
             $rowData[] = ['value' => $nama, 'error' => empty($nama)];
             $rowData[] = ['value' => $tempat, 'error' => empty($tempat)];
             $rowData[] = ['value' => $tgl, 'error' => empty($tgl) || !$validDate];
@@ -288,8 +295,8 @@ class DataDosen extends Controller
 
             $processedData[] = $rowData;
         }
-     
-     return view('admin.data-master.priviewImportDosen', [
+
+        return view('admin.data-master.priviewImportDosen', [
             'header' => $header,
             'data' => $processedData,
             'file' => $request->file('file')->hashName(),
@@ -326,18 +333,18 @@ class DataDosen extends Controller
 
         foreach ($rows as $row) {
             // Ambil dan bersihkan nilai
-            $nidn = $row[0] ?? '';
-            $nip = $row[1] ?? '';
-            $nama = $row[2] ?? '';
-            $tempat = $row[3] ?? '';
-            $tgl = $row[4] ?? '';
-            $prodi = $row[5] ?? '';
-            $email = $row[6] ?? '';
-            $no_hp = $row[7] ?? '';
-
+            $nip = $row[0] ?? '';
+            $nidn = $row[1] ?? '';
+            $status_pegawai = $row[2] ?? '';
+            $nama = $row[3] ?? '';
+            $tempat = $row[4] ?? '';
+            $tgl = $row[5] ?? '';
+            $prodi = $row[6] ?? '';
+            $email = $row[7] ?? '';
+            $no_hp = $row[8] ?? '';
 
             // Validasi sederhana sebelum insert
-            if (!$nidn || !$nip || !$nama || !$email || !$prodi || !$tempat || !$tgl || !$no_hp) {
+            if (!$nidn || !$nip || !$status_pegawai || !$nama || !$email || !$prodi || !$tempat || !$tgl || !$no_hp) {
                 continue; // skip baris invalid
             }
 
@@ -347,11 +354,11 @@ class DataDosen extends Controller
             // })->toArray();
 
             // $id_prodi = $prodiMap[strtolower(trim($prodi))] ?? null;
-            $id_prodi='';
+            $id_prodi = '';
             //Validasi prodi
             $prodiList = Prodi::pluck('id', 'nama')->toArray();
             if (array_key_exists($prodi, $prodiList)) {
-                 $id_prodi = $prodiList[$prodi];
+                $id_prodi = $prodiList[$prodi];
                 //  $prodi = $prodi;
             }
 
@@ -360,7 +367,7 @@ class DataDosen extends Controller
             }
 
             // Cek duplikat
-            if (Dosen::where('nidn', $nidn)->exists() || Dosen::where('nip', $nip)->exists() || Dosen::where('email', $email)->exists()) {
+            if (Dosen::where('nip', $nip)->exists() || Dosen::where('nidn', $nidn)->exists() || Dosen::where('email', $email)->exists()) {
                 continue;
             }
 
@@ -371,44 +378,45 @@ class DataDosen extends Controller
                 continue; // skip jika tanggal salah format
             }
             $roleDosenId = Role::where('name_role', 'Dosen')
-                                ->value('id');
-                        
+                ->value('id');
+
 
             DB::beginTransaction();
 
             try {
-            // Insert ke database
-            Dosen::create([
-                'nidn'          => $nidn,
-                'nip'           => $nip,
-                'nama'          => $nama,
-                'email'         => $email,
-                'id_prodi'      => $id_prodi,
-                'tempat_lahir'  => $tempat,
-                'tanggal_lahir' => $tgl_lahir,
-                'no_hp'         => $no_hp,
-            ]);
+                // Insert ke database
+                Dosen::create([
+                    'nip'           => $nip,
+                    'nidn'          => $nidn,
+                    'status_pegawai' => $status_pegawai,
+                    'nama'          => $nama,
+                    'email'         => $email,
+                    'id_prodi'      => $id_prodi,
+                    'tempat_lahir'  => $tempat,
+                    'tanggal_lahir' => $tgl_lahir,
+                    'no_hp'         => $no_hp,
+                ]);
 
                 $user = User::create([
-                    'id_user' => $nidn,
-                    'password' => Hash::make($nidn),
+                    'id_user' => $nip,
+                    'password' => Hash::make($nip),
                     // 'id_role' => $roleMahasiswaId,
                 ]);
                 $userId = $user->id;
-                
+
                 RoleUser::create([
                     'user_id' => $userId,
                     'role_id' => $roleDosenId,
                     // 'id_role' => $roleMahasiswaId,
                 ]);
-                
-            DB::commit(); // semua sukses
-        
+
+                DB::commit(); // semua sukses
+
                 // return response()->json(['message' => 'Data berhasil disimpan']);
             } catch (\Exception $e) {
                 DB::rollback(); // batalkan semua jika ada error
                 // Hapus file sementara
-               
+
             }
         }
 

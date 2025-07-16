@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id' => 2,
-                'id_user' => '2025',
+                'id_user' => '199007162025071001',
                 'password' => Hash::make('123'),
                 'created_at' => now(),
                 'updated_at' => now(),

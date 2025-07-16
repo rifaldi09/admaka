@@ -90,10 +90,10 @@ Route::middleware(['auth', 'handle.session'])->group(function () {
     // Data Master - Dosen
     Route::controller(DataDosen::class)->group(function () {
         Route::get('data-dosen', 'index')->name('data-dosen');
-        Route::delete('destroy-dosen/{nidn}', 'destroyDosen')->name('destroy-dosen');
+        Route::delete('destroy-dosen/{nip}', 'destroyDosen')->name('destroy-dosen');
         Route::post('add_dosen', 'storeDosen')->name('add_dosen');
-        Route::get('update-dosen/{nim}', 'updateDosen')->name('update-dosen');
-        Route::put('update_datadosen/{nim}', 'updatedataDosen')->name('update_datadosen');
+        Route::get('update-dosen/{nip}', 'updateDosen')->name('update-dosen');
+        Route::put('update_datadosen/{nip}', 'updatedataDosen')->name('update_datadosen');
         Route::post('dosen-preview',  'previewCSVDosen')->name('dosen-preview');
         Route::post('import-dosen', 'importDosen')->name('import-dosen');
     });

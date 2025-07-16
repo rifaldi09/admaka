@@ -20,24 +20,26 @@ class User extends Authenticatable
         'password',
         'id_role',
     ];
-    
+
     protected $hidden = [
         'password',
         'remember_token',
     ];
-    
+
     protected $casts = [
         'password' => 'hashed',
     ];
 
     // mengambil 1 data mahasiswa
-    public function dataMahasiswa() {
+    public function dataMahasiswa()
+    {
         return $this->hasOne(Mahasiswa::class, 'nim', 'id_user');
     }
 
     // mengambil 1 data dosen
-    public function dataDosen() {
-        return $this->hasOne(Dosen::class, 'nidn', 'id_user');
+    public function dataDosen()
+    {
+        return $this->hasOne(Dosen::class, 'nip', 'id_user');
     }
 
     // function yang ini gunanya biar $user->data itu bisa dinamis sesuai data yang lagi login sekarang

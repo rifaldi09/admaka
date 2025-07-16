@@ -25,7 +25,7 @@ class DosenController extends Controller
     public function updateProfilDosen(Request $request)
     {
         $validated = $request->validate([
-            'nip' => 'required|min:5|max:18',
+            'nidn' => 'required|min:5|max:30',
             'nama' => 'required|string|min:3',
             'email' => 'required|email|min:5',
             'tempat_lahir' => 'required|string|min:5',
@@ -36,7 +36,7 @@ class DosenController extends Controller
 
         // Get user login
         $user = auth()->user();
-        $dosen = Dosen::where('nidn', $user->id_user)->first();
+        $dosen = Dosen::where('nip', $user->id_user)->first();
 
         if ($dosen) {
             $dosen->update($validated);

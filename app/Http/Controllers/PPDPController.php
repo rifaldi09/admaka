@@ -118,13 +118,13 @@ class PPDPController extends Controller
             $query->where('status', 'Diterima')
                 ->where('id_prodi', Auth::user()->data->id_prodi)
                 ->where('keperluan', 'mata_kuliah')
-                ->where('nidn', Auth::user()->id_user);
+                ->where('nip', Auth::user()->id_user);
         })->with(['permohonanPengambilan' => function ($query) {
             $query->where('status', 'Diterima')
                 ->where('id_prodi', Auth::user()->data->id_prodi)
                 ->where('keperluan', 'mata_kuliah')
-                ->where('nidn', Auth::user()->id_user)
-                ->with(['dosen:nidn,nama']);
+                ->where('nip', Auth::user()->id_user)
+                ->with(['dosen:nip,nama']);
         }, 'dataMahasiswa'])->get();
 
 

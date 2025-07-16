@@ -12,14 +12,15 @@ class Dosen extends Authenticatable
     use HasFactory;
     use SoftDeletes;
     protected $table = 'dosen';
-    protected $primaryKey = 'nidn';
+    protected $primaryKey = 'nip';
     public $incrementing = false;
     protected $keyType = 'string';
 
 
     protected $fillable = [
-        'nidn',
         'nip',
+        'nidn',
+        'status_pegawai',
         'nama',
         'email',
         'id_prodi',
@@ -41,6 +42,6 @@ class Dosen extends Authenticatable
 
     public function ppdp()
     {
-        return $this->belongsTo(PPDP::class, 'nidn', 'nidn');
+        return $this->belongsTo(PPDP::class, 'nip', 'nip');
     }
 }

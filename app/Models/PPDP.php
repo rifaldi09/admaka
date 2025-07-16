@@ -20,7 +20,7 @@ class PPDP extends Model
     protected $fillable = [
         "user_id",
         "id_prodi",
-        "nidn",
+        "nip",
         "no_surat",
         "tujuan_surat",
         "alamat_surat",
@@ -50,7 +50,7 @@ class PPDP extends Model
 
     public function dosen()
     {
-        return $this->hasOne(Dosen::class, 'nidn', 'nidn');
+        return $this->hasOne(Dosen::class, 'nip', 'nip');
     }
 
     public function filePermohonan()

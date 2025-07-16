@@ -28,14 +28,14 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="nidn" class="form-label">NIP</label>
-                                        <input type="number" class="form-control" placeholder="NIP" name="nidn" id="nidn"
-                                            value={{ old('nidn',$user->nidn) }} readonly disabled>
+                                        <label for="nip" class="form-label">NIP/NIPPPK/NK</label>
+                                        <input type="number" class="form-control" placeholder="NIP/NIPPPK/NK" name="nip" id="nip"
+                                            value={{ old('nip',$user->nip) }} readonly disabled>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="nip" class="form-label">NUPTK</label>
-                                        <input type="number" class="form-control" placeholder="NUPTK" name="nip" id="nip"
-                                            value={{ old('nip',$user->nip) }} required>
+                                        <label for="nidn" class="form-label">NIDN/NUPTK</label>
+                                        <input type="number" class="form-control" placeholder="NIDN/NUPTK" name="nidn" id="nidn"
+                                            value={{ old('nidn',$user->nidn) }} required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="nama" class="form-label">Nama Lengkap</label>
@@ -98,7 +98,8 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="new_password" class="form-label">Password Baru</label>
-                                        <input type="password" class="form-control" placeholder="Password Baru" name="new_password" id="new_password">
+                                        <input type="password" class="form-control mb-1" placeholder="Password Baru" name="new_password" id="new_password">
+                                        <span style="font-size: 13px;">Password baru minimal 8 karakter</span>
                                     </div>
                                     <div class="mb-3">
                                         <label for="new_password_confirmation" class="form-label">Password Konfirmasi</label>

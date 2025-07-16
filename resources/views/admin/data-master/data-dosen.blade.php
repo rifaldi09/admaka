@@ -19,9 +19,9 @@
         {{-- Setup data for datatables --}}
         @php
         $heads = [
-        'NIP',
-        'NUPTK',
-        'Nama',
+        'NIP/NIPPPK',
+        'NIDN/NUPTK',
+        'Nama Lengkap',
         'Email',
         'No HP',
         ['label' => 'Actions', 'no-export' => true, 'width' => 5],
@@ -52,13 +52,16 @@
     <form action="{{ route('add_dosen') }}" method="post" id="form-dosen" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
-            <x-adminlte-input type="text" label="NIP" name="nidn" placeholder="NIP" required />
+            <x-adminlte-input type="text" label="NIP/NIPPPK" name="nip" placeholder="NIP/NIPPPK" required />
         </div>
         <div class="form-group">
-            <x-adminlte-input type="text" label="NUPTK" name="nip" placeholder="NUPTK" required />
+            <x-adminlte-input type="text" label="NIDN/NUPTK" name="nidn" placeholder="NIDN/NUPTK" required />
         </div>
         <div class="form-group">
-            <x-adminlte-input type="text" label="Nama" name="nama" placeholder="Nama" required />
+            <x-adminlte-input type="text" label="Status Pegawai" name="status_pegawai" placeholder="Status Pegawai" required />
+        </div>
+        <div class="form-group">
+            <x-adminlte-input type="text" label="Nama Lengkap" name="nama" placeholder="Nama Lengkap" required />
         </div>
         <div class="form-group">
             <x-adminlte-select name="prodi" label="Prodi" required>
@@ -93,7 +96,10 @@
         @csrf
         @method('PUT')
         <div class="form-group">
-            <x-adminlte-input type="text" label="NUPTK" name="nip1" id="nip1" placeholder="NUPTK" required />
+            <x-adminlte-input type="text" label="NIDN/NUPTK" name="nidn1" id="nidn1" placeholder="NIDN/NUPTK" required />
+        </div>
+        <div class="form-group">
+            <x-adminlte-input type="text" label="Status Pegawai" name="status_pegawai1" placeholder="Status Pegawai" required />
         </div>
         <div class="form-group">
             <x-adminlte-input type="text" label="Nama" name="nama1" id="nama1" placeholder="Nama" required />
@@ -141,7 +147,7 @@
 <script>
 // Menambahkan sweetalert2 untuk konfirmasi hapus role
 document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.delet-dosen');
+    const deleteButtons = document.querySelectorAll('.delete-dosen');
 
     deleteButtons.forEach(button => {
         button.addEventListener('click', function(event) {
@@ -175,9 +181,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     editButtons.forEach(button => {
         button.addEventListener('click', function() {
-            const nidn = this.dataset.key;
+            const nip = this.dataset.key;
             // Ambil data via AJAX
-            fetch(`update-dosen/${nidn}`)
+            fetch(`update-dosen/${nip}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -185,7 +191,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         return;
                     }
                     // set data;
-                    document.getElementById('nip1').value = data.nip;
+                    document.getElementById('nidn1').value = data.nidn;
+                    document.getElementById('status_pegawai1').value = data.status_pegawai;
                     document.getElementById('prodi1').value = data.id_prodi;
                     document.getElementById('nama1').value = data.nama;
                     document.getElementById('tempat_lahir1').value = data.tempat_lahir;
@@ -195,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Set form action
                     const form = document.getElementById('editFormDosen');
-                    form.action = `update_datadosen/${nidn}`;
+                    form.action = `update_datadosen/${nip}`;
 
                     // Tampilkan modal
                     $('#modalUpdateDosen').modal('show');

@@ -129,7 +129,8 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="new_password" class="form-label">Password Baru</label>
-                                        <input type="password" class="form-control" placeholder="Password Baru" name="new_password" id="new_password">
+                                        <input type="password" class="form-control mb-1" placeholder="Password Baru" name="new_password" id="new_password">
+                                        <span style="font-size: 13px;">Password baru minimal 8 karakter</span>
                                     </div>
                                     <div class="mb-3">
                                         <label for="new_password_confirmation" class="form-label">Password Konfirmasi</label>
