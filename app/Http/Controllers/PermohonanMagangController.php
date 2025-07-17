@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Storage;
+use App\Models\NomorSuratHistory;
 // set format tanggal ke bahasa indonesia
 Carbon::setLocale('id');
 
@@ -111,6 +112,24 @@ class PermohonanMagangController extends Controller
             'alamat_surat' => 'required'
         ]);
 
+          $hasIncomplete = \App\Models\Mahasiswa::where('nim', Auth::user()->id_user)
+        ->where(function ($query) {
+            $query->whereNull('nama')->orWhere('nama', '')
+                ->orWhereNull('email')->orWhere('email', '')
+                ->orWhereNull('id_prodi')
+                ->orWhereNull('tempat_lahir')->orWhere('tempat_lahir', '')
+                ->orWhereNull('tanggal_lahir')
+                ->orWhereNull('no_hp')->orWhere('no_hp', '')
+                ->orWhereNull('jenjang')->orWhere('jenjang', '')
+                ->orWhereNull('semester')
+                ->orWhereNull('tahun_akademik')->orWhere('tahun_akademik', '')
+                ->orWhereNull('ipk')
+                ->orWhereNull('sks');
+        })->exists();
+
+        if ($hasIncomplete) {
+            return redirect()->back()->with('error', 'Data mahasiswa belum lengkap. Mohon lengkapi dulu.');
+        }
         // $cek_nomor_terakhir = PermohonanMagang::orderByDesc('created_at')->value('no_surat');
 
         // if ($cek_nomor_terakhir) {
@@ -149,7 +168,7 @@ class PermohonanMagangController extends Controller
             'alamat_surat' => $request->alamat_surat,
             'user_id' => Auth::user()->id,
             'id_prodi' => Auth::user()->data->id_prodi,
-            'no_surat' => $no_surat
+            // 'no_surat' => $no_surat
         ];
 
         PermohonanMagang::create($data);
@@ -234,12 +253,29 @@ class PermohonanMagangController extends Controller
 
         $kp = $data->permohonanMagang->first();
 
+        
+        $tahun = date('Y');
+        $lastHistory = NomorSuratHistory::where('tahun', $tahun)
+                ->where('id_surat', $kp->id_permohonan_magang)
+                ->orderByDesc('created_at') // atau orderByDesc('no_surat') kalau urutan berdasarkan nomor
+                ->first();
+        if ($lastHistory) {
+            $nomorSurat = $lastHistory->no_surat;
+        } else {
+            $nomorSurat = generateNomorSurat('Surat Permohonan Magang', $kp->id_permohonan_magang);
+        }
+
+        $updated = PermohonanMagang::where('id_permohonan_magang', $kp->id_permohonan_magang)->update([
+            'no_surat' =>  $nomorSurat,
+        ]);
+
+        
         $tanggal = Carbon::parse($kp->created_at)->translatedFormat('j F Y');
         $tanggal_mulai = Carbon::parse($kp->tanggal_mulai)->translatedFormat('j F Y');
         $tanggal_selesai = Carbon::parse($kp->tanggal_selesai)->translatedFormat('j F Y');
 
         $pdf = Pdf::loadView('pdf.permohonan-magang.pdf-magang', [
-            'no_surat'        => $kp->no_surat . '/UN53.01/DT.01.01/' . $kp->created_at->format('Y'),
+            'no_surat'        =>  $nomorSurat. '/UN53.01/DT.01.01/' . $kp->created_at->format('Y'),
             'created_at'      => $tanggal,
             'tujuan_surat'    => $kp->tujuan_surat,
             'alamat_surat'    => $kp->alamat_surat,

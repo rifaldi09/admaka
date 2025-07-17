@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Storage;
+use App\Models\NomorSuratHistory;
 // set format tanggal ke bahasa indonesia
 Carbon::setLocale('id');
 
@@ -111,7 +112,25 @@ class PengajuanKPController extends Controller
             'tanggal_selesai' => 'required',
             'alamat_surat' => 'required'
         ]);
+        
+        $hasIncomplete = \App\Models\Mahasiswa::where('nim', Auth::user()->id_user)
+        ->where(function ($query) {
+            $query->whereNull('nama')->orWhere('nama', '')
+                ->orWhereNull('email')->orWhere('email', '')
+                ->orWhereNull('id_prodi')
+                ->orWhereNull('tempat_lahir')->orWhere('tempat_lahir', '')
+                ->orWhereNull('tanggal_lahir')
+                ->orWhereNull('no_hp')->orWhere('no_hp', '')
+                ->orWhereNull('jenjang')->orWhere('jenjang', '')
+                ->orWhereNull('semester')
+                ->orWhereNull('tahun_akademik')->orWhere('tahun_akademik', '')
+                ->orWhereNull('ipk')
+                ->orWhereNull('sks');
+        })->exists();
 
+        if ($hasIncomplete) {
+            return redirect()->back()->with('error', 'Data mahasiswa belum lengkap. Mohon lengkapi dulu.');
+        }
         $cek_nomor_terakhir = PengajuanKP::where('status', '!=', 'Ditolak')
             ->orderByDesc('created_at')
             ->first();
@@ -150,7 +169,7 @@ class PengajuanKPController extends Controller
             'alamat_surat' => $request->alamat_surat,
             'user_id' => Auth::user()->id,
             'id_prodi' => Auth::user()->data->id_prodi,
-            'no_surat' => $no_surat
+            // 'no_surat' => $no_surat
         ];
 
         PengajuanKP::create($data);
@@ -234,8 +253,26 @@ class PengajuanKPController extends Controller
         if (!$user) {
             return back()->with('error', 'Data tidak ditemukan.');
         }
+       
 
         $kp = $user->pengajuanKp->first();
+        
+        $tahun = date('Y');
+        $lastHistory = NomorSuratHistory::where('tahun', $tahun)
+                ->where('id_surat', $kp->id_pengajuan)
+                ->orderByDesc('created_at') // atau orderByDesc('no_surat') kalau urutan berdasarkan nomor
+                ->first();
+        if ($lastHistory) {
+            $nomorSurat = $lastHistory->no_surat;
+        } else {
+            $nomorSurat = generateNomorSurat('Surat Pengajuan KP', $kp->id_pengajuan);
+        }
+
+        $updated = PengajuanKP::where('id_pengajuan', $kp->id_pengajuan)->update([
+            'no_surat' =>  $nomorSurat,
+        ]);
+                
+        
 
         $data = [
             'no' => 1,
@@ -244,7 +281,7 @@ class PengajuanKPController extends Controller
             'prodi' => $user->dataMahasiswa->prodi->nama,
             'no_hp' => $user->dataMahasiswa->no_hp,
             'created_at' => Carbon::parse($kp->created_at)->translatedFormat('j F Y'),
-            'no_surat' => $kp->no_surat . '/UN53.01/DT.01.01/' . $kp->created_at->format('Y'),
+            'no_surat' =>  $nomorSurat . '/UN53.01/DT.01.01/' . $kp->created_at->format('Y'),
             'tujuan_surat' => $kp->tujuan_surat,
             'alamat_surat' => $kp->alamat_surat,
             'tanggal_mulai' => Carbon::parse($kp->tanggal_mulai)->translatedFormat('j F Y'),

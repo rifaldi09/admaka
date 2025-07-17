@@ -14,6 +14,10 @@
                     <label>Keperluan</label>
                     <textarea class="form-control" disabled>{{ $tp->keperluan }}</textarea>
                 </div>
+                <div class="form-group">
+                    <label>Nomor Surat</label>
+                    <textarea class="form-control" disabled>{{ $tp->no_surat }}</textarea>
+                </div>
 
                 <div class="form-group">
                     <label>Status</label>

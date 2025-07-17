@@ -14,6 +14,7 @@ use PhpOffice\PhpWord\TemplateProcessor;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat\NumberFormatter;
+use App\Models\NomorSuratHistory;
 
 Carbon::setLocale('id');
 
@@ -72,13 +73,34 @@ class AktifKuliahController extends Controller
     // Fungsi untuk input pengajuan surat aktif kuliah dari mahasiswa
     public function createSuratAktif(Request $request)
     {
+    
         // Validasi inputan
         $request->validate([
-            'keperluan' => 'required|string',
+            'keperluan' => 'required|string|max:200',
+          
             // 'semester_awal' => 'required',
             // 'semester_akhir' => 'required',
         ]);
 
+        $hasIncomplete = \App\Models\Mahasiswa::where('nim', Auth::user()->id_user)
+        ->where(function ($query) {
+            $query->whereNull('nama')->orWhere('nama', '')
+                ->orWhereNull('email')->orWhere('email', '')
+                ->orWhereNull('id_prodi')
+                ->orWhereNull('tempat_lahir')->orWhere('tempat_lahir', '')
+                ->orWhereNull('tanggal_lahir')
+                ->orWhereNull('no_hp')->orWhere('no_hp', '')
+                ->orWhereNull('jenjang')->orWhere('jenjang', '')
+                ->orWhereNull('semester')
+                ->orWhereNull('tahun_akademik')->orWhere('tahun_akademik', '')
+                ->orWhereNull('ipk')
+                ->orWhereNull('sks');
+        })->exists();
+
+        if ($hasIncomplete) {
+            return redirect()->back()->with('error', 'Data mahasiswa belum lengkap. Mohon lengkapi dulu.');
+        }
+    
         $cek_nomor_terakhir = AktifKuliah::where('status', '!=', 'Ditolak')
             ->orderByDesc('created_at')
             ->first();
@@ -107,7 +129,7 @@ class AktifKuliahController extends Controller
             // 'semester_awal' => $request->semester_awal,
             // 'semester_akhir' => $request->semester_akhir,
             'user_id' => Auth::user()->id,
-            'nomor_surat' => $no_surat
+            // 'nomor_surat' => $no_surat
         ]);
 
 
@@ -165,6 +187,18 @@ class AktifKuliahController extends Controller
     public function penerbitanAktifKuliah($id)
     {
         $idAktifKuliah = decrypt($id);
+        $tahun = date('Y');
+        $lastHistory = NomorSuratHistory::where('tahun', $tahun)
+                ->where('id_surat', $idAktifKuliah)
+                ->orderByDesc('created_at') // atau orderByDesc('no_surat') kalau urutan berdasarkan nomor
+                ->first();
+        if ($lastHistory) {
+            $nomorSurat = $lastHistory->no_surat;
+        } else {
+            $nomorSurat = generateNomorSurat('Surat Aktif Kuliah', $idAktifKuliah);
+        }
+        
+
         $dataSurat = AktifKuliah::with('user.dataMahasiswa.prodi')->where('id_aktif_kuliah', $idAktifKuliah)->first();
 
         $mahasiswa = $dataSurat->user->dataMahasiswa;
@@ -176,9 +210,10 @@ class AktifKuliahController extends Controller
 
         $dataSurat->update([
             'status' => 'Penerbitan',
+            'nomor_surat' => $nomorSurat
         ]);
 
-        $nomorSurat = $dataSurat->nomor_surat;
+        // $nomorSurat = $dataSurat->nomor_surat;
 
         $data = [
             'nomor_surat'     => $nomorSurat . '/UN53.01/DT.01.01/' . $dataSurat->created_at->format('Y'),

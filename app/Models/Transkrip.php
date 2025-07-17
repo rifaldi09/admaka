@@ -19,6 +19,7 @@ class Transkrip extends Model
         'user_id',
         'keperluan',
         'status',
+        'no_surat',
         'alasan_ditolak'
     ];
 

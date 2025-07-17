@@ -13,6 +13,7 @@ use PhpOffice\PhpWord\TemplateProcessor;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use App\Models\NomorSuratHistory;
 
 // set format tanggal ke bahasa indonesia
 Carbon::setLocale('id');
@@ -29,7 +30,7 @@ class PPDPController extends Controller
         $permohonan = PPDP::where('user_id', Auth::id())->get();
         $dosen = User::whereHas('roles', function ($query) {
             $query->where('role.id', 2);
-        })->with(['dataDosen:nidn,nama'])->get();
+        })->with(['dataDosen:nip,nama'])->get();
 
         return view('mahasiswa.permohonan-pengambilan.index', compact('permohonan', 'dosen'));
     }
@@ -47,14 +48,14 @@ class PPDPController extends Controller
             $query->where('status', 'Belum Diterima');
         })->with(['permohonanPengambilan' => function ($query) {
             $query->where('status', 'Belum Diterima')
-                ->with(['dosen:nidn,nama']);
+                ->with(['dosen:nip,nama']);
         }, 'dataMahasiswa'])->get();
 
         $diterima = User::select('id', 'id_user')->whereHas('permohonanPengambilan', function ($query) {
             $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
         })->with(['permohonanPengambilan' => function ($query) {
             $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan'])
-                ->with(['dosen:nidn,nama']);
+                ->with(['dosen:nip,nama']);
         }, 'dataMahasiswa'])->get();
 
         return view('admin.permohonan-pengambilan.index', compact('draft', 'diterima'));
@@ -72,14 +73,14 @@ class PPDPController extends Controller
             $query->where('status', 'Belum Diterima');
         })->with(['permohonanPengambilan' => function ($query) {
             $query->where('status', 'Belum Diterima')
-                ->with(['dosen:nidn,nama']);
+                ->with(['dosen:nip,nama']);
         }, 'dataMahasiswa'])->get();
 
         $diterima = User::select('id', 'id_user')->whereHas('permohonanPengambilan', function ($query) {
             $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan']);
         })->with(['permohonanPengambilan' => function ($query) {
             $query->whereIn('status', ['Diterima', 'Ditolak', 'Penerbitan'])
-                ->with(['dosen:nidn,nama']);
+                ->with(['dosen:nip,nama']);
         }, 'dataMahasiswa'])->get();
 
         return view('admin.permohonan-pengambilan.index', compact('draft', 'diterima'));
@@ -144,6 +145,24 @@ class PPDPController extends Controller
             'dosen' => 'required_if:keperluan,mata_kuliah',
         ]);
 
+          $hasIncomplete = \App\Models\Mahasiswa::where('nim', Auth::user()->id_user)
+        ->where(function ($query) {
+            $query->whereNull('nama')->orWhere('nama', '')
+                ->orWhereNull('email')->orWhere('email', '')
+                ->orWhereNull('id_prodi')
+                ->orWhereNull('tempat_lahir')->orWhere('tempat_lahir', '')
+                ->orWhereNull('tanggal_lahir')
+                ->orWhereNull('no_hp')->orWhere('no_hp', '')
+                ->orWhereNull('jenjang')->orWhere('jenjang', '')
+                ->orWhereNull('semester')
+                ->orWhereNull('tahun_akademik')->orWhere('tahun_akademik', '')
+                ->orWhereNull('ipk')
+                ->orWhereNull('sks');
+        })->exists();
+
+        if ($hasIncomplete) {
+            return redirect()->back()->with('error', 'Data mahasiswa belum lengkap. Mohon lengkapi dulu.');
+        }
         // buat ngakalin no_surat biar ga pakai id
         //$cek_nomor_terakhir = PPDP::orderByDesc('created_at')->value('no_surat');
         $cek_nomor_terakhir = PPDP::where('status', '!=', 'Ditolak')
@@ -177,10 +196,10 @@ class PPDPController extends Controller
         ]);
 
         $data['judul_skripsi'] = $request->keperluan === 'skripsi' ? $request->judul_skripsi : '';
-        $data['nidn'] = $request->keperluan === 'mata_kuliah' ? $request->dosen : null;
+        $data['nip'] = $request->keperluan === 'mata_kuliah' ? $request->dosen : null;
         $data['user_id'] = Auth::id();
         $data['id_prodi'] = Auth::user()->data->id_prodi;
-        $data['no_surat'] = $no_surat;
+        // $data['no_surat'] = $no_surat;
 
 
         PPDP::create($data);
@@ -247,7 +266,7 @@ class PPDPController extends Controller
         ]);
 
         $data['judul_skripsi'] = $request->keperluan === 'skripsi' ? $request->judul_skripsi : '';
-        $data['nidn'] = $request->keperluan === 'mata_kuliah' ? $request->dosen : null;
+        $data['nip'] = $request->keperluan === 'mata_kuliah' ? $request->dosen : null;
         $data['user_id'] = Auth::id();
         $data['id_prodi'] = Auth::user()->data->id_prodi;
 
@@ -267,13 +286,28 @@ class PPDPController extends Controller
                 $query->where('status', 'Penerbitan')
                     ->where('keperluan', 'mata_kuliah')
                     ->where('id_permohonan', $permohonan->id_permohonan)
-                    ->with(['dosen:nidn,nama']);
+                    ->with(['dosen:nip,nama']);
             }, 'dataMahasiswa.prodi'])->first();
 
             $pp = $data->permohonanPengambilan->first();
+            
+            $tahun = date('Y');
+            $lastHistory = NomorSuratHistory::where('tahun', $tahun)
+                    ->where('id_surat', $pp->id_permohonan)
+                    ->orderByDesc('created_at') // atau orderByDesc('no_surat') kalau urutan berdasarkan nomor
+                    ->first();
+            if ($lastHistory) {
+                $nomorSurat = $lastHistory->no_surat;
+            } else {
+                $nomorSurat = generateNomorSurat('Surat Permohonan Pengambilan Data MK', $pp->id_permohonan);
+            }
+
+            $updated = PPDP::where('id_permohonan', $pp->id_permohonan)->update([
+                'no_surat' =>  $nomorSurat,
+            ]);
 
             $viewData = [
-                'no_surat' => $pp->no_surat . '/UN53.01/DT.01.01/' . $pp->created_at->format('Y'),
+                'no_surat' => $nomorSurat . '/UN53.01/DT.01.01/' . $pp->created_at->format('Y'),
                 'tujuan_surat' => $pp->tujuan_surat,
                 'alamat_surat' => $pp->alamat_surat,
                 'created_at' => Carbon::parse($pp->created_at)->translatedFormat('j F Y'),
@@ -299,9 +333,23 @@ class PPDPController extends Controller
             }, 'dataMahasiswa.prodi'])->first();
 
             $pp = $data->permohonanPengambilan->first();
+            $tahun = date('Y');
+            $lastHistory = NomorSuratHistory::where('tahun', $tahun)
+                    ->where('id_surat', $pp->id_permohonan)
+                    ->orderByDesc('created_at') // atau orderByDesc('no_surat') kalau urutan berdasarkan nomor
+                    ->first();
+            if ($lastHistory) {
+                $nomorSurat = $lastHistory->no_surat;
+            } else {
+                $nomorSurat = generateNomorSurat('Surat Permohonan Pengambilan Data Skripsi', $pp->id_permohonan);
+            }
 
+            $updated = PPDP::where('id_permohonan', $pp->id_permohonan)->update([
+                'no_surat' =>  $nomorSurat,
+            ]);
+            
             $viewData = [
-                'no_surat' => $pp->no_surat . '/UN53.01/DT.01.01/' . $pp->created_at->format('Y'),
+                'no_surat' => $nomorSurat . '/UN53.01/DT.01.01/' . $pp->created_at->format('Y'),
                 'tujuan_surat' => $pp->tujuan_surat,
                 'alamat_surat' => $pp->alamat_surat,
                 'judul_skripsi' => $pp->judul_skripsi,

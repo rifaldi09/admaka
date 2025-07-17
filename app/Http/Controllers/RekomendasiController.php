@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
-
+use App\Models\NomorSuratHistory;
 Carbon::setLocale('id');
 
 class RekomendasiController extends Controller
@@ -63,6 +63,26 @@ class RekomendasiController extends Controller
         $validasi = $req->validate([
             'perihal' => 'required',
         ]);
+
+      $hasIncomplete = \App\Models\Mahasiswa::where('nim', Auth::user()->id_user)
+        ->where(function ($query) {
+            $query->whereNull('nama')->orWhere('nama', '')
+                ->orWhereNull('email')->orWhere('email', '')
+                ->orWhereNull('id_prodi')
+                ->orWhereNull('tempat_lahir')->orWhere('tempat_lahir', '')
+                ->orWhereNull('tanggal_lahir')
+                ->orWhereNull('no_hp')->orWhere('no_hp', '')
+                ->orWhereNull('jenjang')->orWhere('jenjang', '')
+                ->orWhereNull('semester')
+                ->orWhereNull('tahun_akademik')->orWhere('tahun_akademik', '')
+                ->orWhereNull('ipk')
+                ->orWhereNull('sks');
+        })->exists();
+
+        if ($hasIncomplete) {
+            return redirect()->back()->with('error', 'Data mahasiswa belum lengkap. Mohon lengkapi dulu.');
+        }
+        
         $cek_nomor_terakhir = SuratRekomendasi::where('status', '!=', 'Ditolak')
             ->orderByDesc('created_at')
             ->first();
@@ -100,13 +120,13 @@ class RekomendasiController extends Controller
                     'perihal' => $validasi['perihal'],
                     'tempat_perihal' => $req->tempat_perihal,
                     'user_id' => Auth::user()->id,
-                    'nomor_surat' => $no_surat
+                    // 'nomor_surat' => $no_surat
                 ]);
             } else {
                 SuratRekomendasi::create([
                     'perihal' => $validasi['perihal'],
                     'user_id' => Auth::user()->id,
-                    'nomor_surat' => $no_surat
+                    // 'nomor_surat' => $no_surat
                 ]);
             }
             return redirect()->back()->with('success', 'Berhasil menambahkan surat');
@@ -189,13 +209,28 @@ class RekomendasiController extends Controller
     public function penerbitanSuratRekomendasi($id)
     {
         $idRekomendasi = decrypt($id);
+        $tahun = date('Y');
+        $lastHistory = NomorSuratHistory::where('tahun', $tahun)
+                ->where('id_surat', $idRekomendasi)
+                ->orderByDesc('created_at') // atau orderByDesc('no_surat') kalau urutan berdasarkan nomor
+                ->first();
+        if ($lastHistory) {
+            $nomorSurat = $lastHistory->no_surat;
+        } else {
+            $nomorSurat = generateNomorSurat('Surat Rekomendasi', $idRekomendasi);
+        }
+
+        
         $dataSurat = SuratRekomendasi::with('user.dataMahasiswa.prodi')->where('id_rekomendasi', $idRekomendasi)->first();
 
         $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
         $numberSemester = $dataSurat->user->dataMahasiswa->semester . ' (' . $formatter->format($dataSurat->user->dataMahasiswa->semester) . ')';
-
+        $updated = SuratRekomendasi::where('id_rekomendasi', $idRekomendasi)->update([
+            'nomor_surat' =>  $nomorSurat,
+        ]);
+        
         $pdf = Pdf::loadView('pdf.surat-rekomendasi.pdf-surat-rekom', [
-            'nomor_surat'     => $dataSurat->nomor_surat . '/UN53.01/DT.01.01/' . $dataSurat->created_at->format('Y'),
+            'nomor_surat'     => $nomorSurat . '/UN53.01/DT.01.01/' . $dataSurat->created_at->format('Y'),
             'konversi_sks'    => $dataSurat->konversi_sks,
             'nama_mahasiswa'  => $dataSurat->user->dataMahasiswa->nama,
             'nim'             => $dataSurat->user->dataMahasiswa->nim,

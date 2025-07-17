@@ -168,7 +168,7 @@ class DataDosen extends Controller
 
             // Validasi input
             $validasi = $request->validate([
-                'nidn1'            => 'required|string|unique:dosen,nidn',
+                'nidn1'            => 'required|string',
                 'status_pegawai1' => 'required|string|max:20',
                 'nama1'           => 'required|string|max:255',
                 'email1'          => [
@@ -236,9 +236,16 @@ class DataDosen extends Controller
 
         // Baca isi file
         $data = [];
-        while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
+        while (($row = fgetcsv($handle, 1000, $delimiter, '"')) !== false) {
+               // Jika hanya 1 kolom tapi ada banyak koma, berarti baris ini salah kutip
+            if (count($row) === 1 && substr_count($row[0], ',') >= 8) {
+                // Bersihkan kutip luar
+                $clean = trim($row[0], "\"");
+                $row = str_getcsv($clean, $delimiter, '"');
+            }
             $data[] = $row;
         }
+  
         fclose($handle);
 
         if (empty($data)) {
@@ -320,7 +327,13 @@ class DataDosen extends Controller
         rewind($handle);
 
         $data = [];
-        while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
+        while (($row = fgetcsv($handle, 1000, $delimiter, '"')) !== false) {
+               // Jika hanya 1 kolom tapi ada banyak koma, berarti baris ini salah kutip
+            if (count($row) === 1 && substr_count($row[0], ',') >= 8) {
+                // Bersihkan kutip luar
+                $clean = trim($row[0], "\"");
+                $row = str_getcsv($clean, $delimiter, '"');
+            }
             $data[] = $row;
         }
         fclose($handle);

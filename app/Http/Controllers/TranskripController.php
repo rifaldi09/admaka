@@ -7,6 +7,7 @@ use App\Models\Transkrip;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\NomorSuratHistory;
 
 class TranskripController extends Controller
 {
@@ -87,7 +88,26 @@ class TranskripController extends Controller
         $request->validate([
             'keperluan' => 'required'
         ]);
+        
+      $hasIncomplete = \App\Models\Mahasiswa::where('nim', Auth::user()->id_user)
+        ->where(function ($query) {
+            $query->whereNull('nama')->orWhere('nama', '')
+                ->orWhereNull('email')->orWhere('email', '')
+                ->orWhereNull('id_prodi')
+                ->orWhereNull('tempat_lahir')->orWhere('tempat_lahir', '')
+                ->orWhereNull('tanggal_lahir')
+                ->orWhereNull('no_hp')->orWhere('no_hp', '')
+                ->orWhereNull('jenjang')->orWhere('jenjang', '')
+                ->orWhereNull('semester')
+                ->orWhereNull('tahun_akademik')->orWhere('tahun_akademik', '')
+                ->orWhereNull('ipk')
+                ->orWhereNull('sks');
+        })->exists();
 
+        if ($hasIncomplete) {
+            return redirect()->back()->with('error', 'Data mahasiswa belum lengkap. Mohon lengkapi dulu.');
+        }
+        
         Transkrip::create([
             'keperluan' => $request->keperluan,
             'user_id' => Auth::user()->id
@@ -107,8 +127,21 @@ class TranskripController extends Controller
 
     public function penerbitanTranskrip(Transkrip $transkrip)
     {
+        $tahun = date('Y');
+        $lastHistory = NomorSuratHistory::where('tahun', $tahun)
+                ->where('id_surat', $transkrip->id_transkrip)
+                ->orderByDesc('created_at') // atau orderByDesc('no_surat') kalau urutan berdasarkan nomor
+                ->first();
+        if ($lastHistory) {
+            $nomorSurat = $lastHistory->no_surat;
+        } else {
+            $nomorSurat = generateNomorSurat('Transkrip Nilai', $transkrip->id_transkrip);
+        }
+        
+     
         $transkrip->update([
-            'status' => 'Penerbitan'
+            'status' => 'Penerbitan',
+            'no_surat'=> $nomorSurat
         ]);
 
         return back()->with('success', 'Status transkrip telah diperbarui');

@@ -413,6 +413,7 @@ class DataMahasiswa extends Controller
             } catch (\Exception $e) {
                 DB::rollback(); // batalkan semua jika ada error
                 // Hapus file sementara
+                return redirect()->route('data-mahasiswa')->with('error', 'Data Mahasiswa Gagal Di tambah');
                
             }
  
