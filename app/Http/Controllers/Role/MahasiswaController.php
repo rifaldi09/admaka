@@ -25,8 +25,6 @@ class MahasiswaController extends Controller
     // Mahasiswa profile update
     public function updateProfilMhs(Request $request)
     {
-        // dd($request->all());
-
         $validated = $request->validate([
             'nama' => 'required|string|min:3',
             'email' => 'required|email|min:5',

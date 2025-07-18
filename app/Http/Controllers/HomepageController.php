@@ -17,10 +17,11 @@ class HomepageController extends Controller
         $models = [AktifKuliah::class, PengajuanKP::class, PPDP::class, PermohonanMagang::class, SuratRekomendasi::class, Transkrip::class];
 
         // Count data surat
+        $totalDataSurat = AktifKuliah::count() + PengajuanKP::count() + PPDP::count() + PermohonanMagang::count() + SuratRekomendasi::count() + Transkrip::count();
         $belumDiterima = collect($models)->sum(fn($models) => $models::where('status', 'Belum Diterima')->count());
-        $dataDiterima = collect($models)->sum(fn($models) => $models::where('status', 'Diterima')->count());
+        // $dataDiterima = collect($models)->sum(fn($models) => $models::where('status', 'Diterima')->count());
         $dataPenerbitan = collect($models)->sum(fn($models) => $models::where('status', 'Penerbitan')->count());
 
-        return view('homepage.index', compact('belumDiterima', 'dataDiterima', 'dataPenerbitan'), ['title' => 'ADMAKA - FTTK UMRAH']);
+        return view('homepage.index', compact('totalDataSurat', 'belumDiterima', 'dataPenerbitan'), ['title' => 'ADMAKA - FTTK UMRAH']);
     }
 }

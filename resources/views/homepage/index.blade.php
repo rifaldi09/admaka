@@ -16,38 +16,48 @@
 
     <!-- Featured Services Section -->
     <section id="featured-services" class="featured-services section light-background">
-        <div class="container">
+        <div class="container section-title" data-aos="fade-up">
+            <h2>Statistik Surat ADMAKA</h2>
+            <p>Informasi Jumlah Surat di Fakultas Teknik dan Teknologi Kemaritiman, Universitas Maritim Raja Ali Haji</p>
+        </div>
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
             <div class="row gy-4">
                 <div class="col-xl-4 col-lg-6" data-aos="fade-up" data-aos-delay="100">
                     <div class="service-item d-flex">
-                        <div class="icon flex-shrink-0"><i class="bi bi-briefcase"></i></div>
+                        <div class="icon flex-shrink-0"><i class="bi bi-envelope-arrow-up"></i></div>
                         <div>
                             <h4 class="title">Pengajuan Surat</h4>
-                            <p class="description">Total Pengajuan Surat <b>{{ $belumDiterima }} Surat</b></p>
+                            <p class="description">Total Pengajuan <b>{{ $belumDiterima }} Surat</b></p>
                         </div>
                     </div>
                 </div>
-                <!-- End Service Item -->
-
-                <div class="col-xl-4 col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                {{-- <div class="col-xl-4 col-lg-6" data-aos="fade-up" data-aos-delay="200">
                     <div class="service-item d-flex">
-                        <div class="icon flex-shrink-0"><i class="bi bi-card-checklist"></i></div>
+                        <div class="icon flex-shrink-0"><i class="bi bi-envelope-paper"></i></div>
                         <div>
                             <h4 class="title">Surat Diproses</h4>
-                            <p class="description">Total Surat Yang Diproses <b>{{ $dataDiterima }} Surat</b></p>
+                            <p class="description">Total Proses <b>{{ $dataDiterima }} Surat</b></p>
                         </div>
                     </div>
-                </div><!-- End Service Item -->
-
+                </div> --}}
                 <div class="col-xl-4 col-lg-6" data-aos="fade-up" data-aos-delay="300">
                     <div class="service-item d-flex">
-                        <div class="icon flex-shrink-0"><i class="bi bi-bar-chart"></i></div>
+                        <div class="icon flex-shrink-0"><i class="bi bi-envelope-check"></i></div>
                         <div>
                             <h4 class="title">Penerbitan Surat</h4>
-                            <p class="description">Total Penerbitan Surat <b>{{ $dataPenerbitan }} Surat</b></p>
+                            <p class="description">Total Penerbitan <b>{{ $dataPenerbitan }} Surat</b></p>
                         </div>
                     </div>
-                </div><!-- End Service Item -->
+                </div>
+                <div class="col-xl-4 col-lg-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-item d-flex">
+                        <div class="icon flex-shrink-0"><i class="bi bi-graph-up"></i></div>
+                        <div>
+                            <h4 class="title">Total Surat</h4>
+                            <p class="description">Jumlah Keseluruhan <b>{{ $totalDataSurat }} Surat</b></p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section><!-- /Featured Services Section -->
@@ -57,7 +67,7 @@
         <!-- Section Title -->
         <div class="container section-title" data-aos="fade-up">
             <h2>Contact</h2>
-            <p>Informasi Fakultas Teknik dan Teknologi Kemaritiman Universitas Maritim Raja Ali Haji</p>
+            <p>Informasi Fakultas Teknik dan Teknologi Kemaritiman, Universitas Maritim Raja Ali Haji</p>
         </div><!-- End Section Title -->
         <div class="container" data-aos="fade-up" data-aos-delay="100">
             <div class="row gy-4">
@@ -69,7 +79,6 @@
                         <p>Jl. Politeknik – Senggarang, Tanjungpinang Provinsi Kepulauan Riau</p>
                     </div>
                 </div><!-- End Info Item -->
-
                 <div class="col-lg-3 col-md-6">
                     <div class="info-item d-flex flex-column justify-content-center align-items-center"
                         data-aos="fade-up" data-aos-delay="300">
@@ -78,7 +87,6 @@
                         <p>(0771) 4500097</p>
                     </div>
                 </div><!-- End Info Item -->
-
                 <div class="col-lg-3 col-md-6">
                     <div class="info-item d-flex flex-column justify-content-center align-items-center"
                         data-aos="fade-up" data-aos-delay="400">
@@ -88,7 +96,6 @@
                     </div>
                 </div><!-- End Info Item -->
             </div>
-
             <div class="row gy-4 mt-1">
                 <div class="col-lg-6" data-aos="fade-up" data-aos-delay="300">
                     <iframe

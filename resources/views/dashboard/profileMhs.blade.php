@@ -65,8 +65,9 @@
                                     </div>
                                     <div class=" mb-3">
                                         <label for="ipk" class="form-label">IPK</label>
-                                        <input type="text" class="form-control" placeholder="IPK" name="ipk" required
+                                        <input type="text" class="form-control mb-1" placeholder="IPK" name="ipk" required
                                             id="ipk" value="{{ old('ipk',$user->ipk) }}">
+                                        <span style="font-size: 13px;">IPK diisi pakai titik (.)</span>
                                     </div>
                                 </div>
                                 <div class=" col-6">
